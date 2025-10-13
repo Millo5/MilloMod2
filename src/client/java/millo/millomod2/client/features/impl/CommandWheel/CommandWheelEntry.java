@@ -54,7 +54,7 @@ public class CommandWheelEntry {
     private void drawMouseLine(DrawContext context, int x, int y) {
         var window = MilloMod.MC.getWindow();
         double mouseX = MilloMod.MC.mouse.getX() / window.getWidth() * window.getScaledWidth();
-        double mouseY = MilloMod.MC.mouse.getY() / window.getHeight() * window.getScaledHeight();;
+        double mouseY = MilloMod.MC.mouse.getY() / window.getHeight() * window.getScaledHeight();
 
         double dx = (x - mouseX);
         double dy = (y - mouseY);

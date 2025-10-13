@@ -1,7 +1,6 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import millo.millomod2.client.config.ConfigValuePair;
 import net.minecraft.text.Text;
 import net.sapfii.sapscreens.screens.widgets.TextDisplayWidget;
 import net.sapfii.sapscreens.screens.widgets.Widget;

@@ -2,7 +2,6 @@ package millo.millomod2.client.config.saving;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.FeatureHandler;
 import net.fabricmc.loader.api.FabricLoader;
 

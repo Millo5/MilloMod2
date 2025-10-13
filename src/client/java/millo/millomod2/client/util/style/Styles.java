@@ -8,6 +8,7 @@ import net.minecraft.util.Formatting;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public enum Styles {
     // Common
     DEFAULT (Color.white),

@@ -1,19 +1,14 @@
 package millo.millomod2.client.util;
 
 import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DataResult;
 import millo.millomod2.client.MilloMod;
 import net.minecraft.command.argument.ItemStringReader;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.packrat.PackratParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +43,8 @@ public class ItemUtil {
     }
 
     public static ItemStack fromNbt(String data) {
+        if (MilloMod.MC.world == null) return ItemStack.EMPTY;
+
         try {
             NbtCompound nbt = StringNbtReader.readCompound(data);
             DataResult<ItemStack> result = ItemStack.CODEC.parse(MilloMod.MC.world.getRegistryManager().getOps(NbtOps.INSTANCE), nbt);

@@ -2,7 +2,6 @@ package millo.millomod2.client.mixin.render;
 
 import millo.millomod2.client.util.HypercubeInfo;
 import net.minecraft.client.gui.hud.DebugHud;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

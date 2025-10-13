@@ -56,7 +56,7 @@ public class PacketHandler {
                 boolean result = (boolean) method.invoke(methodReferenceReceive.get(method), packet);
                 re = re || result;
             } catch (Exception e) {
-                e.printStackTrace();
+                MilloLog.stackTrace(e);
             }
         }
         return re;
@@ -71,7 +71,7 @@ public class PacketHandler {
                 boolean result = (boolean) method.invoke(methodReferenceSend.get(method), packet);
                 re = re || result;
             } catch (Exception e) {
-                e.printStackTrace();
+                MilloLog.stackTrace(e);
             }
         }
         return re;

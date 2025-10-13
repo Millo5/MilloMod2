@@ -5,10 +5,9 @@ import millo.millomod2.client.config.value.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "unchecked"})
 public class FeatureConfig {
 
     private final ArrayList<String> order = new ArrayList<>();

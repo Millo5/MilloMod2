@@ -5,7 +5,7 @@ import net.minecraft.text.Text;
 public final class Notification {
     private final Text message;
     private float age = 0f;
-    private float lifetime = 5f;
+    private final float lifetime = 5f;
     private float visible = 0.1f;
 
     public Notification(Text message) {

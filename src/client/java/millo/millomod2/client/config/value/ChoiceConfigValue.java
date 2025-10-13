@@ -1,7 +1,6 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import millo.millomod2.client.config.ConfigValuePair;
 import net.minecraft.text.Text;
 import net.sapfii.sapscreens.screens.widgets.*;
 
@@ -29,9 +28,8 @@ public class ChoiceConfigValue extends ConfigValue<String> {
                 .withDimensions(10, 40 * Math.min(choices.length, 4));
 
         for (String choice : choices) {
-            folder.addWidget(new ButtonWidget(Text.literal(choice.equals(value) ? "⏺ " : "○ ").append(Text.translatable(choice)), buttonWidget -> {
-                setValue(choice);
-            }));
+            folder.addWidget(new ButtonWidget(Text.literal(choice.equals(value) ? "⏺ " : "○ ")
+                    .append(Text.translatable(choice)), buttonWidget -> setValue(choice)));
         }
         return folder;
     }

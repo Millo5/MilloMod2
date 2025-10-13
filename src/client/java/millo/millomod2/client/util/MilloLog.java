@@ -36,4 +36,8 @@ public class MilloLog {
         MilloMod.player().sendMessage(Text.literal("[MilloMod2] Error: " + message).setStyle(Styles.SCARY.getStyle()), false);
     }
 
+    public static void stackTrace(Exception e) {
+        LOGGER.error("Exception: ", e);
+        if (DEBUG) e.printStackTrace();
+    }
 }

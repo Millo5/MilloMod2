@@ -5,7 +5,6 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.util.HypercubeInfo;
-import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.client.MinecraftClient;

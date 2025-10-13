@@ -5,9 +5,6 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.client.option.KeyBinding;
-
-import java.util.HashMap;
 
 public class FlightSpeedToggle extends Feature implements Keybound, Configurable {
 

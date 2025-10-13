@@ -10,9 +10,9 @@ import org.joml.Matrix3x2f;
 
 public class DonutRenderState implements SimpleGuiElementRenderState {
 
-    private RenderPipeline pipeline;
-    private Matrix3x2f pose;
-    private ScreenRect bounds;
+    private final RenderPipeline pipeline;
+    private final Matrix3x2f pose;
+    private final ScreenRect bounds;
 
     private final int segments;
     private float centerX, centerY;
@@ -52,6 +52,11 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
     public void setAngles(float start, float end) {
         this.startAngle = start;
         this.endAngle = end;
+    }
+
+    public void setRadii(float inner, float outer) {
+        this.innerRadius = inner;
+        this.outerRadius = outer;
     }
 
     @Override

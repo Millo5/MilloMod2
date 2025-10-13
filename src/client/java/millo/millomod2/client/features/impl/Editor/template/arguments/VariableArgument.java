@@ -21,6 +21,8 @@ public class VariableArgument extends Argument<VariableArgument> {
         return this;
     }
 
+
+    @SuppressWarnings("unused")
     public enum Scope {
         UNSAVED,
         SAVE,

@@ -1,5 +1,6 @@
 package millo.millomod2.client.hypercube.actiondump;
 
+@SuppressWarnings("unused")
 public class Argument {
 
     public String type;

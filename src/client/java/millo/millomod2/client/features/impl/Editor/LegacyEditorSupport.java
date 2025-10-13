@@ -3,7 +3,6 @@ package millo.millomod2.client.features.impl.Editor;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.ItemUtil;
-import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

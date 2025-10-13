@@ -1,21 +1,7 @@
 package millo.millomod2.client.util;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Message;
-import com.mcdiamondfire.proto.ModAPIMessage;
-import com.mcdiamondfire.proto.ModAPIMessages;
-import com.mcdiamondfire.proto.ModAPIUtility;
-import com.mcdiamondfire.proto.messages.serverbound.server.C2SHandshakeRequest;
-import com.mcdiamondfire.proto.messages.serverbound.server.C2SHandshakeRequestOrBuilder;
-import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.hypercube.modapi.ModAPIPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-
-import java.util.Objects;
-import java.util.Optional;
 
 public class ModAPI {
 

@@ -54,7 +54,8 @@ public class PlayerUtil {
 
     public static void giveItem(ItemStack item) {
         MinecraftClient mc = MilloMod.MC;
-        DefaultedList<ItemStack> inv = mc.player.getInventory().getMainStacks();
+        if (MilloMod.player() == null || MilloMod.player().getInventory() == null) return;
+        DefaultedList<ItemStack> inv = MilloMod.player().getInventory().getMainStacks();
 
         if (!mc.player.isCreative()) return;
         if (mc.interactionManager == null) return;

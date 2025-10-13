@@ -20,17 +20,6 @@ public class CommandActionDump extends Command {
                     FeatureHandler.get(ActionDumpReader.class).read();
                     return 1;
                 })
-                .then(Arg.literal("test")
-                        .executes(ctx -> {
-//                            Optional<RawActionDump> actionDump = RawActionDump.getActionDump();
-//                            MilloLog.logInGame(actionDump.toString());
-                            ActionDump actionDump = ActionDump.getActionDump().orElse(null);
-                            if (actionDump == null) return 1;
-                            MilloLog.logInGame(actionDump.getCodeBlock(actionDump.getCodeBlockIds().get(4)).get().getActions().toString());
-
-                            return 1;
-                        })
-                )
         );
     }
 

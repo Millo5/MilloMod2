@@ -76,10 +76,12 @@ public final class FeatureHandler {
         INSTANCE.order.forEach(id -> consumer.accept(INSTANCE.featureMap.get(id)));
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Feature> T get(String id) {
         return (T) INSTANCE.featureMap.get(id);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Feature> T get(Class<T> clazz) {
         for (Feature feature : INSTANCE.featureMap.values()) {
             if (clazz.isInstance(feature)) {

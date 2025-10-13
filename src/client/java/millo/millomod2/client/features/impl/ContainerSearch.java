@@ -143,7 +143,8 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
         searchBox.setEditable(true);
         searchBox.setSelectionStart(0);
         searchBox.setSelectionEnd(searchBox.getText().length());
-        MilloMod.MC.currentScreen.setFocused(searchBox);
+
+        if (MilloMod.MC.currentScreen != null) MilloMod.MC.currentScreen.setFocused(searchBox);
     }
 
     @Override

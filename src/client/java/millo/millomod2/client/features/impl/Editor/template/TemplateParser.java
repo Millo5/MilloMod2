@@ -8,7 +8,6 @@ import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.hypercube.template.TemplateBlock;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TemplateParser {
 
