@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "millo.millomod2.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "core.MMouse",
+    "network.MClientCommonNetworkHandler",
+    "network.MClientPlayNetworkHandler",
+    "render.MContainerScreen",
+    "render.MDebugMenu",
+    "render.MInGameHUD",
+    "render.accessors.HandledScreenAccessor",
+    "render.accessors.ScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixins": [
+    "network.MClientConnection",
+    "render.MItemStack"
+  ]
+}
