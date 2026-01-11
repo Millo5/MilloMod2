@@ -92,9 +92,9 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
         context.getMatrices().translate(position.getX(), position.getY());
 
         for (Notification notification : notifications) {
-            float visible = renderInfo.lerp(notification.getVisible(), notification.isFadingOut() ? 0f : 1f, 20f);
+            float visible = renderInfo.lerp(notification.getVisible(), notification.isFadingOut() ? 0f : 1f, 1f);
             notification.setVisible(visible);
-            if (visible > 0.9f) notification.age(renderInfo.deltaTime());
+            if (visible > 0.9f) notification.age(renderInfo.deltaTime() * 0.05f);
 
             float progress = notification.getProgress();
 
