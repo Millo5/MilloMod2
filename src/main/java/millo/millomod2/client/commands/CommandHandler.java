@@ -22,7 +22,6 @@ public class CommandHandler {
 
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess context) {
-        if (INSTANCE != null) return;
         INSTANCE = new CommandHandler(dispatcher, context);
     }
 
