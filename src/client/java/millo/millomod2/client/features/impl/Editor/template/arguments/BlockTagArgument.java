@@ -12,7 +12,7 @@ public class BlockTagArgument extends Argument<BlockTagArgument> {
     private String block;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal(tag + ":" + option);
     }
 

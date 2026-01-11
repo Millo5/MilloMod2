@@ -15,7 +15,7 @@ public class SimpleArgument extends Argument<SimpleArgument> {
     }
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return switch (type) {
             case TEXT -> Text.literal("\"" + value + "\"").setStyle(Styles.TEXT.getStyle());
             case NUMBER -> Text.literal(value).setStyle(Styles.NUMBER.getStyle());

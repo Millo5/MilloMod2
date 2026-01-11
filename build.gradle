@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.11.8'
+    id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -61,19 +61,19 @@ repositories {
 
 dependencies {
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
+    modRuntimeOnly("org.apache.httpcomponents:httpclient:4.5.14")
 
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    modImplementation "maven.modrinth:sapscreens:v1.2"
-    implementation include("org.java-websocket:Java-WebSocket:1.5.3")
+    modImplementation include("org.java-websocket:Java-WebSocket:1.5.3")
 
     // DiamondFire ModAPI.
-    implementation("com.mcdiamondfire:proto:1.0.0")
+//    implementation("com.mcdiamondfire:proto:1.0.0")
     // Protocol Buffers.
     implementation("com.google.protobuf:protobuf-java:4.32.0")
     implementation("com.google.protobuf:protobuf-java-util:4.32.0")
@@ -117,7 +117,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 

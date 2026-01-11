@@ -14,7 +14,6 @@ public class CommandHandler {
 
     public static CommandHandler INSTANCE;
 
-
     private final List<Command> commands = new ArrayList<>();
 
     public List<Command> getCommands() {

@@ -1,8 +1,10 @@
 package millo.millomod2.client.features.addons;
 
 import millo.millomod2.client.util.RenderInfo;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,12 +18,14 @@ public interface ContainerMod {
 
     default void containerTick(CallbackInfo ci) {}
 
-    default void containerMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {}
+    default void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {}
 
-    default void containerKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {}
+    default void containerKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {}
 
     default void containerClose(CallbackInfo ci) {}
 
-    default void containerDrawSlot(DrawContext context, Slot slot, CallbackInfo ci) {}
+    default void containerDrawSlot(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {}
+
 
 }
+

@@ -3,9 +3,11 @@ package millo.millomod2.client.mixin.render;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.util.RenderInfo;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -69,19 +71,19 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    private void mouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerMouseClicked(mouseX, mouseY, button, cir);
+                rendered.containerMouseClicked(click, doubled, cir);
             }
         });
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void keyPressedInject(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+    private void keyPressedInject(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerKeyPressed(keyCode, scanCode, modifiers, cir);
+                rendered.containerKeyPressed(input, cir);
             }
         });
     }
@@ -96,10 +98,10 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
     }
 
     @Inject(method="drawSlot", at = @At("TAIL"))
-    private void drawSlotInject(DrawContext context, Slot slot, CallbackInfo ci) {
+    private void drawSlotInject(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerDrawSlot(context, slot, ci);
+                rendered.containerDrawSlot(context, slot, mouseX, mouseY, ci);
             }
         });
     }

@@ -11,7 +11,7 @@ public class PotionArgument extends Argument<PotionArgument> {
     private int duration;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal("Potion(amplifier: " + amplifier + ", duration: " + duration + ")").setStyle(Styles.POTION.getStyle());
     }
 

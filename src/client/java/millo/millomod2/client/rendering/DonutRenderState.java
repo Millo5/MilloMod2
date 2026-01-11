@@ -60,7 +60,7 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
     }
 
     @Override
-    public void setupVertices(VertexConsumer vertices, float depth) {
+    public void setupVertices(VertexConsumer vertices) {
 
         double startAngle = this.startAngle * 2 * Math.PI;
         double endAngle = this.endAngle * 2 * Math.PI;
@@ -82,15 +82,15 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
             float x2_outer = centerX + (float) (Math.cos(angle2) * outerRadius);
             float y2_outer = centerY + (float) (Math.sin(angle2) * outerRadius);
 
-            vertices.vertex(pose, x1_outer, y1_outer, depth).color(color);
-            vertices.vertex(pose, x2_outer, y2_outer, depth).color(color);
-            vertices.vertex(pose, x2_inner, y2_inner, depth).color(color);
-            vertices.vertex(pose, x1_inner, y1_inner, depth).color(color);
+            vertices.vertex(pose, x1_outer, y1_outer).color(color);
+            vertices.vertex(pose, x2_outer, y2_outer).color(color);
+            vertices.vertex(pose, x2_inner, y2_inner).color(color);
+            vertices.vertex(pose, x1_inner, y1_inner).color(color);
 
-            vertices.vertex(pose, x1_inner, y1_inner, depth).color(color);
-            vertices.vertex(pose, x2_inner, y2_inner, depth).color(color);
-            vertices.vertex(pose, x2_outer, y2_outer, depth).color(color);
-            vertices.vertex(pose, x1_outer, y1_outer, depth).color(color);
+            vertices.vertex(pose, x1_inner, y1_inner).color(color);
+            vertices.vertex(pose, x2_inner, y2_inner).color(color);
+            vertices.vertex(pose, x2_outer, y2_outer).color(color);
+            vertices.vertex(pose, x1_outer, y1_outer).color(color);
         }
 
     }

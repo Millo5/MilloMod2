@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class Editor extends Feature implements Keybound {
 
     private final LegacyEditorSupport legacy;
-    private EditorScreen screen;
+    private EditorMenu screen;
 
     @Override
     public String getId() {
@@ -64,13 +64,13 @@ public class Editor extends Feature implements Keybound {
             }
 
             TemplateParser parser = new TemplateParser(template);
-            screen.lineContainer.setLines(parser.getResult());
+            EditorMenu.setLines(parser.getResult());
         });
     }
 
     public void openEditor() {
         MC.send(() -> {
-            screen = new EditorScreen();
+            screen = new EditorMenu(null);
             MC.setScreen(screen);
         });
     }

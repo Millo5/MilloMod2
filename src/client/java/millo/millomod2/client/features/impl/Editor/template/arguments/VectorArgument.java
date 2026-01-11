@@ -5,15 +5,21 @@ import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.text.Text;
 
+import java.text.DecimalFormat;
+
 public class VectorArgument extends Argument<VectorArgument> {
 
     private double x;
     private double y;
     private double z;
 
-
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
+        DecimalFormat df = new DecimalFormat("#.##");
+        String x = df.format(this.x);
+        String y = df.format(this.y);
+        String z = df.format(this.z);
+
         return Text.literal("<" + x + ", " + y + ", " + z + ">").setStyle(Styles.VECTOR.getStyle());
     }
 

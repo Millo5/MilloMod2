@@ -1,5 +1,6 @@
-package millo.millomod2.client.features.impl.Editor.template;
+package millo.millomod2.client.features.impl.Editor.template.lines;
 
+import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import net.minecraft.text.Text;
 
 public class BracketLine implements CodeLine {

@@ -1,14 +1,14 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.*;
+import millo.millomod2.menu.elements.TextElement;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class ChoiceConfigValue extends ConfigValue<String> {
 
     private final String[] choices;
 
-    private WidgetListBox folder;
+//    private FolderWidget folder;
 
     public ChoiceConfigValue(String defaultValue, String[] choices) {
         super(defaultValue);
@@ -16,23 +16,34 @@ public class ChoiceConfigValue extends ConfigValue<String> {
     }
 
     @Override
-    public Widget<?> createWidget() {
-//        return new TextDisplayWidget(Text.literal(key + ": " + value + "(" + String.join(", ", choices) +")"),
-//                10, Widget.Alignment.LEFT);
-
-        // ⏺ ○
-
-        folder = new WidgetListFolder()
-                .withTitle(Text.translatable(value))
-                .useParentDimensions(true, false)
-                .withDimensions(10, 40 * Math.min(choices.length, 4));
-
-        for (String choice : choices) {
-            folder.addWidget(new ButtonWidget(Text.literal(choice.equals(value) ? "⏺ " : "○ ")
-                    .append(Text.translatable(choice)), buttonWidget -> setValue(choice)));
-        }
-        return folder;
+    public ClickableWidget createWidget() {
+        return TextElement.create("Choice Config Value");
     }
+
+//    @Override
+//    public Widget<?> createWidget() {
+////        return new TextDisplayWidget(Text.literal(key + ": " + value + "(" + String.join(", ", choices) +")"),
+////                10, Widget.Alignment.LEFT);
+//
+//        // ⏺ ○
+//
+//        folder = new FolderWidget()
+//                .withTitle(MilloMod.translatable("choice", value))
+//                .withDimensions(10, 40 * Math.min(choices.length, 4), true);
+//
+//        for (String choice : choices) {
+//            folder.addWidget(new ButtonWidget()
+//                    .withText(Text.literal(choice.equals(value) ? "⏺ " : "○ ").append(MilloMod.translatable("choice", choice)))
+//                    .withClickEvent((widget, x, y, active) -> {
+//                        if (!widget.hovered()) return;
+//                        setValue(choice);
+//                    })
+//                    .withDimensions(0, 40, true)
+//            );
+//        }
+//        refreshButtons();
+//        return folder;
+//    }
 
     @Override
     public void deserialize(Object obj) {
@@ -46,17 +57,23 @@ public class ChoiceConfigValue extends ConfigValue<String> {
         }
     }
 
-    @Override
-    public void setValue(String value) {
-        super.setValue(value);
-        if (folder == null) return;
-        ((WidgetListFolder) folder).withTitle(Text.translatable(value));
-        for (int i = 0; i < choices.length; i++) {
-            String choice = choices[i];
-            Widget<? extends Widget<?>> widget = folder.getChildren().get(i);
-            if (widget instanceof ButtonWidget buttonWidget) {
-                buttonWidget.withText(Text.literal(choice.equals(value) ? "⏺ " : "○ ").append(Text.translatable(choice)));
-            }
-        }
-    }
+//    @Override
+//    public void setValue(String value) {
+//        super.setValue(value);
+////        refreshButtons();
+//    }
+
+//
+//    private void refreshButtons() {
+//        if (folder == null) return;
+//
+//        folder.withTitle(MilloMod.translatable("choice", value));
+//        for (int i = 0; i < choices.length; i++) {
+//            String choice = choices[i];
+//            Widget<? extends Widget<?>> widget = folder.getWidgets().get(i);
+//            if (widget instanceof ButtonWidget buttonWidget) {
+//                buttonWidget.withText(Text.literal(choice.equals(value) ? "⏺ " : "○ ").append(MilloMod.translatable("choice", choice)));
+//            }
+//        }
+//    }
 }

@@ -10,7 +10,7 @@ public class VariableArgument extends Argument<VariableArgument> {
     private Scope scope;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal(scope.name().toLowerCase() + "." + name);
     }
 

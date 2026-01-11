@@ -1,8 +1,8 @@
 package millo.millomod2.client.util.style;
 
+import millo.millomod2.client.MilloMod;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 
@@ -85,8 +85,8 @@ public enum Styles {
     }
 
     public static MutableText getTrueFalse(boolean state) {
-        if (state) return Text.translatable("config.millo.enabled").setStyle(TRUE.getStyle());
-        return Text.translatable("config.millo.disabled").setStyle(FALSE.getStyle());
+        if (state) return MilloMod.translatable("enabled").setStyle(TRUE.getStyle());
+        return MilloMod.translatable("disabled").setStyle(FALSE.getStyle());
     }
 
     public Style getStyle() {

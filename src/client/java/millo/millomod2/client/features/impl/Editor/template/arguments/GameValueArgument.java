@@ -11,10 +11,10 @@ public class GameValueArgument extends Argument<GameValueArgument> {
     private String type;
 
     @Override
-    protected Text getDisplayText() {
-        String t = String.valueOf(target.charAt(0));
-        if (t.equals("D")) t = "";
-        return Text.literal(type + " [" + t + "]").setStyle(Styles.GAME_VALUE.getStyle());
+    public Text getDisplayText() {
+        String t = "["+ target.charAt(0) +"]";
+        if (t.equals("[D]")) t = "";
+        return Text.literal(type + t).setStyle(Styles.GAME_VALUE.getStyle());
     }
 
     @Override

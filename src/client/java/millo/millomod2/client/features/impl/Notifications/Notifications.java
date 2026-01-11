@@ -14,21 +14,13 @@ import net.minecraft.text.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class Notifications extends Feature implements Toggleable, Positional, HUDRendered, Configurable {
 
     private final ArrayList<Notification> notifications = new ArrayList<>();
-
-    private final ChatMatchRule friendMessageRule = new ChatMatchRule(Pattern.compile("» your friend (.+) has joined!"));
-    private final ChatMatchRule plotVoteRule = new ChatMatchRule(Pattern.compile("⭐ (.+) has voted for this plot! ⭐|⭐ (.+) voted for .+"));
-    private final ChatMatchRule playerJoinPlotRule = new ChatMatchRule(Pattern.compile("▷ (.+) joined .+|○ (.+) played on .+"));
-    private final ChatMatchRule playerJoinNodeRule = new ChatMatchRule(Pattern.compile("\\[.+\\](.+) joined!?|(.+) joined!"));
-    private final ChatMatchRule plotInfoRule = new ChatMatchRule(
-            "Note: This plot may hide, log, or change your chat messages. Use /gchat or /gc to bypass and talk to global chat.",
-            "Note: Your whitelist bypass permission was applied.",
-            "\\n» The plot's resource pack was automatically enabled due to your preference.\\n  [Disable]\\n"
-    );
+    private HashMap<String, ChatMatchRule> rules;
 
     @Override
     public String getId() {
@@ -37,13 +29,27 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
 
     @Override
     public void setupConfig(FeatureConfig config) {
+        rules = new HashMap<>();
+        rules.put("friend_messages", new ChatMatchRule(Pattern.compile("» your friend (.+) has joined!")));
+        rules.put("plot_votes", new ChatMatchRule(Pattern.compile("⭐ (.+) has voted for this plot! ⭐|⭐ (.+) voted for .+")));
+        rules.put("player_joins_plot", new ChatMatchRule(Pattern.compile("▷ (.+) joined .+|○ (.+) played on .+")));
+        rules.put("player_joins_node", new ChatMatchRule(Pattern.compile("\\[.+\\](.+) joined!?|(.+) joined!")));
+        rules.put("plot_info_messages", new ChatMatchRule(
+                "Note: This plot may hide, log, or change your chat messages. Use /gchat or /gc to bypass and talk to global chat.",
+                "Note: Your whitelist bypass permission was applied.",
+                "\\n» The plot's resource pack was automatically enabled due to your preference.\\n  [Disable]\\n"
+        ));
+        rules.put("plot_info_annoying", new ChatMatchRule(
+                "Note: You can view your past 5 created templates with /templatehistory!",
+                "Error: Invalid template placement."
+        ));
+        rules.put("fly_speed_changes", new ChatMatchRule(Pattern.compile("» Set fly speed to: (\\d+)% of default speed.")));
+
         config.addChoice("direction", "down", new String[]{"up", "down"});
 
-        config.addBoolean("friend_messages", false);
-        config.addBoolean("plot_votes", false);
-        config.addBoolean("player_joins_plot", false);
-        config.addBoolean("player_joins_node", false);
-        config.addBoolean("plot_info_messages", false);
+        for (String ruleKey : rules.keySet()) {
+            config.addBoolean(ruleKey, false);
+        }
     }
 
     @OnReceivePacket
@@ -52,15 +58,14 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
 
         String message = packet.content().getString();
 
-        if ((config.getBoolean("friend_messages") && friendMessageRule.matches(message)) ||
-            (config.getBoolean("plot_votes") && plotVoteRule.matches(message)) ||
-            (config.getBoolean("player_joins_plot") && playerJoinPlotRule.matches(message)) ||
-            (config.getBoolean("player_joins_node") && playerJoinNodeRule.matches(message)) ||
-            (config.getBoolean("plot_info_messages") && plotInfoRule.matches(message))
-        ) {
-            notify(packet.content());
-            return true;
+        for (String ruleKey : rules.keySet()) {
+            ChatMatchRule rule = rules.get(ruleKey);
+            if (config.getBoolean(ruleKey) && rule.matches(message)) {
+                notify(packet.content());
+                return true;
+            }
         }
+
         return false;
     }
 

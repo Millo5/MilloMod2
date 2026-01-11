@@ -1,20 +1,25 @@
 package millo.millomod2.client.features.impl.Editor.widgets.hierarchy;
 
-import net.sapfii.sapscreens.screens.widgets.Widget;
-import net.sapfii.sapscreens.screens.widgets.WidgetListBox;
 
-public class HierarchyWidget extends WidgetListBox {
+import millo.millomod2.client.rendering.gui.FlexChild;
 
+public class HierarchyWidget implements FlexChild {
     @Override
-    public Widget<WidgetListBox> addWidget(Widget<?> widget) {
-        if (!(widget instanceof HierarchyEntry)) {
-            throw new IllegalArgumentException("Only HierarchyEntry widgets can be added to HierarchyWidget");
-        }
-        return super.addWidget(widget);
+    public float getFlexGrow() {
+        return 0.1f;
     }
 
-    public void addEntry(HierarchyEntry entry) {
-        addWidget((Widget<?>) entry);
-    }
+
+//    @Override
+//    public Widget<WidgetListBox> addWidget(Widget<?> widget) {
+//        if (!(widget instanceof HierarchyEntry)) {
+//            throw new IllegalArgumentException("Only HierarchyEntry widgets can be added to HierarchyWidget");
+//        }
+//        return super.addWidget(widget);
+//    }
+//
+//    public void addEntry(HierarchyEntry entry) {
+//        addWidget((Widget<?>) entry);
+//    }
 
 }

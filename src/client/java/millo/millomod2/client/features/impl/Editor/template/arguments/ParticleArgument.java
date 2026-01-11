@@ -18,7 +18,7 @@ public class ParticleArgument extends Argument<ParticleArgument> {
     
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
 
         ArrayList<Text> tooltip = new ArrayList<>();
         boolean newline = false;
@@ -80,6 +80,8 @@ public class ParticleArgument extends Argument<ParticleArgument> {
         if (pMap.containsKey("roll")) pMap.put("Roll", pMap.get("roll"));
         if (pMap.containsKey("size")) pMap.put("Size", pMap.get("size"));
         if (pMap.containsKey("material")) pMap.put("Material", pMap.get("material"));
+
+        this.data = pMap;
 
         return this;
     }

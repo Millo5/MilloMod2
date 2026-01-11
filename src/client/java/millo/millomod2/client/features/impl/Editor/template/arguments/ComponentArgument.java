@@ -10,7 +10,7 @@ public class ComponentArgument extends Argument<ComponentArgument> {
     private String component;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal(component).setStyle(Styles.COMPONENT.getStyle());
     }
 

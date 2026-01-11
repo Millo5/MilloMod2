@@ -1,9 +1,8 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.TextDisplayWidget;
-import net.sapfii.sapscreens.screens.widgets.Widget;
+import millo.millomod2.menu.elements.TextElement;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class IntegerConfigValue extends ConfigValue<Integer> {
 
@@ -12,9 +11,14 @@ public class IntegerConfigValue extends ConfigValue<Integer> {
     }
 
     @Override
-    public Widget<?> createWidget() {
-        return new TextDisplayWidget(Text.literal(""+value), 10, Widget.Alignment.LEFT);
+    public ClickableWidget createWidget() {
+        return TextElement.create(String.valueOf(value));
     }
+
+//    @Override
+//    public Widget<?> createWidget() {
+//        return TextWidget.create().withText(Text.literal(""+value));
+//    }
 
     @Override
     public void deserialize(Object obj) {

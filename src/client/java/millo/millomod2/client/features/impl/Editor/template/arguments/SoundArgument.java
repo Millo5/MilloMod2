@@ -11,7 +11,7 @@ public class SoundArgument extends Argument<SoundArgument> {
     private double volume;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal("Sound(pitch: " + pitch + ", volume: " + volume + ")").setStyle(Styles.SOUND.getStyle());
     }
 

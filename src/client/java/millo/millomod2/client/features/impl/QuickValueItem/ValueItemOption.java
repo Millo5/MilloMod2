@@ -72,7 +72,7 @@ public abstract class ValueItemOption {
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
         context.fill(-8, -8, 8, 8, color);
-        context.drawBorder(-8, -8, 16, 16, borderCol);
+        context.drawStrokedRectangle(-8, -8, 16, 16, borderCol);
 
         context.drawItem(icon, -8, -8);
 

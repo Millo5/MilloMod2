@@ -3,10 +3,12 @@ package millo.millomod2.client.config.value;
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.config.Instantiable;
 import millo.millomod2.client.util.MilloLog;
-import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.TextDisplayWidget;
-import net.sapfii.sapscreens.screens.widgets.Widget;
-import net.sapfii.sapscreens.screens.widgets.WidgetListBox;
+import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
+import millo.millomod2.menu.elements.flex.FlexDirection;
+import millo.millomod2.menu.elements.flex.FlexElement;
+import millo.millomod2.menu.elements.flex.MainAxisAlignment;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,21 +36,39 @@ public class ListConfigValue<T extends ConfigValue<?> & Instantiable<T>> extends
     }
 
     @Override
-    public Widget<?> createWidget() {
-        WidgetListBox a = new WidgetListBox()
-                .useParentDimensions(true, true)
-                .withDimensions(400, 100)
-                .withPadding(10, 10, 5)
-                .withAlignment(Widget.Alignment.TOP);
+    public ClickableWidget createWidget() {
+//        ListWidget a = ListWidget.create()
+//                .withDimensions(400, 100, true)
+//                .withPadding(10, 10, 5);
+//        a.withAlignment(WidgetPos.Alignment.CENTER);
+//
+//        for (T item : value) {
+//            a.addWidget(item.createWidget());
+//        }
+//
+//        if (value.isEmpty()) {
+//            a.addWidget(TextWidget.create().withText(Text.literal("Empty List")));
+//        }
+//        return a;
 
+        FlexElement container = FlexElement.create(400, 100)
+                .direction(FlexDirection.COLUMN)
+                .mainAlign(MainAxisAlignment.START)
+                .crossAlign(CrossAxisAlignment.CENTER)
+                .padding(10)
+                .gap(5);
+
+        ArrayList<ClickableWidget> itemWidgets = new ArrayList<>();
         for (T item : value) {
-            a.addWidget(item.createWidget());
+            itemWidgets.add(item.createWidget());
         }
-
+        container.addChildren(itemWidgets);
         if (value.isEmpty()) {
-            a.addWidget(new TextDisplayWidget(Text.literal("Empty List"), 10, Widget.Alignment.CENTER));
+//            container.addChild(new TextElement(Text.of("Empty List")));
+            container.addChild(TextElement.create("Empty List"));
         }
-        return a;
+        return container;
+
     }
 
     @Override

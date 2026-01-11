@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.template;
 
+import millo.millomod2.client.features.impl.Editor.template.lines.*;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
@@ -70,10 +71,19 @@ public class TemplateParser {
 
     private CodeLine parseBlock(TemplateBlock templateBlock) throws ParsingException {
         CodeBlock block = actionDump.getCodeBlock(templateBlock.block).orElseThrow(() -> new ParsingException("No such codeblock: " + templateBlock.block));
-
         ArrayList<Argument<?>> arguments = parseArguments(templateBlock.args);
 
-        return new CodeActionLine(block.getIdentifier(), templateBlock.action == null ? "-" : templateBlock.action, arguments);
+        return switch (block.getIdentifier()) {
+            case "call_func", "start_process", "process", "func" -> new DynamicCodeLine(block, templateBlock.data, arguments);
+            case "set_var" -> new SetVarCodeLine(block, templateBlock.action, arguments);
+            default -> {
+                CodeActionLine line = new CodeActionLine(block, templateBlock.action == null ? "-" : templateBlock.action, arguments);
+                if (templateBlock.attribute != null) line.setAttribute(templateBlock.attribute);
+                if (templateBlock.subAction != null) line.setSubAction(templateBlock.subAction);
+                if (templateBlock.target != null) line.setTarget(templateBlock.target);
+                yield line;
+            }
+        };
     }
 
     private ArrayList<Argument<?>> parseArguments(Arguments args) {

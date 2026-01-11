@@ -7,6 +7,8 @@ import millo.millomod2.client.util.style.Styles;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+import java.text.DecimalFormat;
+
 public class LocationArgument extends Argument<LocationArgument> {
 
     private boolean isBlock;
@@ -18,10 +20,17 @@ public class LocationArgument extends Argument<LocationArgument> {
 
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
+        DecimalFormat df = new DecimalFormat("#.##");
+        String x = df.format(this.x);
+        String y = df.format(this.y);
+        String z = df.format(this.z);
+
         MutableText text = Text.literal("[").setStyle(Styles.LOCATION.getStyle());
         text.append(Text.literal(x + ", " + y + ", " + z).setStyle(Styles.DEFAULT.getStyle()));
         if (!isBlock) {
+            String pitch = df.format(this.pitch);
+            String yaw = df.format(this.yaw);
             text.append(Text.literal(", " + pitch + ", " + yaw).setStyle(Styles.DEFAULT.getStyle()));
         }
         text.append(Text.literal("]").setStyle(Styles.LOCATION.getStyle()));

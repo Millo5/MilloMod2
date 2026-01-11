@@ -14,6 +14,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -56,6 +58,10 @@ public class MilloMod implements ClientModInitializer {
 
     public static void schedule(Runnable task, long delayMs) {
         executor.schedule(() -> MilloMod.MC.execute(task), delayMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+    }
+
+    public static MutableText translatable(String... keys) {
+        return Text.translatable("millo." + String.join(".", keys));
     }
 
 }

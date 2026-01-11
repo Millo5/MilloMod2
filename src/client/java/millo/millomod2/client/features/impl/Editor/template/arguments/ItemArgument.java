@@ -13,7 +13,7 @@ public class ItemArgument extends Argument<ItemArgument> {
     private ItemStack item;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal(item.getName().getString()).setStyle(Styles.ITEM.getStyle());
     }
 

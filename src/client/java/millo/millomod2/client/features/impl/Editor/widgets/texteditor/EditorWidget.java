@@ -1,33 +1,26 @@
 package millo.millomod2.client.features.impl.Editor.widgets.texteditor;
 
-import millo.millomod2.client.features.impl.Editor.template.BracketLine;
+import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
 import millo.millomod2.client.features.impl.Editor.template.CodeEntry;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.TextDisplayWidget;
-import net.sapfii.sapscreens.screens.widgets.WidgetListBox;
 
-public class LineContainer extends WidgetListBox {
+public class EditorWidget {
 
     private int indentation = 0;
 
-    public LineContainer(int width, int height) {
+    public EditorWidget() {
         super();
-        useParentDimensions(true, true);
-        withDimensions(width, height);
-        withPadding(10, 10, 5);
-        withAlignment(Alignment.TOPLEFT);
-    }
-
-    public void updateWidth(int width, int xOffset) {
-        this.width = width;
-        this.xOffset = xOffset;
+////        useParentDimensions(true, true);
+//        withDimensions(10, 10, true);
+//        withPadding(10, 10, 5);
+//        withAlignment(Alignment.TOPLEFT);
     }
 
     public void setLines(CodeBody result) {
-        this.clearChildren();
+//        clearWidgets();
 
         indentation = -1;
         addBody(result);
@@ -50,8 +43,7 @@ public class LineContainer extends WidgetListBox {
 
         MutableText indentText = Text.literal(" ".repeat((indentation - (isBracket ? 1 : 0)) * 4));
 
-        addWidget(new TextDisplayWidget(
-                indentText.append(line.getDisplayText()),
-                0, Alignment.LEFT));
+//        addWidget(TextWidget.create().withText(
+//                indentText.append(line.getDisplayText())));
     }
 }

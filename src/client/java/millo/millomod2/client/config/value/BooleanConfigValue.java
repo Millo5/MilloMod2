@@ -1,9 +1,8 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.ButtonWidget;
-import net.sapfii.sapscreens.screens.widgets.Widget;
+import millo.millomod2.menu.elements.TextElement;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class BooleanConfigValue extends ConfigValue<Boolean> {
 
@@ -12,12 +11,20 @@ public class BooleanConfigValue extends ConfigValue<Boolean> {
     }
 
     @Override
-    public Widget<?> createWidget() {
-        return new ButtonWidget(Text.translatable(value ? "true" : "false"), buttonWidget -> {
-            value = !value;
-            buttonWidget.withText(Text.translatable(value ? "true" : "false"));
-        });
+    public ClickableWidget createWidget() {
+        return TextElement.create("Button!");
     }
+//
+//    @Override
+//    public Widget<?> createWidget() {
+//        return new ButtonWidget()
+//                .withText(MilloMod.translatable(value ? "true" : "false"))
+//                .withClickEvent((widget, x, y, active) -> {
+//                    if (!widget.hovered()) return;
+//                    value = !value;
+//                    widget.withText(MilloMod.translatable(value ? "true" : "false"));
+//                });
+//    }
 
     @Override
     public void deserialize(Object obj) {

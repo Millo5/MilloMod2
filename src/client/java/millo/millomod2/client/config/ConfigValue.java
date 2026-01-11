@@ -1,6 +1,6 @@
 package millo.millomod2.client.config;
 
-import net.sapfii.sapscreens.screens.widgets.Widget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class ConfigValue<T> {
         return defaultValue;
     }
 
-    public abstract Widget<?> createWidget();
+    public abstract ClickableWidget createWidget();
 
     public Object serialize() {
         return value;

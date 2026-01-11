@@ -4,7 +4,10 @@ import millo.millomod2.client.features.impl.Editor.template.arguments.*;
 import millo.millomod2.client.hypercube.template.ArgumentItem;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+
+import java.util.List;
 
 public abstract class Argument<T extends Argument<?>> {
 
@@ -16,7 +19,7 @@ public abstract class Argument<T extends Argument<?>> {
         this.slot = slot;
     }
 
-    protected abstract Text getDisplayText();
+    public abstract Text getDisplayText();
 
     public abstract T from(ArgumentItemData data);
 
@@ -40,5 +43,16 @@ public abstract class Argument<T extends Argument<?>> {
         };
         arg.setSlot(itemSlot.slot);
         return arg;
+    }
+
+    public static MutableText getArgumentsText(List<Argument<?>> arguments) {
+        MutableText text = Text.literal("");
+        for (int i = 0; i < arguments.size(); i++) {
+            text = text.append(arguments.get(i).getDisplayText());
+            if (i < arguments.size() - 1) {
+                text = text.append(Text.literal(", "));
+            }
+        }
+        return text;
     }
 }

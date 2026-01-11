@@ -2,9 +2,8 @@ package millo.millomod2.client.features.impl.CommandWheel;
 
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.config.Instantiable;
-import net.minecraft.text.Text;
-import net.sapfii.sapscreens.screens.widgets.TextDisplayWidget;
-import net.sapfii.sapscreens.screens.widgets.Widget;
+import millo.millomod2.menu.elements.TextElement;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public final class CommandWheelEntryConfigValue extends ConfigValue<CommandWheelEntry> implements Instantiable<CommandWheelEntryConfigValue> {
 
@@ -22,9 +21,14 @@ public final class CommandWheelEntryConfigValue extends ConfigValue<CommandWheel
     }
 
     @Override
-    public Widget<?> createWidget() {
-        return new TextDisplayWidget(Text.literal(getValue().name + "; " + getValue().command), 10, Widget.Alignment.LEFT);
+    public ClickableWidget createWidget() {
+        return TextElement.create(getValue().name + "; " + getValue().command);
     }
+
+//    @Override
+//    public Widget<?> createWidget() {
+//        return TextWidget.create().withText(Text.literal(getValue().name + "; " + getValue().command));
+//    }
 
     @Override
     public void deserialize(Object obj) {

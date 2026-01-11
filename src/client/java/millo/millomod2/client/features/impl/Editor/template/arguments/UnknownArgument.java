@@ -14,7 +14,7 @@ public class UnknownArgument extends Argument<UnknownArgument> {
     }
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         return Text.literal(id).setStyle(Styles.BUG.getStyle());
     }
 

@@ -13,7 +13,7 @@ public class ParameterArgument extends Argument<ParameterArgument> {
     private boolean plural;
 
     @Override
-    protected Text getDisplayText() {
+    public Text getDisplayText() {
         StringBuilder display = new StringBuilder();
         if (optional) display.append("[");
         display.append(parameter);

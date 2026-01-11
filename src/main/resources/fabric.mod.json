@@ -10,14 +10,8 @@
   "icon": "assets/millomod2/icon.png",
   "environment": "*",
   "entrypoints": {
-    "fabric-datagen": [
-      "millo.millomod2.client.Millomod2DataGenerator"
-    ],
     "client": [
       "millo.millomod2.client.MilloMod"
-    ],
-    "main": [
-      "millo.millomod2.Millomod2"
     ]
   },
   "mixins": [

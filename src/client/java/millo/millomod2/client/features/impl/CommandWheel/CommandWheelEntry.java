@@ -43,7 +43,7 @@ public class CommandWheelEntry {
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
         context.fill(-20, -20, 20, 20, color);
-        context.drawBorder(-20, -20, 40, 40, borderCol);
+        context.drawStrokedRectangle(-20, -20, 40, 40, borderCol);
 
         int w = textRenderer.getWidth(text);
         context.drawText(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);

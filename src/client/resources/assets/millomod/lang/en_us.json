@@ -1,0 +1,35 @@
+{
+
+  "millo.true": "True",
+  "millo.false": "False",
+  "millo.feature.config.enabled": "Enabled",
+  "millo.feature.config.speed": "Speed",
+  "millo.feature.config.display": "Display",
+  "millo.feature.config.show_text": "Show Text",
+  "millo.feature.config.interpolate": "Interpolate",
+  "millo.feature.config.always_show": "Flight Speed",
+  "millo.feature.config.pages": "Pages",
+  "millo.feature.config.text": "Text",
+  "millo.feature.config.direction": "Direction",
+  "millo.feature.config.friend_messages": "Friend Messages",
+  "millo.feature.config.plot_votes": "Plot Votes",
+  "millo.feature.config.player_joins_plot": "Player Joins Plot",
+  "millo.feature.config.player_joins_node": "Player Joins Node",
+  "millo.feature.config.plot_info_messages": "Plot Info Messages",
+
+  "millo.choice.none": "None",
+  "millo.choice.radial": "Radial",
+  "millo.choice.bar": "Bar",
+
+  "millo.feature.flight_speed_toggle": "Flight Speed Toggle",
+  "millo.feature.quick_value_item": "Quick Value Item",
+  "millo.feature.angels_grace": "Angel's Grace",
+  "millo.feature.lagslayer_hud": "Lagslayer HUD",
+  "millo.feature.container_search": "Container Search",
+  "millo.feature.command_wheel": "Command Wheel",
+  "millo.feature.socket_serve": "Socket Serve",
+  "millo.feature.toggle_sprint_display": "Toggle Sprint Display",
+  "millo.feature.notifications": "Notifications",
+  "millo.feature.skin_preview": "Skin Preview"
+
+}

@@ -15,7 +15,7 @@ public class GlobalUtil {
             String cname = FabricLoader.getInstance().isDevelopmentEnvironment() ? "boundKey" : "field_1655";
             int keycode = ((InputUtil.Key) FieldUtils.getField(KeyBinding.class, cname, true).get(keyBind)).getCode();
             if (keycode == -1) return false;
-            return InputUtil.isKeyPressed(MilloMod.MC.getWindow().getHandle(), keycode);
+            return InputUtil.isKeyPressed(MilloMod.MC.getWindow(), keycode);
         } catch (IllegalAccessException e) {
             return false;
         }

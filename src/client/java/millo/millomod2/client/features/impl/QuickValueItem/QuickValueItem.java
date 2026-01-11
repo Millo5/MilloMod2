@@ -10,10 +10,11 @@ import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
 import millo.millomod2.client.util.HypercubeInfo;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.screen.ScreenHandler;
@@ -57,7 +58,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
         if (!isEnabled()) return false;
         if (HypercubeInfo.getMode() != HypercubeInfo.Mode.DEV) return false;
         if (selectorShown || textInputShown) return true;
-        if (!Screen.hasShiftDown()) return false;
+
 
         if (!packet.modifiedStacks().isEmpty()) return false;
         if (packet.button() != 1 || packet.actionType() != SlotActionType.QUICK_MOVE) return false;
@@ -243,7 +244,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
 
 
     @Override
-    public void containerMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    public void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (isSelectorShown()) {
             for (ValueItemOption option : options) {
@@ -265,17 +266,17 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
     }
 
     @Override
-    public void containerKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+    public void containerKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (isTextInputShown() && argumentTextField != null) {
-            argumentTextField.keyPressed(keyCode, scanCode, modifiers);
+            argumentTextField.keyPressed(input);
             cir.setReturnValue(true);
-            if (keyCode == 256) { // ESC
+            if (input.key() == 256) { // ESC
                 closeTextInput(false);
                 cir.setReturnValue(true);
                 return;
             }
-            if (keyCode == 257) { // ENTER
+            if (input.key() == 257) { // ENTER
                 closeTextInput();
             }
         }
