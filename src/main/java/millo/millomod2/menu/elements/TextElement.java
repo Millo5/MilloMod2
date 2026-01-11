@@ -8,8 +8,11 @@ import net.minecraft.text.Text;
 
 public class TextElement extends TextWidget implements FadeElement {
 
+    private TextAlignment alignment = TextAlignment.LEFT;
+
     private TextElement(Text message) {
         super(message, MilloMod.MC.textRenderer);
+        setWidth(MilloMod.MC.textRenderer.getWidth(message));
     }
 
     public static TextElement create(Text message) {
@@ -25,13 +28,32 @@ public class TextElement extends TextWidget implements FadeElement {
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
+
+        int textWidth = MilloMod.MC.textRenderer.getWidth(this.getMessage());
+        if (alignment == TextAlignment.CENTER) {
+            context.getMatrices().translate((this.width - textWidth) / 2f, 0);
+        } else if (alignment == TextAlignment.RIGHT) {
+            context.getMatrices().translate(this.width - textWidth, 0);
+        }
+
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
         context.getMatrices().popMatrix();
+    }
+
+    public TextElement align(TextAlignment alignment) {
+        this.alignment = alignment;
+        return this;
     }
 
     private final Fade fade = new Fade(Fade.Direction.RIGHT);
     @Override
     public Fade getFade() {
         return fade;
+    }
+
+    public enum TextAlignment {
+        LEFT,
+        CENTER,
+        RIGHT
     }
 }

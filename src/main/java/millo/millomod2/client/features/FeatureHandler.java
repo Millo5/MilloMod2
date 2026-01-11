@@ -63,7 +63,8 @@ public final class FeatureHandler {
                 new ToggleSprintDisplay(),
                 new Notifications(),
                 new SkinPreview(),
-                new ActionDumpReader()
+                new ActionDumpReader(),
+                new Debug()
         );
 
         featureMap = Map.copyOf(initialFeatureMap);

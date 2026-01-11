@@ -1,7 +1,8 @@
 package millo.millomod2.client.config.value;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.ConfigValue;
-import millo.millomod2.menu.elements.TextElement;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class BooleanConfigValue extends ConfigValue<Boolean> {
@@ -12,7 +13,14 @@ public class BooleanConfigValue extends ConfigValue<Boolean> {
 
     @Override
     public ClickableWidget createWidget() {
-        return TextElement.create("Button!");
+//        return TextElement.create("Button!");
+        return ButtonWidget.builder(
+                MilloMod.translatable(value ? "true" : "false"),
+                button -> {
+                    value = !value;
+                    button.setMessage(MilloMod.translatable(value ? "true" : "false"));
+                }
+        ).build();
     }
 //
 //    @Override

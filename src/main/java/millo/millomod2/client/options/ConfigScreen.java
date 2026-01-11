@@ -1,10 +1,21 @@
 package millo.millomod2.client.options;
 
+import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.config.saving.ConfigSaving;
+import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.menu.Menu;
+import millo.millomod2.menu.elements.FolderElement;
+import millo.millomod2.menu.elements.ListElement;
+import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
+import millo.millomod2.menu.elements.flex.ElementDirection;
+import millo.millomod2.menu.elements.flex.FlexElement;
+import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class ConfigScreen extends Menu {
 
@@ -12,7 +23,57 @@ public class ConfigScreen extends Menu {
         super(previousScreen);
     }
 
-//    @Override
+    @Override
+    protected void init() {
+//        FlexElement container = FlexElement.create(width, height)
+//                .direction(ElementDirection.COLUMN)
+//                .mainAlign(MainAxisAlignment.START)
+//                .crossAlign(CrossAxisAlignment.CENTER)
+//                .padding(40)
+//                .gap(10);
+        ListElement list = ListElement.create(width/4 * 3, height)
+                .position(width/8, 0)
+                .crossAlign(CrossAxisAlignment.CENTER)
+                .padding(40)
+                .gap(10);
+
+        list.addChild(
+                TextElement.create("MilloMod Settings").align(TextElement.TextAlignment.CENTER)
+        );
+
+        FeatureHandler.forEach(feature -> {
+            FeatureConfig config = feature.getConfig();
+            if (config.getValues().isEmpty()) return;
+
+            FolderElement folder = FolderElement.create(width / 2, 800, MilloMod.translatable("feature", feature.getId()));
+            folder.getContent().crossAlign(CrossAxisAlignment.CENTER);
+
+            config.forEach(configValue -> {
+                FlexElement setting = FlexElement.create(width / 2 - 10, 20)
+                        .direction(ElementDirection.ROW)
+                        .mainAlign(MainAxisAlignment.SPACE_BETWEEN)
+                        .crossAlign(CrossAxisAlignment.CENTER)
+                        .gap(5);
+
+                TextElement configText = TextElement.create(MilloMod.translatable("feature", "config", configValue.getKey()));
+
+                ClickableWidget widget = configValue.getConfigValue().createWidget();
+                setting.addChildren(
+                        configText,
+                        widget
+                );
+                setting.grow(configText, 1);
+                setting.grow(widget, 2);
+                folder.addChild(setting);
+            });
+
+            list.addChild(folder);
+        });
+
+        addDrawableChild(list);
+    }
+
+    //    @Override
 //    protected void init() {
 //        ListWidget list = ListWidget.create()
 //                .withAlignment(WidgetPos.Alignment.CENTER)

@@ -60,11 +60,15 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
 //        context.drawText(textRenderer, text, x() + (width() - textWidth) / 2, middle - 4, 0xFFFFFFFF, false);
 //    }
 
+    private boolean hovered = false;
+
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
+
+        hovered = isMouseOver(mouseX, mouseY);
 
         if (dragging) {
             updateValueFromMouse(mouseX);
@@ -78,9 +82,12 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
         double progress = (value - min) / (max - min);
         int middle = getY() + getHeight() / 2;
 
-        context.fill(getX(), middle - 1, getX() + (getWidth() - textWidth) / 2 - 2, middle + 1, GUIStyle.GUIDE);
-        context.fill(getX() + (getWidth() + textWidth) / 2 + 2, middle - 1, getRight(), middle + 1, GUIStyle.GUIDE);
-        context.fill(getX(), getY(), (int) (getX() + progress * getWidth()), getBottom(), GUIStyle.ACCENT);
+        context.fill(getX(), middle -1, getX() + (getWidth() - textWidth) / 2 - 2, middle + 1, GUIStyle.GUIDE);
+        context.fill(getX() + (getWidth() + textWidth) / 2 + 2, middle -1, getX() + getWidth(), middle + 1, GUIStyle.GUIDE);
+        context.fill(getX(), getY(), (int) (getX() + progress * getWidth()), getX() + getHeight(), GUIStyle.ACCENT);
+
+        int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
+        context.drawText(textRenderer, text, getX() + (getWidth() - textWidth) / 2, middle - 4, textColor, false);
 
         context.getMatrices().popMatrix();
     }
@@ -107,11 +114,22 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
 //        drawContext.fill(left(), top(), (int) (left() + progress * width()), bottom(), GUIStyle.ACCENT);
 //    }
 
+
     @Override
-    public void onClick(Click click, boolean doubled) {
-        if (!isMouseOver(click.x(), click.y())) return;
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (!active || !visible) return false;
+        if (!isValidClickButton(click.buttonInfo())) return false;
+        if (!isMouseOver(click.x(), click.y())) return false;
+
         dragging = true;
         updateValueFromMouse(click.x());
+        return true;
+    }
+
+    @Override
+    public boolean mouseReleased(Click click) {
+        dragging = false;
+        return true;
     }
 
     @Override

@@ -1,8 +1,9 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
-import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.TextFieldElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 
 public class StringConfigValue extends ConfigValue<String> {
 
@@ -12,7 +13,9 @@ public class StringConfigValue extends ConfigValue<String> {
 
     @Override
     public ClickableWidget createWidget() {
-        return TextElement.create(value);
+        TextFieldElement element = new TextFieldElement(150, 20, Text.literal(value));
+        element.setChangedListener(this::setValue);
+        return element;
     }
 
 //    @Override

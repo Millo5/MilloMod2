@@ -2,8 +2,10 @@ package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.FadeElement;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 public class TextFieldElement extends TextFieldWidget implements FadeElement {
@@ -14,9 +16,14 @@ public class TextFieldElement extends TextFieldWidget implements FadeElement {
         setDrawsBackground(false);
     }
 
+    public TextFieldElement(TextRenderer textRenderer, int x, int y, int w, int h, MutableText text) {
+        super(textRenderer, x, y, w, h, text);
+        setDrawsBackground(false);
+    }
+
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        getFade().progress(deltaTicks);
+        getFade().progress(deltaTicks * 20f);
 
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
@@ -31,6 +38,7 @@ public class TextFieldElement extends TextFieldWidget implements FadeElement {
         context.fill(getX(), getY(), getRight(), getBottom(), color);
         context.fill(getX(), getBottom() - 1, getRight(), getBottom(), underlineColor);
 
+        context.getMatrices().translate(4, 4);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
         context.getMatrices().popMatrix();
     }

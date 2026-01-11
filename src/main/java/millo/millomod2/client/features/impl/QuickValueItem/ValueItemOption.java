@@ -59,7 +59,7 @@ public abstract class ValueItemOption {
 
     private float x, y;
     public void draw(DrawContext context, int x, int y, float delta, float shown) {
-        hover = MathHelper.clampedLerp(hover, isSelected() ? 1f : 0f, delta);
+        hover = MathHelper.clampedLerp(delta, hover, isSelected() ? 1f : 0f);
 
         this.x = x;
         this.y = y;
@@ -80,8 +80,8 @@ public abstract class ValueItemOption {
     }
 
     public void draw(DrawContext context, int x, int y, float delta) {
-        this.x = MathHelper.clampedLerp(this.x, x, delta);
-        this.y = MathHelper.clampedLerp(this.y, y, delta);
+        this.x = MathHelper.clampedLerp(delta, this.x, x);
+        this.y = MathHelper.clampedLerp(delta, this.y, y);
 
         context.getMatrices().pushMatrix();
         context.getMatrices().translate(this.x, this.y);

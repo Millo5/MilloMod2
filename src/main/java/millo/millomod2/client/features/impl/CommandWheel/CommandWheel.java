@@ -142,9 +142,9 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
     private float rotateBump = 0f;
     @Override
     public void HUDRender(RenderInfo renderInfo) {
-        shown = renderInfo.lerp(shown, open ? 1f : 0f, 15f);
+        shown = renderInfo.lerp(shown, open ? 1f : 0f, 1f);
         if (shown < 0.01f) return;
-        rotateBump = renderInfo.lerp(rotateBump, 0f, 15f);
+        rotateBump = renderInfo.lerp(rotateBump, 0f, 0.8f);
 
         DrawContext context = renderInfo.context();
         TextRenderer textRenderer = MilloMod.MC.textRenderer;

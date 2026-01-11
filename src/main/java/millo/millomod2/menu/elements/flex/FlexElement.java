@@ -4,16 +4,20 @@ import millo.millomod2.menu.ContainerElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FlexElement extends ContainerElement {
 
-    private FlexDirection direction = FlexDirection.ROW;
+    private ElementDirection direction = ElementDirection.ROW;
     private MainAxisAlignment mainAlign = MainAxisAlignment.START;
     private CrossAxisAlignment crossAlign = CrossAxisAlignment.START;
 
     private int padding = 0;
     private int gap = 0;
+
+    private final Map<ClickableWidget, Integer> growMap = new HashMap<>();
 
     private FlexElement(int x, int y, int width, int height, Text message) {
         super(x, y, width, height, message);
@@ -25,7 +29,7 @@ public class FlexElement extends ContainerElement {
 
     // Builder methods
 
-    public FlexElement direction(FlexDirection direction) {
+    public FlexElement direction(ElementDirection direction) {
         this.direction = direction;
         return this;
     }
@@ -50,22 +54,30 @@ public class FlexElement extends ContainerElement {
         return this;
     }
 
+    public FlexElement grow(ClickableWidget child, int factor) {
+        growMap.put(child, factor);
+        return this;
+    }
+
     //
 
-    private void layoutChildren() {
+    @Override
+    public void layoutChildren() {
         List<ClickableWidget> children = getChildren();
         if (children.isEmpty()) return;
 
-        int contentX = getX() + padding;
-        int contentY = getY() + padding;
+        int contentX = padding;
+        int contentY = padding;
         int contentWidth = getWidth() - 2 * padding;
         int contentHeight = getHeight() - 2 * padding;
 
-        boolean row = direction == FlexDirection.ROW;
+        boolean row = direction == ElementDirection.ROW;
 
         int totalMainSize = 0;
+        int totalGrow = 0;
         for (ClickableWidget child : children) {
             totalMainSize += row ? child.getWidth() : child.getHeight();
+            totalGrow += growMap.getOrDefault(child, 0);
         }
         totalMainSize += gap * (children.size() - 1);
 
@@ -79,14 +91,20 @@ public class FlexElement extends ContainerElement {
             case END -> cursor = freeSpace;
             case SPACE_BETWEEN -> {
                 cursor = 0;
-                if (children.size() > 1) {
-                    spacing = gap + freeSpace / (children.size() - 1);
-                }
+                if (children.size() > 1) spacing = gap + freeSpace / (children.size() - 1);
             }
             default -> cursor = 0;
         }
 
         for (ClickableWidget child : children) {
+            int grow = growMap.getOrDefault(child, 0);
+
+            if (grow > 0 && freeSpace > 0 && totalGrow > 0) {
+                int extra = freeSpace * grow / totalGrow;
+                if (row) child.setWidth(child.getWidth() + extra);
+                else child.setHeight(child.getHeight() + extra);
+            }
+
             int childX = contentX;
             int childY = contentY;
 

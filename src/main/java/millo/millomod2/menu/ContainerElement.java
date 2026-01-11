@@ -1,6 +1,9 @@
 package millo.millomod2.menu;
 
+import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.features.impl.Debug;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -43,6 +46,7 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
 
     protected void childrenUpdated() {}
 
+    public void layoutChildren() {}
     //
 
     @Override
@@ -51,6 +55,7 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
         if (!isValidClickButton(click.buttonInfo())) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
 
+        click = transformClickToLocal(click);
         for (ClickableWidget child : getChildren()) {
             if (child.mouseClicked(click, doubled)) {
                 if (MinecraftClient.getInstance().currentScreen != null) {
@@ -63,18 +68,48 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
     }
 
     @Override
+    public boolean mouseReleased(Click click) {
+        if (!this.isValidClickButton(click.buttonInfo())) return false;
+        for (ClickableWidget child : getChildren()) {
+            child.mouseReleased(transformClickToLocal(click));
+        }
+        return false;
+    }
+
+    @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
-        context.enableScissor(getX(), getY(), getRight(), getBottom());
+        context.getMatrices().translate(getX(), getY());
+        context.enableScissor(0, 0, getWidth(), getHeight());
 
-        for (ClickableWidget child : getChildren()) {
-            child.render(context, mouseX, mouseY, deltaTicks);
+        if (Debug.showHudInfo()) {
+            int nameColor = getClass().getSimpleName().hashCode() | 0x33000000;
+            context.fill(0, 0, getWidth(), getHeight(), nameColor);
+            context.drawText(MilloMod.MC.textRenderer, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
         }
 
+
+        RenderArgs args = new RenderArgs(context, mouseX - getX(), mouseY - getY(), deltaTicks);
+        renderElement(args);
+
         context.disableScissor();
-        context.getMatrices().pushMatrix();
+        context.getMatrices().popMatrix();
+    }
+
+    protected void renderElement(RenderArgs args) {
+        renderChildren(args);
+    }
+
+    protected void renderChildren(RenderArgs args) {
+        for (ClickableWidget child : getChildren()) {
+            child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
+        }
+    }
+
+    protected Click transformClickToLocal(Click click) {
+        return new Click(click.x() - getX(), click.y() - getY(), click.buttonInfo());
     }
 
     private final Fade fade = new Fade(Fade.Direction.UP);
@@ -85,7 +120,6 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
 
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-
     }
 
     public <T extends ClickableWidget> void addChildren(List<T> children) {
@@ -93,4 +127,16 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
             addChild(child);
         }
     }
+
+    public void addChildren(ClickableWidget... children) {
+        for (ClickableWidget child : children) {
+            addChild(child);
+        }
+    }
+
+    protected TextRenderer getTextRenderer() {
+        return MilloMod.MC.textRenderer;
+    }
+
+    protected record RenderArgs(DrawContext context, int mouseX, int mouseY, float deltaTicks) {}
 }

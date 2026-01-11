@@ -7,7 +7,7 @@
   "millo.feature.config.display": "Display",
   "millo.feature.config.show_text": "Show Text",
   "millo.feature.config.interpolate": "Interpolate",
-  "millo.feature.config.always_show": "Flight Speed",
+  "millo.feature.config.always_show": "Always Show",
   "millo.feature.config.pages": "Pages",
   "millo.feature.config.text": "Text",
   "millo.feature.config.direction": "Direction",
@@ -15,6 +15,8 @@
   "millo.feature.config.plot_votes": "Plot Votes",
   "millo.feature.config.player_joins_plot": "Player Joins Plot",
   "millo.feature.config.player_joins_node": "Player Joins Node",
+  "millo.feature.config.plot_info_annoying": "Annoying Plot Info",
+  "millo.feature.config.fly_speed_changes": "Fly Speed Changes",
   "millo.feature.config.plot_info_messages": "Plot Info Messages",
 
   "millo.choice.none": "None",
@@ -30,6 +32,7 @@
   "millo.feature.socket_serve": "Socket Serve",
   "millo.feature.toggle_sprint_display": "Toggle Sprint Display",
   "millo.feature.notifications": "Notifications",
-  "millo.feature.skin_preview": "Skin Preview"
+  "millo.feature.skin_preview": "Skin Preview",
+  "millo.feature.debug": "Debug"
 
 }

@@ -3,11 +3,9 @@ package millo.millomod2.client.config.value;
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.config.Instantiable;
 import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
-import millo.millomod2.menu.elements.flex.FlexDirection;
-import millo.millomod2.menu.elements.flex.FlexElement;
-import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.widget.ClickableWidget;
 
 import java.util.ArrayList;
@@ -51,20 +49,15 @@ public class ListConfigValue<T extends ConfigValue<?> & Instantiable<T>> extends
 //        }
 //        return a;
 
-        FlexElement container = FlexElement.create(400, 100)
-                .direction(FlexDirection.COLUMN)
-                .mainAlign(MainAxisAlignment.START)
+        ListElement container = ListElement.create(400, 100)
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(10)
                 .gap(5);
 
         ArrayList<ClickableWidget> itemWidgets = new ArrayList<>();
-        for (T item : value) {
-            itemWidgets.add(item.createWidget());
-        }
+        for (T item : value) itemWidgets.add(item.createWidget());
         container.addChildren(itemWidgets);
         if (value.isEmpty()) {
-//            container.addChild(new TextElement(Text.of("Empty List")));
             container.addChild(TextElement.create("Empty List"));
         }
         return container;

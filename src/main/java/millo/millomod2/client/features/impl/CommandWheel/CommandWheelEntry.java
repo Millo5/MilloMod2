@@ -30,7 +30,7 @@ public class CommandWheelEntry {
     }
 
     public void draw(RenderInfo info, int x, int y, TextRenderer textRenderer, float shown) {
-        hover = info.lerp(hover, isSelected() ? 1f : 0f, 10f);
+        hover = info.lerp(hover, isSelected() ? 1f : 0f, 1f);
         DrawContext context = info.context();
 
         if (selected) drawMouseLine(context, x, y);

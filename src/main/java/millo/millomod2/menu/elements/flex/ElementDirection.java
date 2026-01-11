@@ -1,6 +1,6 @@
 package millo.millomod2.menu.elements.flex;
 
-public enum FlexDirection {
+public enum ElementDirection {
     ROW, COLUMN
 }
 

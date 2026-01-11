@@ -11,7 +11,7 @@ public record RenderInfo(DrawContext context, float deltaTime, int mouseX, int m
     }
 
     public float lerp(float start, float end, float delta) {
-        return MathHelper.clampedLerp(start, end, delta * deltaTime);
+        return MathHelper.clampedLerp(delta * deltaTime, start, end);
     }
 
     @Override

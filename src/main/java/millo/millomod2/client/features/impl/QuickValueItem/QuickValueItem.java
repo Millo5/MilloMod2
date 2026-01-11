@@ -10,6 +10,7 @@ import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
 import millo.millomod2.client.util.HypercubeInfo;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
+import millo.millomod2.menu.elements.TextFieldElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -87,7 +88,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
 
         ScreenHandler handler = ((HandledScreen<?>) MilloMod.MC.currentScreen).getScreenHandler();
 
-        argumentTextField = new TextFieldWidget(MilloMod.MC.textRenderer,
+        argumentTextField = new TextFieldElement(MilloMod.MC.textRenderer,
                 handler.slots.get(this.slot).x + 24,
                 handler.slots.get(this.slot).y,
                 200,
@@ -210,7 +211,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
             argumentTextField.render(info.context(), info.mouseX(), info.mouseY(), info.deltaTime());
         }
 
-        animationProgress = info.lerp(animationProgress, selectorShown ? 1f : 0f, 10f);
+        animationProgress = info.lerp(animationProgress, selectorShown ? 1f : 0f, 15f);
 
         if (slot != -1 && slot <= handler.slots.size()) {
             Slot slot = handler.getSlot(this.slot);

@@ -20,7 +20,9 @@ public class IntegerRangeConfigValue extends IntegerConfigValue {
 
     @Override
     public ClickableWidget createWidget() {
-        return NumberSliderElement.create(value, min, max, 1, (value) -> setValue(value.intValue()));
+        ClickableWidget element = NumberSliderElement.create(value, min, max, 1, (value) -> setValue(value.intValue()));
+        element.setDimensions(150, 20);
+        return element;
     }
 
     //    @Override
