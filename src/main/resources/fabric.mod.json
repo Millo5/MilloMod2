@@ -15,7 +15,6 @@
     ]
   },
   "mixins": [
-    "millomod2.mixins.json",
     {
       "config": "millomod2.client.mixins.json",
       "environment": "client"
