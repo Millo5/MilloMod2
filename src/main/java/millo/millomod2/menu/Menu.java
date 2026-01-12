@@ -5,7 +5,7 @@ import net.minecraft.text.Text;
 
 public abstract class Menu extends Screen {
 
-    private Screen parent;
+    private final Screen parent;
 
     public Menu(Screen parent) {
         super(Text.empty());
