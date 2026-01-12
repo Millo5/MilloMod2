@@ -39,6 +39,7 @@ public class MDebugMenu {
         }
 
         Vec3d pos = HypercubeAPI.getPlotOrigin();
+        if (pos == null) return;
         String s = String.format(Locale.ROOT, "Plot XYZ: %.3f / %.5f / %.3f", pos.getX(), pos.getY(), pos.getZ());
         if (insertIndex >= 0) text.add(insertIndex+1, s);
         else text.add(s);
