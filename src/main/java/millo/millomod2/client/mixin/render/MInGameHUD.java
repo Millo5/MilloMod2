@@ -23,7 +23,7 @@ public class MInGameHUD {
         long deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
-        RenderInfo renderInfo = new RenderInfo(context, deltaTime / 1000f);
+        RenderInfo renderInfo = new RenderInfo(context, deltaTime / 1000f * 20f);
 
         FeatureHandler.forEach(feature -> {
             if (feature instanceof HUDRendered hud) {

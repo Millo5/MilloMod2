@@ -1,6 +1,8 @@
 package millo.millomod2.client.util;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.features.impl.Debug;
+import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -20,6 +22,10 @@ public class PlayerUtil {
     public static void sendCommand(String command) {
         if (MilloMod.net() == null) return;
         if (command.startsWith("/")) command = command.substring(1);
+
+        if (Debug.logCommands()) {
+            Notifications.notify(Text.literal(command));
+        }
 
         MilloMod.net().sendChatCommand(command);
     }

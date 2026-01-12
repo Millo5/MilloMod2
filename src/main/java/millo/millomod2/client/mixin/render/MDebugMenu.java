@@ -1,6 +1,6 @@
 package millo.millomod2.client.mixin.render;
 
-import millo.millomod2.client.util.HypercubeInfo;
+import millo.millomod2.client.util.HypercubeAPI;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.util.math.Vec3d;
@@ -38,7 +38,7 @@ public class MDebugMenu {
             }
         }
 
-        Vec3d pos = HypercubeInfo.getPlotOrigin().toBottomCenterPos();
+        Vec3d pos = HypercubeAPI.getPlotOrigin();
         String s = String.format(Locale.ROOT, "Plot XYZ: %.3f / %.5f / %.3f", pos.getX(), pos.getY(), pos.getZ());
         if (insertIndex >= 0) text.add(insertIndex+1, s);
         else text.add(s);

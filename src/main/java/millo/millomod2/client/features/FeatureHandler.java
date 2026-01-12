@@ -64,7 +64,8 @@ public final class FeatureHandler {
                 new Notifications(),
                 new SkinPreview(),
                 new ActionDumpReader(),
-                new Debug()
+                new Debug(),
+                new TemporaryTracker()
         );
 
         featureMap = Map.copyOf(initialFeatureMap);

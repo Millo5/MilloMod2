@@ -72,10 +72,10 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
 
         double time = (System.currentTimeMillis() - lastUpdateTime) / 1000d;
         float alpha = (float) Math.max(Math.min(1, 5 - time), 0);
-        renderedAlpha = renderInfo.lerp(renderedAlpha, alpha, 7f);
+        renderedAlpha = renderInfo.lerp(renderedAlpha, alpha, 0.35f);
 
         if (config.getBoolean("interpolate")) {
-            renderedCpuUsage = renderInfo.lerp(renderedCpuUsage, cpuUsage, 10f);
+            renderedCpuUsage = renderInfo.lerp(renderedCpuUsage, cpuUsage, 0.5f);
         } else renderedCpuUsage = cpuUsage;
 
         textOffsetX = 0;
@@ -96,7 +96,22 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
     }
 
     private void renderBar(DrawContext context, FeaturePosition pos) {
+        int barWidth = 100;
+        int barHeight = 10;
+        int x = pos.getX();
+        int y = pos.getY() + 5;
 
+        textOffsetX = barWidth - 8;
+
+        // Background bar
+        context.fill(x, y, x + barWidth, y + barHeight,
+                new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode());
+
+        // Foreground bar
+        int filledWidth = Math.round((renderedCpuUsage / 100f) * barWidth);
+        Color color = Color.getHSBColor(Math.max(0f, (100f - renderedCpuUsage) / 360f), 1f, 1f);
+        context.fill(x, y, x + filledWidth, y + barHeight,
+                new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, renderedAlpha).hashCode());
     }
 
     private void renderRadial(DrawContext context, FeaturePosition pos) {

@@ -7,7 +7,7 @@ import millo.millomod2.client.features.addons.OnSendPacket;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
 import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
-import millo.millomod2.client.util.HypercubeInfo;
+import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
 import millo.millomod2.menu.elements.TextFieldElement;
@@ -57,7 +57,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
     @OnSendPacket
     public boolean onSlotClick(ClickSlotC2SPacket packet) {
         if (!isEnabled()) return false;
-        if (HypercubeInfo.getMode() != HypercubeInfo.Mode.DEV) return false;
+        if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return false;
         if (selectorShown || textInputShown) return true;
 
 

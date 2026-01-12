@@ -4,7 +4,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
-import millo.millomod2.client.util.HypercubeInfo;
+import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -54,7 +54,7 @@ public class PickChestValue extends Feature implements Keybound {
         while (getKeybind().wasPressed()) {
             ClientPlayerEntity player = player();
             MinecraftClient mc = MilloMod.MC;
-            if (HypercubeInfo.getMode() != HypercubeInfo.Mode.DEV) return;
+            if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
             if (mc.world == null || player == null || MilloMod.net() == null) return;
             if (!(MilloMod.MC.crosshairTarget instanceof BlockHitResult block)) return;
             if (block.getType() != HitResult.Type.BLOCK) return;

@@ -5,7 +5,7 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
-import millo.millomod2.client.util.HypercubeInfo;
+import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.SignBlockEntity;
@@ -46,7 +46,7 @@ public class Editor extends Feature implements Keybound {
     private void onKeyPress() {
         openEditor();
 
-        if (HypercubeInfo.getMode() != HypercubeInfo.Mode.DEV) return;
+        if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
         if (MilloMod.MC.world == null || player() == null || net() == null) return;
         if (!(MilloMod.MC.crosshairTarget instanceof BlockHitResult hit)) return;
         if (hit.getType() != HitResult.Type.BLOCK) return;

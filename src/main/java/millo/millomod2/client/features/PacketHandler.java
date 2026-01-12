@@ -48,6 +48,10 @@ public class PacketHandler {
             return false;
         }
 
+        if (packet.getClass().getSimpleName().contains("ScoreboardDisplayS2CPacket")) {
+            System.out.println("Received packet: " + packet.getClass().getSimpleName());
+        }
+
         List<Method> subscriberMethods = subscribersReceive.get(packet.getClass());
         if (subscriberMethods == null) return false;
         boolean re = false;

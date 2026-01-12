@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.util.FileUtil;
-import millo.millomod2.client.util.HypercubeInfo;
+import millo.millomod2.client.util.HypercubeAPI;
 
 import java.util.HashMap;
 
 public class TimeTracker extends Feature implements Toggleable {
 
-    private HashMap<Integer, HashMap<HypercubeInfo.Mode, Long>> times = new HashMap<>();
+    private HashMap<Integer, HashMap<HypercubeAPI.Mode, Long>> times = new HashMap<>();
 
     private long startTime = -1;
     private long lastSaveTime = -1;
@@ -61,9 +61,9 @@ public class TimeTracker extends Feature implements Toggleable {
     }
 
 //    @Override // todo: doesn't exist yet
-    public void onStateChange(HypercubeInfo.Mode mode, int plotId) {
+    public void onStateChange(HypercubeAPI.Mode mode, int plotId) {
         if (!isEnabled()) return;
-        if (mode == HypercubeInfo.Mode.DEV) {
+        if (mode == HypercubeAPI.Mode.DEV) {
             startTime = -1;
             lastSaveTime = -1;
         } else {
