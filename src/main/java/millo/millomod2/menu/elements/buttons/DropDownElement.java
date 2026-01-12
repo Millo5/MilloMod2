@@ -76,7 +76,7 @@ public class DropDownElement extends AbstractButton<DropDownElement> {
     }
 
     public DropDownElement addHeader(Text text) {
-        FlexElement container = FlexElement.create(optionsList.getWidth(), 15)
+        FlexElement<?> container = FlexElement.create(optionsList.getWidth(), 15)
                 .padding(2)
                 .background(0);
         container.addChild(

@@ -55,6 +55,21 @@ public class ListElement extends ContainerElement<ListElement> {
 
     //
 
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        if (direction == ElementDirection.ROW) {
+            minExpansion = width;
+        }
+    }
+
+    @Override
+    public void setHeight(int height) {
+        super.setHeight(height);
+        if (direction == ElementDirection.COLUMN) {
+            minExpansion = height;
+        }
+    }
 
 
     //

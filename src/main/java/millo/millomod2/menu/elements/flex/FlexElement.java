@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlexElement extends ContainerElement<FlexElement> {
+public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
 
     private ElementDirection direction = ElementDirection.ROW;
     private MainAxisAlignment mainAlign = MainAxisAlignment.START;
@@ -23,40 +23,44 @@ public class FlexElement extends ContainerElement<FlexElement> {
         super(x, y, width, height, message);
     }
 
-    public static FlexElement create(int width, int height) {
-        return new FlexElement(0, 0, width, height, Text.empty());
+    public static FlexElement<?> create(int width, int height) {
+        return new FlexElement<>(0, 0, width, height, Text.empty());
+    }
+
+    protected T self() {
+        return (T) this;
     }
 
     // Builder methods
 
-    public FlexElement direction(ElementDirection direction) {
+    public T direction(ElementDirection direction) {
         this.direction = direction;
-        return this;
+        return self();
     }
 
-    public FlexElement mainAlign(MainAxisAlignment alignment) {
+    public T mainAlign(MainAxisAlignment alignment) {
         this.mainAlign = alignment;
-        return this;
+        return self();
     }
 
-    public FlexElement crossAlign(CrossAxisAlignment alignment) {
+    public T crossAlign(CrossAxisAlignment alignment) {
         this.crossAlign = alignment;
-        return this;
+        return self();
     }
 
-    public FlexElement padding(int padding) {
+    public T padding(int padding) {
         this.padding = padding;
-        return this;
+        return self();
     }
 
-    public FlexElement gap(int gap) {
+    public T gap(int gap) {
         this.gap = gap;
-        return this;
+        return self();
     }
 
-    public FlexElement grow(ClickableWidget child, int factor) {
+    public T grow(ClickableWidget child, int factor) {
         growMap.put(child, factor);
-        return this;
+        return self();
     }
 
     //

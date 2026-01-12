@@ -78,6 +78,14 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        for (ClickableWidget child : getChildren()) {
+            child.mouseDragged(transformClickToLocal(click), offsetX, offsetY);
+        }
+        return false;
+    }
+
+    @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();

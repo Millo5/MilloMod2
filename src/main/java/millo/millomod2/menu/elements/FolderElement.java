@@ -5,7 +5,7 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
-public class FolderElement extends ContainerElement {
+public class FolderElement extends ContainerElement<FolderElement> {
 
     private boolean opened = false;
     private final Text title;

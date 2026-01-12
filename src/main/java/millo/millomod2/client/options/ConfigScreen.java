@@ -62,8 +62,8 @@ public class ConfigScreen extends Menu {
                         configText,
                         widget
                 );
-                setting.grow(configText, 1);
-                setting.grow(widget, 2);
+//                setting.grow(configText, 1);
+//                setting.grow(widget, 2);
                 folder.addChild(setting);
             });
 

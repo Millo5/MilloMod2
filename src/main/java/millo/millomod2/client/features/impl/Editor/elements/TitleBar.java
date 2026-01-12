@@ -14,12 +14,12 @@ import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-public class TitleBar extends FlexElement {
+public class TitleBar extends FlexElement<TitleBar> {
 
     private final EditorMenu menu;
 
-    private final FlexElement left;
-    private final FlexElement right;
+    private final FlexElement<?> left;
+    private final FlexElement<?> right;
 
     private DropDownElement currentPlotDropDown;
 

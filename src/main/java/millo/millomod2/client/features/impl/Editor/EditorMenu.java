@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor;
 
+import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
@@ -19,6 +20,7 @@ public class EditorMenu extends Menu {
     private static EditorPlot loadedPlot;
 
     private TitleBar titleBar;
+    private MainBody mainBody;
 
     protected EditorMenu(Screen previousScreen) {
         super(previousScreen);
@@ -32,7 +34,7 @@ public class EditorMenu extends Menu {
             if (loc instanceof Plot plot) loadedPlot = new EditorPlot(plot);
         }
 
-        FlexElement main = FlexElement.create(width, height)
+        FlexElement<?> main = FlexElement.create(width, height)
                 .gap(0)
                 .padding(0)
                 .direction(ElementDirection.COLUMN)
@@ -42,8 +44,11 @@ public class EditorMenu extends Menu {
         titleBar = new TitleBar(this);
         titleBar.setLoadedPlot(loadedPlot);
 
+        mainBody = new MainBody(this);
+
         main.addChildren(
-                titleBar
+                titleBar,
+                mainBody
         );
         addDrawableChild(main);
     }
