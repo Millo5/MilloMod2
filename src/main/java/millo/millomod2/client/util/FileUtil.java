@@ -18,7 +18,11 @@ public class FileUtil {
     }
 
     public static String readJson(String name) {
-        File file = getModFolder().resolve(name).toFile();
+        return readJson(getModFolder().resolve(name));
+    }
+
+    public static String readJson(Path resolve) {
+        File file = resolve.toFile();
         if (!file.exists()) return null;
 
         try {

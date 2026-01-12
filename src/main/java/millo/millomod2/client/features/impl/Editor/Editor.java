@@ -5,6 +5,7 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
+import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
 import net.minecraft.block.Block;
@@ -18,6 +19,9 @@ import net.minecraft.util.math.BlockPos;
 import java.util.regex.Pattern;
 
 public class Editor extends Feature implements Keybound {
+
+    // this feature doesn't contain any logic for the Editor Menu itself
+    // only the interaction logic with hypercube.
 
     private final LegacyEditorSupport legacy;
     private EditorMenu screen;
@@ -66,6 +70,11 @@ public class Editor extends Feature implements Keybound {
             TemplateParser parser = new TemplateParser(template);
             EditorMenu.setLines(parser.getResult());
         });
+    }
+
+    @Override
+    public void onEnterPlot(Plot plot) {
+        EditorMenu.unloadPlot();
     }
 
     public void openEditor() {

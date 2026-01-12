@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 
-public class ListElement extends ContainerElement {
+public class ListElement extends ContainerElement<ListElement> {
 
     private ElementDirection direction = ElementDirection.COLUMN;
     private CrossAxisAlignment crossAlign = CrossAxisAlignment.START;
@@ -17,8 +17,7 @@ public class ListElement extends ContainerElement {
     private int gap = 0;
 
     private int minExpansion = 0;
-
-    private boolean relayoutNeeded = true;
+    private boolean needsLayout = true;
 
     private ListElement(int x, int y, int width, int height) {
         super(x, y, width, height, Text.empty());
@@ -53,6 +52,10 @@ public class ListElement extends ContainerElement {
         this.gap = gap;
         return this;
     }
+
+    //
+
+
 
     //
 

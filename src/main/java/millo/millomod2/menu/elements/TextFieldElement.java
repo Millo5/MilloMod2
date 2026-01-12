@@ -43,7 +43,7 @@ public class TextFieldElement extends TextFieldWidget implements FadeElement {
         context.getMatrices().popMatrix();
     }
 
-    private final Fade fade = new Fade(Fade.Direction.RIGHT);
+    private final Fade fade = new Fade();
     @Override
     public Fade getFade() {
         return fade;

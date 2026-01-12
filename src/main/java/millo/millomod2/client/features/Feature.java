@@ -5,6 +5,8 @@ import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.client.features.addons.Toggleable;
+import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.util.HypercubeAPI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -52,6 +54,11 @@ public abstract class Feature {
 
     public void onTick() {}
 
+    public void onEnterSpawn() {}
+
+    public void onEnterPlot(Plot plot) {}
+
+    public void onModeChange(HypercubeAPI.Mode oldMode, HypercubeAPI.Mode newMode) {}
 
     // Feature addon data
 
@@ -64,4 +71,5 @@ public abstract class Feature {
     public FeaturePosition getPosition() {
         return position;
     }
+
 }

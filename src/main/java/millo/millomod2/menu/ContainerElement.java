@@ -2,6 +2,7 @@ package millo.millomod2.menu;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
+import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ContainerElement extends ClickableWidget implements FadeElement {
+public abstract class ContainerElement<T extends ContainerElement<?>> extends ClickableElement<T> {
 
     private final ArrayList<ClickableWidget> children = new ArrayList<>();
 
@@ -81,6 +82,7 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
+        super.renderWidget(context, mouseX, mouseY, deltaTicks);
         context.getMatrices().translate(getX(), getY());
         context.enableScissor(0, 0, getWidth(), getHeight());
 
@@ -89,7 +91,6 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
             context.fill(0, 0, getWidth(), getHeight(), nameColor);
             context.drawText(MilloMod.MC.textRenderer, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
         }
-
 
         RenderArgs args = new RenderArgs(context, mouseX - getX(), mouseY - getY(), deltaTicks);
         renderElement(args);
@@ -110,12 +111,6 @@ public abstract class ContainerElement extends ClickableWidget implements FadeEl
 
     protected Click transformClickToLocal(Click click) {
         return new Click(click.x() - getX(), click.y() - getY(), click.buttonInfo());
-    }
-
-    private final Fade fade = new Fade(Fade.Direction.UP);
-    @Override
-    public Fade getFade() {
-        return fade;
     }
 
     @Override

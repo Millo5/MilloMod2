@@ -1,9 +1,9 @@
 package millo.millomod2.client.features.impl;
 
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
-import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
@@ -20,8 +20,9 @@ public class TemporaryTracker extends Feature {
 
     private static double x, z;
     private static Sequence step = Sequence.WAIT_FOR_CLEAR;
-    private static HypercubeLocation hypercubeLocation = new Spawn();
+    private static HypercubeLocation hypercubeLocation = new HypercubeLocation.UnknownLocation();
     private static HypercubeAPI.Mode mode = HypercubeAPI.Mode.IDLE;
+    private static HypercubeAPI.Mode oldMode = HypercubeAPI.Mode.IDLE;
 
     private static boolean requestPlotId = false;
     private static int requestPlotIdDelay = 0;
@@ -40,10 +41,17 @@ public class TemporaryTracker extends Feature {
         requestPlotIdDelay = 20;
 
         if (mode == HypercubeAPI.Mode.DEV) {
-            if (hypercubeLocation instanceof Plot plot) plot.setPos(new Vec3d(x + 9.5, 0, z - 10.5));
+            hypercubeLocation.setPos(new Vec3d(x + 9.5, 0, z - 10.5));
         }
     }
 
+    private static void setHypercubeLocation(HypercubeLocation location) {
+        hypercubeLocation = location;
+        if (mode != oldMode) {
+            FeatureHandler.onModeChange(oldMode, mode); // Trigger after location has been found
+            oldMode = mode;
+        }
+    }
 
     @OnReceivePacket
     public boolean clearTitle(ClearTitleS2CPacket clear) {
@@ -95,6 +103,7 @@ public class TemporaryTracker extends Feature {
             if (content.startsWith("» Joined game: ")) setMode(HypercubeAPI.Mode.PLAY);
         }
 
+        //                                        \nYou are currently coding on:\n\n? Millo5's Game [10764] \n? Owner: Millo5 \n? Server: Node Beta\n
         if (requestPlotId && content.startsWith("                          ")) {
             String regex = "\\[\\d+\\] (?=\\[[\\w-]+\\]\\n|\\n)";
             Matcher matcher = Pattern.compile(regex).matcher(content);
@@ -106,10 +115,19 @@ public class TemporaryTracker extends Feature {
                 if (nameMatcher.find()) {
                     String plotName = nameMatcher.group().trim();
 
+                    // plot owner
+                    String ownerRegex = "(?<=Owner: ).*(?= \\n)";
+                    Matcher ownerMatcher = Pattern.compile(ownerRegex).matcher(content);
+                    String plotOwner = "Unknown";
+                    if (ownerMatcher.find()) plotOwner = ownerMatcher.group().trim();
+
                     // plot id
                     String plotIdString = matcher.group().trim().replace("[", "").replace("]", "");
                     int id = Integer.parseInt(plotIdString);
-                    hypercubeLocation = hypercubeLocation.update(plotName, id);
+                    setHypercubeLocation(hypercubeLocation.update(plotName, id, plotOwner));
+                    if (mode == HypercubeAPI.Mode.DEV) {
+                        hypercubeLocation.setPos(new Vec3d(x + 9.5, 0, z - 10.5));
+                    }
                     requestPlotId = false;
                     return true;
                 }
@@ -117,7 +135,7 @@ public class TemporaryTracker extends Feature {
             regex = "spawn\\n";
             matcher = Pattern.compile(regex).matcher(content);
             if (matcher.find()) {
-                hypercubeLocation = new Spawn();
+                if (!(hypercubeLocation instanceof Spawn)) setHypercubeLocation(new Spawn());
                 requestPlotId = false;
                 return true;
             }

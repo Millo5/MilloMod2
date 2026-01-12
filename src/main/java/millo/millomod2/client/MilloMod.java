@@ -1,5 +1,7 @@
 package millo.millomod2.client;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import millo.millomod2.client.commands.CommandHandler;
 import millo.millomod2.client.config.saving.ConfigSaving;
 import millo.millomod2.client.features.FeatureHandler;
@@ -25,6 +27,10 @@ public class MilloMod implements ClientModInitializer {
 
     public static final String MOD_ID = "millomod2";
     public static final String MOD_VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).get().getMetadata().getVersion().getFriendlyString();
+    public static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+    public static final Gson GSON_COMPACT = new Gson();
 
     public static MinecraftClient MC = MinecraftClient.getInstance();
     public static ClientPlayNetworkHandler net() {

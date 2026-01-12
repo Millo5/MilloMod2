@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlexElement extends ContainerElement {
+public class FlexElement extends ContainerElement<FlexElement> {
 
     private ElementDirection direction = ElementDirection.ROW;
     private MainAxisAlignment mainAlign = MainAxisAlignment.START;
@@ -19,7 +19,7 @@ public class FlexElement extends ContainerElement {
 
     private final Map<ClickableWidget, Integer> growMap = new HashMap<>();
 
-    private FlexElement(int x, int y, int width, int height, Text message) {
+    protected FlexElement(int x, int y, int width, int height, Text message) {
         super(x, y, width, height, message);
     }
 

@@ -74,6 +74,7 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
             lines.add("  Name: " + plot.getName());
             lines.add("  Has Underground: " + plot.hasUnderground());
         }
+        lines.add("  " + location.toString());
 
         int yOffset = 0;
         for (String line : lines) {

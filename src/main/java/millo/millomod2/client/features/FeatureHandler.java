@@ -6,6 +6,8 @@ import millo.millomod2.client.features.impl.CommandWheel.CommandWheel;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.features.impl.QuickValueItem.QuickValueItem;
+import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -65,7 +67,8 @@ public final class FeatureHandler {
                 new SkinPreview(),
                 new ActionDumpReader(),
                 new Debug(),
-                new TemporaryTracker()
+                new TemporaryTracker(),
+                new TimeTracker()
         );
 
         featureMap = Map.copyOf(initialFeatureMap);
@@ -75,6 +78,25 @@ public final class FeatureHandler {
     }
 
     //
+
+
+    // On Mode Change is called before onEnterSpawn/onEnterPlot
+
+    public static void onEnterSpawn() {
+        forEach(Feature::onEnterSpawn);
+    }
+
+    public static void onEnterPlot(Plot plot) {
+        forEach(feature -> feature.onEnterPlot(plot));
+    }
+
+    public static void onModeChange(HypercubeAPI.Mode oldMode, HypercubeAPI.Mode newMode) {
+        forEach(feature -> feature.onModeChange(oldMode, newMode));
+    }
+
+
+    //
+
 
     public static void forEach(FeatureConsumer consumer) {
         INSTANCE.order.forEach(id -> consumer.accept(INSTANCE.featureMap.get(id)));
@@ -98,6 +120,7 @@ public final class FeatureHandler {
     public static PacketHandler getPacketHandler() {
         return INSTANCE.packetHandler;
     }
+
 
     private void register(Feature... features) {
         for (Feature feature : features) {

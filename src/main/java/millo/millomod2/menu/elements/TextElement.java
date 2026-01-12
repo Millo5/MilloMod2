@@ -45,7 +45,7 @@ public class TextElement extends TextWidget implements FadeElement {
         return this;
     }
 
-    private final Fade fade = new Fade(Fade.Direction.RIGHT);
+    private final Fade fade = new Fade();
     @Override
     public Fade getFade() {
         return fade;

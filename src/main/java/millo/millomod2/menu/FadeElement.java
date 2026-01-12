@@ -35,10 +35,12 @@ public interface FadeElement {
         }
 
         private int getXOffset() {
+            if (locked) return 0;
             return (int)(direction.dx * ((1f - getProgress()) * 10f));
         }
 
         private int getYOffset() {
+            if (locked) return 0;
             return (int)(direction.dy * ((1f - getProgress()) * 10f));
         }
 
@@ -50,6 +52,13 @@ public interface FadeElement {
             int alpha = (int)(a * getProgress());
             return (alpha << 24) | (r << 16) | (g << 8) | b;
         }
+        public int getColor(int color) {
+            int a = (color >> 24) & 0xFF;
+            int r = (color >> 16) & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = color & 0xFF;
+            return getColor(r, g, b, a);
+        }
 
         public void lock(Fade fade) {
             this.locked = true;
@@ -58,6 +67,10 @@ public interface FadeElement {
 
         public void unlock() {
             this.locked = false;
+        }
+
+        public void reset() {
+            this.progress = 0f;
         }
 
         public enum Direction {

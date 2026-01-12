@@ -1,66 +1,66 @@
 package millo.millomod2.client.features.impl.Editor;
 
+import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
+import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
-import millo.millomod2.client.features.impl.Editor.widgets.texteditor.EditorWidget;
+import millo.millomod2.client.hypercube.data.HypercubeLocation;
+import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
+import millo.millomod2.menu.elements.buttons.ButtonElement;
+import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
+import millo.millomod2.menu.elements.flex.ElementDirection;
+import millo.millomod2.menu.elements.flex.FlexElement;
+import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.screen.Screen;
 
 public class EditorMenu extends Menu {
 
-    private static final EditorWidget editorWidget = new EditorWidget();
+    private static EditorPlot loadedPlot;
 
+    private TitleBar titleBar;
 
     protected EditorMenu(Screen previousScreen) {
         super(previousScreen);
     }
-//
-//    @Override
-//    protected void init() {
-//        super.init();
-//
-//        HorizontalGroupWidget root = new HorizontalGroupWidget()
-//                .withDimensions(width, height, true);
-//
-//        root.addWidgets(
-//                new HierarchyWidget(),
-//                editorWidget
-//        );
-//
-//        addWidget(root);
-//    }
 
-    public static void setLines(CodeBody body) {
-        editorWidget.setLines(body);
+    @Override
+    protected void init() {
+
+        if (loadedPlot == null) {
+            HypercubeLocation loc = HypercubeAPI.getHypercubeLocation();
+            if (loc instanceof Plot plot) loadedPlot = new EditorPlot(plot);
+        }
+
+        FlexElement main = FlexElement.create(width, height)
+                .gap(0)
+                .padding(0)
+                .direction(ElementDirection.COLUMN)
+                .mainAlign(MainAxisAlignment.START)
+                .crossAlign(CrossAxisAlignment.STRETCH);
+
+        titleBar = new TitleBar(this);
+        titleBar.setLoadedPlot(loadedPlot);
+
+        main.addChildren(
+                titleBar
+        );
+        addDrawableChild(main);
     }
 
-//
-//    private static final float HIERARCHY_WIDTH = 0.2f;
-//
-//    HierarchyWidget hierarchy;
-//    LineContainer lineContainer;
-//
-//    public EditorScreen() {
-//        super(null);
-//
-//        int hierarchyWidth = (int) (this.width * HIERARCHY_WIDTH);
-//
-//        hierarchy = new HierarchyWidget();
-//        hierarchy.withDimensions(hierarchyWidth, height);
-//        hierarchy.addEntry(new HierarchyMethodWidget(Text.literal("test method"), LineStarterType.FUNCTION));
-//        addWidget(hierarchy);
-//
-//        lineContainer = new LineContainer(this.width - hierarchyWidth, height);
-//        addWidget(lineContainer);
-//    }
-//
-//    @Override
-//    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-//        context.fill(0, 0, this.width, this.height, GUIStyle.BACKGROUND);
-//
-//        int hierarchyWidth = (int) (this.width * HIERARCHY_WIDTH);
-//        context.fill(hierarchyWidth, 0, hierarchyWidth + 1, this.height, GUIStyle.TEXT);
-//
-//        lineContainer.updateWidth(this.width - hierarchyWidth, hierarchyWidth);
-//        super.render(context, mouseX, mouseY, deltaTicks);
-//    }
+    public static void unloadPlot() {
+        loadedPlot = null;
+    }
+
+    public void openPlotSelector(ButtonElement button) {
+
+    }
+
+    public void searchContext(ButtonElement button) {
+
+    }
+
+    public static void setLines(CodeBody body) {
+
+    }
 }
