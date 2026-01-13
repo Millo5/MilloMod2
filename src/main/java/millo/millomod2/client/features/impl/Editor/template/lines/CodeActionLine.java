@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.template.lines;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
-import net.minecraft.text.MutableText;
+import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -13,7 +13,6 @@ import java.util.List;
 // Action blocks, with arguments
 
 public class CodeActionLine implements CodeLine {
-
 
     private final CodeBlock block; // "set_var" or "player_action"
     private final String action; // "=" or "GiveItem"
@@ -28,33 +27,31 @@ public class CodeActionLine implements CodeLine {
         this.arguments = arguments;
     }
 
-    @Override
-    public Text getDisplayText() {
-        MutableText text = Text.literal(block.getIdentifier())
-                .append(DOT)
-                .append(Text.literal(action));
 
-        if (attribute != null || subAction != null) text.append(DOT);
+    @Override
+    public void buildOn(FlexElement<?> lineElement) {
+        append(lineElement, Text.literal(block.getIdentifier()));
+        append(lineElement, DOT);
+        append(lineElement, Text.literal(action));
+
+        if (attribute != null || subAction != null) append(lineElement, DOT);
 
         if (attribute != null) {
-            if (attribute.equals("NOT")) text.append(Text.literal("!"));
-            else text.append(Text.literal(attribute));
+            if (attribute.equals("NOT")) append(lineElement, Text.literal("!"));
+            else append(lineElement, Text.literal(attribute));
         }
 
         if (subAction != null) {
-            text = text.append(Text.literal(subAction));
+            append(lineElement, Text.literal(subAction));
         }
 
-        text.append(Text.literal("("));
-        text.append(Argument.getArgumentsText(arguments));
-
-        text = text.append(Text.literal(")"));
-
+        append(lineElement, Text.literal("("));
+        Argument.buildArgumentsOn(lineElement, arguments);
+        append(lineElement, Text.literal(")"));
         if (target != null) {
-            text = text.append(Text.literal(" -> ")).append(Text.literal(target));
+            append(lineElement, Text.literal(" -> "));
+            append(lineElement, Text.literal(target));
         }
-
-        return text;
     }
 
     public void setAttribute(String attribute) {
@@ -68,4 +65,5 @@ public class CodeActionLine implements CodeLine {
     public void setTarget(String target) {
         this.target = target;
     }
+
 }

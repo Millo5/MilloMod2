@@ -6,7 +6,7 @@ import net.minecraft.text.Text;
 
 public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends FlexElement<T> {
 
-    private final int DISTANCE = 5;
+    private final int DISTANCE = 2;
     private boolean resizing = false;
     private boolean mouseOverResizeArea = false;
 

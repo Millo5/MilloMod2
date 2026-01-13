@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.template.lines;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
-import net.minecraft.text.MutableText;
+import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -21,15 +21,12 @@ public class DynamicCodeLine implements CodeLine {
     }
 
     @Override
-    public Text getDisplayText() {
-        MutableText text = Text.literal(block.getIdentifier())
-                .append(DOT)
-                .append(Text.literal(name))
-                .append(Text.literal("("));
-
-        text.append(Argument.getArgumentsText(arguments));
-
-        text = text.append(Text.literal(")"));
-        return text;
+    public void buildOn(FlexElement<?> lineElement) {
+        append(lineElement, Text.literal(block.getIdentifier()));
+        append(lineElement, DOT);
+        append(lineElement, Text.literal(name));
+        append(lineElement, Text.literal("("));
+        Argument.buildArgumentsOn(lineElement, arguments);
+        append(lineElement, Text.literal(")"));
     }
 }

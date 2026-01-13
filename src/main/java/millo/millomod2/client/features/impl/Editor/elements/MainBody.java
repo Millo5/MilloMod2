@@ -42,6 +42,9 @@ public class MainBody extends FlexElement<MainBody> {
         return width - hierarchy.getWidth();
     }
 
+    public CodeBrowser getCodeBrowser() {
+        return codeBrowser;
+    }
 
     @Override
     protected void renderElement(RenderArgs args) {

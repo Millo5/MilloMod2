@@ -37,8 +37,10 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         boolean hovered = isMouseOver(mouseX, mouseY);
 
+        int background = this.background;
         if (hoverBackgroundColor >= 0) background(hovered ? hoverBackgroundColor : background);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        this.background = background;
 
         int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
         context.drawCenteredTextWithShadow(MilloMod.MC.textRenderer, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, textColor);

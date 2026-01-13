@@ -4,7 +4,6 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
-import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
@@ -66,9 +65,8 @@ public class Editor extends Feature implements Keybound {
                 MilloLog.logInGame("No template found for this block.");
                 return;
             }
-
-            TemplateParser parser = new TemplateParser(template);
-            EditorMenu.setLines(parser.getResult());
+            if (screen == null) return;
+            screen.openTemplate(template);
         });
     }
 

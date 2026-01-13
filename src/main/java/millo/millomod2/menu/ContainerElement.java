@@ -86,6 +86,16 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        for (ClickableWidget child : getChildren()) {
+            if (child.mouseScrolled(mouseX - getX(), mouseY - getY(), horizontalAmount, verticalAmount)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
         context.getMatrices().pushMatrix();
@@ -98,6 +108,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
             int nameColor = getClass().getSimpleName().hashCode() | 0x33000000;
             context.fill(0, 0, getWidth(), getHeight(), nameColor);
             context.drawText(MilloMod.MC.textRenderer, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
+            context.drawText(MilloMod.MC.textRenderer, "x:" + getX() + " y:" + getY() + " w:" + getWidth() + " h:" + getHeight(), 0, 10, 0xFFFFFFFF, false);
         }
 
         RenderArgs args = new RenderArgs(context, mouseX - getX(), mouseY - getY(), deltaTicks);

@@ -3,9 +3,10 @@ package millo.millomod2.client.features.impl.Editor;
 import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
-import millo.millomod2.client.features.impl.Editor.template.CodeBody;
+import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -53,6 +54,13 @@ public class EditorMenu extends Menu {
         addDrawableChild(main);
     }
 
+
+    public void openTemplate(Template template) {
+//        TemplateParser parser = new TemplateParser(template);
+        mainBody.getCodeBrowser().openTemplate(template);
+    }
+
+
     public static void unloadPlot() {
         loadedPlot = null;
     }
@@ -65,7 +73,4 @@ public class EditorMenu extends Menu {
 
     }
 
-    public static void setLines(CodeBody body) {
-
-    }
 }

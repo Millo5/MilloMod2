@@ -18,6 +18,11 @@ public class GameValueArgument extends Argument<GameValueArgument> {
     }
 
     @Override
+    public Text getTooltip() {
+        return Text.literal(target).setStyle(Styles.COMMENT.getStyle());
+    }
+
+    @Override
     public GameValueArgument from(ArgumentItemData data) {
         this.target = data.target;
         this.type = data.type;

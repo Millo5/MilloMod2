@@ -4,7 +4,9 @@ import millo.millomod2.client.features.impl.Editor.template.arguments.*;
 import millo.millomod2.client.hypercube.template.ArgumentItem;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
-import net.minecraft.text.MutableText;
+import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.flex.FlexElement;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
 public abstract class Argument<T extends Argument<?>> {
 
     private int slot;
+
+
     public int getSlot() {
         return slot;
     }
@@ -20,6 +24,9 @@ public abstract class Argument<T extends Argument<?>> {
     }
 
     public abstract Text getDisplayText();
+    public Text getTooltip() {
+        return null;
+    }
 
     public abstract T from(ArgumentItemData data);
 
@@ -45,14 +52,24 @@ public abstract class Argument<T extends Argument<?>> {
         return arg;
     }
 
-    public static MutableText getArgumentsText(List<Argument<?>> arguments) {
-        MutableText text = Text.literal("");
+
+    public TextElement toTextElement() {
+        TextElement element = TextElement.create(getDisplayText());
+        Text tooltip = getTooltip();
+        if (tooltip != null) {
+            element.setTooltip(Tooltip.of(tooltip));
+        }
+        return element;
+    }
+
+    public static void buildArgumentsOn(FlexElement<?> lineElement, List<Argument<?>> arguments) {
         for (int i = 0; i < arguments.size(); i++) {
-            text = text.append(arguments.get(i).getDisplayText());
+            Argument<?> argument = arguments.get(i);
+            lineElement.addChild(argument.toTextElement());
             if (i < arguments.size() - 1) {
-                text = text.append(Text.literal(", "));
+                lineElement.addChild(TextElement.create(", "));
             }
         }
-        return text;
     }
+
 }

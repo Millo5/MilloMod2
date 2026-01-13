@@ -5,6 +5,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
@@ -17,9 +18,14 @@ public class ListElement extends ContainerElement<ListElement> {
     private int gap = 0;
 
     private int minExpansion = 0;
-    private boolean needsLayout = true;
+    private int maxExpansion = Integer.MAX_VALUE;
 
-    private ListElement(int x, int y, int width, int height) {
+    private int contentExpansion = 0;
+    private double renderedScrollOffset = 0d;
+    private double scrollOffset = 0d;
+    private double scrollSpeed = 40.0d;
+
+    protected ListElement(int x, int y, int width, int height) {
         super(x, y, width, height, Text.empty());
     }
 
@@ -50,6 +56,16 @@ public class ListElement extends ContainerElement<ListElement> {
 
     public ListElement gap(int gap) {
         this.gap = gap;
+        return this;
+    }
+
+    public ListElement scrollSpeed(double speed) {
+        this.scrollSpeed = speed;
+        return this;
+    }
+
+    public ListElement maxExpansion(int maxExpansion) {
+        this.maxExpansion = maxExpansion;
         return this;
     }
 
@@ -85,11 +101,11 @@ public class ListElement extends ContainerElement<ListElement> {
 
         boolean vertical = direction == ElementDirection.COLUMN;
 
-        int cursor = padding;
+        int cursor = padding - (int) renderedScrollOffset;
         int contentCross = 0;
 
         for (ClickableWidget child : children) {
-            if (children instanceof ContainerElement ce) {
+            if (children instanceof ContainerElement<?> ce) {
                 ce.layoutChildren();
             }
             if (vertical) {
@@ -104,7 +120,9 @@ public class ListElement extends ContainerElement<ListElement> {
         }
 
         cursor -= gap;
-        setExpansion(cursor);
+        contentExpansion = cursor + (int) renderedScrollOffset + padding;
+        setExpansion(contentExpansion);
+        clampScroll();
     }
 
     private int crossOffset(int size) {
@@ -118,12 +136,21 @@ public class ListElement extends ContainerElement<ListElement> {
 
     private void setExpansion(int expansion) {
         expansion = Math.max(expansion, minExpansion);
+        expansion = Math.min(expansion, maxExpansion);
+
         if (direction == ElementDirection.ROW) setWidth(expansion + padding * 2);
         else setHeight(expansion + padding * 2);
     }
 
+    private void clampScroll() {
+        int viewportSize = (direction == ElementDirection.ROW ? getWidth() : getHeight()) - padding * 2;
+        int maxScroll = Math.max(0, contentExpansion - viewportSize);
+        scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+    }
+
     @Override
     protected void renderElement(RenderArgs args) {
+        renderedScrollOffset = MathHelper.lerp(args.deltaTicks(), renderedScrollOffset, scrollOffset);
         layoutChildren();
         renderChildren(args);
     }
@@ -133,4 +160,20 @@ public class ListElement extends ContainerElement<ListElement> {
         layoutChildren();
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (isMouseOver(mouseX, mouseY)) {
+            double currentOffset = scrollOffset;
+            switch (direction) {
+                case COLUMN -> scrollOffset -= verticalAmount * scrollSpeed;
+                case ROW -> scrollOffset -= horizontalAmount * scrollSpeed;
+            }
+            clampScroll();
+
+            if (currentOffset != scrollOffset) return true;
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+
+    }
 }

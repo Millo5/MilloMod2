@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.util.style.Styles;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -19,28 +19,33 @@ public class ParticleArgument extends Argument<ParticleArgument> {
 
     @Override
     public Text getDisplayText() {
+        return Text.literal(particle).setStyle(Styles.PARTICLE.getStyle());
+    }
 
-        ArrayList<Text> tooltip = new ArrayList<>();
+    @Override
+    public Text getTooltip() {
         boolean newline = false;
-        String[] keys = new String[] {"Amount", "Spread", "n", "Motion", "Motion Variation", "Material", "Roll", "Color", "Color Variation", "Size", "Size Variation"};
+        String[] keys = new String[]{"Amount", "Spread", "n", "Motion", "Motion Variation", "Material", "Roll", "Color", "Color Variation", "Size", "Size Variation"};
+
+        MutableText tooltip = Text.empty();
         for (String key : keys) {
             if (key.equals("n")) newline = true;
             if (!data.containsKey(key)) continue;
 
-            if (newline) tooltip.add(Text.of("\n"));
+            if (newline) tooltip.append("\n");
             newline = false;
 
             String value = data.get(key);
             Style style = Styles.DEFAULT.getStyle();
 
-            tooltip.add(Text.literal(key+": ").setStyle(Styles.UNSAVED.getStyle()));
-            tooltip.add(Text.literal(value).setStyle(style));
-            tooltip.add(Text.of("\n"));
+            tooltip.append(Text.literal(key + ": ").setStyle(Styles.UNSAVED.getStyle()));
+            tooltip.append(Text.literal(value).setStyle(style));
+            tooltip.append("\n");
         }
-        tooltip.removeLast();
-        //  Use when tooltips have been implemented
-
-        return Text.literal(particle).setStyle(Styles.PARTICLE.getStyle());
+        if (tooltip.getString().endsWith("\n")) {
+            tooltip = Text.literal(tooltip.getString().substring(0, tooltip.getString().length() - 1));
+        }
+        return tooltip;
     }
 
     @Override

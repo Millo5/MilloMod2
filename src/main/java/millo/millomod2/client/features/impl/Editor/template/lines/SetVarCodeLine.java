@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.template.lines;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
-import net.minecraft.text.MutableText;
+import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -21,39 +21,41 @@ public class SetVarCodeLine implements CodeLine {
     }
 
     @Override
-    public Text getDisplayText() {
-        MutableText text = Text.literal("");
-        return switch (action) {
+    public void buildOn(FlexElement<?> lineElement) {
+        switch (action) {
             case "+=":
             case "-=":
             case "=":
             case "+":
             case "-":
             case "x":
-                text.append(arguments.getFirst().getDisplayText());
+                append(lineElement, arguments.getFirst().toTextElement());
                 if (arguments.size() == 1 && (action.equals("+=") || action.equals("-="))) {
-                    text.append(Text.literal(String.valueOf(action.charAt(0) + action.charAt(0))));
-                    yield text;
+                    append(lineElement, Text.literal(String.valueOf(action.charAt(0)) + action.charAt(0)));
+                    return;
                 }
-                text.append(SPACE).append(Text.literal(action)).append(SPACE);
+                append(lineElement, SPACE);
+                append(lineElement, Text.literal(action));
+                append(lineElement, SPACE);
 
                 String joiner = "+";
                 if (action.equals("-") || action.equals("x")) joiner = action;
                 for (int i = 1; i < arguments.size(); i++) {
-                    text.append(arguments.get(i).getDisplayText());
-                    if (i != arguments.size() - 1) text.append(SPACE).append(Text.literal(joiner)).append(SPACE);
+                    append(lineElement, arguments.get(i).toTextElement());
+                    if (i != arguments.size() - 1) {
+                        append(lineElement, SPACE);
+                        append(lineElement, Text.literal(joiner));
+                        append(lineElement, SPACE);
+                    }
                 }
-                yield text;
+                break;
             default:
-                yield Text.literal(block.getIdentifier())
-                        .append(DOT)
-                        .append(Text.literal(action))
-                        .append(Text.literal("("))
-                        .append(Argument.getArgumentsText(arguments))
-                        .append(Text.literal(")"));
-        };
-
-
+                append(lineElement, Text.literal(block.getIdentifier()));
+                append(lineElement, DOT);
+                append(lineElement, Text.literal(action));
+                append(lineElement, Text.literal("("));
+                Argument.buildArgumentsOn(lineElement, arguments);
+                append(lineElement, Text.literal(")"));
+        }
     }
-
 }
