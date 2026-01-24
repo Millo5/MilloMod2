@@ -4,13 +4,51 @@ import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class ErrorLine implements CodeLine {
 
     String message;
 
+    private final Exception e;
+
     public ErrorLine(String message) {
         this.message = message;
+        e = null;
+    }
+
+    public ErrorLine(String message, Exception e) {
+        this.message = message;
+        this.e = e;
+    }
+
+    @Override
+    public Text getTooltip() {
+        if (e == null) return null;
+
+        var text = Text.literal(e.getMessage()).append("\n");
+        StackTraceElement[] trace = e.getStackTrace();
+        for (StackTraceElement traceElement : trace)
+            text.append("\tat " + traceElement + "\n");
+
+
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            text.append("\t" + cause + "\n");
+
+            for (Throwable se : cause.getSuppressed()) {
+                text.append("\tSuppressed: " + se);
+            }
+        }
+
+        return text;
+    }
+
+    private static final Identifier BLOCK_ID = Identifier.of("minecraft", "barrier");
+
+    @Override
+    public Identifier getBlockId() {
+        return BLOCK_ID;
     }
 
     @Override

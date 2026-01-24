@@ -34,4 +34,8 @@ public class ItemArgument extends Argument<ItemArgument> {
         item = ItemUtil.fromNbt(itemNbt);
         return this;
     }
+
+    public ItemStack getItemStack() {
+        return item;
+    }
 }

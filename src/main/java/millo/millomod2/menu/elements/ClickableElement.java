@@ -1,10 +1,14 @@
 package millo.millomod2.menu.elements;
 
+import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
 import millo.millomod2.menu.FadeElement;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import org.joml.Vector2f;
 
 public abstract class ClickableElement<T extends ClickableElement<?>> extends ClickableWidget implements FadeElement {
 
@@ -29,11 +33,16 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
         return (T) this;
     }
 
-
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         context.fill(getX(), getY(), getRight(), getBottom(), getFade().getColor(background));
         border.render(context, this);
+
+        ClickableWidgetAccessor accessor = (ClickableWidgetAccessor) this;
+        if (accessor.getTooltipState().getTooltip() != null) {
+            var pos = context.getMatrices().transformPosition(mouseX, mouseY, new Vector2f());
+            accessor.getTooltipState().render(context, (int)pos.x, (int)pos.y, hovered, isFocused(), getNavigationFocus());
+        }
     }
 
 
@@ -95,8 +104,17 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
             if (left) context.fill(element.getX(), element.getY(), element.getX() + 1, element.getBottom(), color);
             if (right) context.fill(element.getRight() + 1, element.getY(), element.getRight(), element.getBottom(), color);
         }
+    }
 
+    protected TextRenderer getTextRenderer() {
+        return MilloMod.MC.textRenderer;
+    }
 
+    public Border getBorder() {
+        return border;
+    }
 
+    public int getBackground() {
+        return background;
     }
 }

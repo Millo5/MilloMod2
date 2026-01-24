@@ -3,6 +3,7 @@ package millo.millomod2.client.features.impl.Editor.template.lines;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
+import net.minecraft.util.Identifier;
 
 public class BracketLine implements CodeLine {
 
@@ -16,6 +17,13 @@ public class BracketLine implements CodeLine {
 
     public int getIndentationChange() {
         return open ? 1 : -1;
+    }
+
+    private static final Identifier BLOCK_ID = Identifier.of("minecraft", "piston");
+
+    @Override
+    public Identifier getBlockId() {
+        return BLOCK_ID;
     }
 
     @Override

@@ -40,9 +40,9 @@ public class TemplateParser {
                 }
             }
 
-        } catch (ParsingException e) {
+        } catch (Exception e) {
             errored = true;
-            body.add(new ErrorLine("Failed to parse block: " + block.block));
+            body.add(new ErrorLine("Failed to parse block: " + block.block + ", " + e.getMessage(), e));
         }
     }
 

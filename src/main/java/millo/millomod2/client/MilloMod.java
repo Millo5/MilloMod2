@@ -70,4 +70,15 @@ public class MilloMod implements ClientModInitializer {
         return Text.translatable("millo." + String.join(".", keys));
     }
 
+
+    /*
+
+
+    pinning tabs
+    find tab in hierarchy
+    else looks weird
+
+
+     */
+
 }

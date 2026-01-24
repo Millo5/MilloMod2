@@ -1,10 +1,13 @@
 package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
 import millo.millomod2.menu.FadeElement;
+import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
+import org.joml.Vector2f;
 
 public class TextElement extends TextWidget implements FadeElement {
 
@@ -37,7 +40,19 @@ public class TextElement extends TextWidget implements FadeElement {
         }
 
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
+
+        ClickableWidgetAccessor accessor = (ClickableWidgetAccessor) this;
+        if (accessor.getTooltipState().getTooltip() != null) {
+            var pos = context.getMatrices().transformPosition(mouseX, mouseY, new Vector2f());
+            accessor.getTooltipState().render(context, (int)pos.x, (int)pos.y, hovered, isFocused(), getNavigationFocus());
+        }
+
         context.getMatrices().popMatrix();
+    }
+
+    @Override
+    public void draw(DrawnTextConsumer textConsumer) {
+        super.draw(textConsumer);
     }
 
     public TextElement align(TextAlignment alignment) {

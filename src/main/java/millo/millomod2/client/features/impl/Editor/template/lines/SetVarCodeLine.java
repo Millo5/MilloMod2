@@ -5,6 +5,7 @@ import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 
@@ -18,6 +19,13 @@ public class SetVarCodeLine implements CodeLine {
         this.block = block;
         this.action = action;
         this.arguments = arguments;
+    }
+
+    private static final Identifier BLOCK_ID = Identifier.of("iron_block");
+
+    @Override
+    public Identifier getBlockId() {
+        return BLOCK_ID;
     }
 
     @Override

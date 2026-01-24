@@ -5,6 +5,7 @@ import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 
@@ -21,12 +22,20 @@ public class CodeActionLine implements CodeLine {
     private String target;
     private final List<Argument<?>> arguments;
 
+    private final Identifier blockId;
+
+
     public CodeActionLine(CodeBlock block, String action, List<Argument<?>> arguments) {
         this.block = block;
         this.action = action;
         this.arguments = arguments;
+        this.blockId = Identifier.of(block.getItem().material.toLowerCase());
     }
 
+    @Override
+    public Identifier getBlockId() {
+        return blockId;
+    }
 
     @Override
     public void buildOn(FlexElement<?> lineElement) {

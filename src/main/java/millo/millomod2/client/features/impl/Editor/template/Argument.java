@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.template;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.template.arguments.*;
 import millo.millomod2.client.hypercube.template.ArgumentItem;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
@@ -7,6 +8,8 @@ import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.ItemStackWidget;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -53,7 +56,10 @@ public abstract class Argument<T extends Argument<?>> {
     }
 
 
-    public TextElement toTextElement() {
+    public ClickableWidget toTextElement() {
+        if (this instanceof ItemArgument item) {
+            return new ItemStackWidget(MilloMod.MC, -2, -4, 12, 8, Text.empty(), item.getItemStack(), true, true);
+        }
         TextElement element = TextElement.create(getDisplayText());
         Text tooltip = getTooltip();
         if (tooltip != null) {

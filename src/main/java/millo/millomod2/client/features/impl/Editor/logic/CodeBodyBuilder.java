@@ -5,6 +5,7 @@ import millo.millomod2.client.features.impl.Editor.template.CodeBody;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
 import millo.millomod2.client.util.style.Styles;
+import millo.millomod2.menu.elements.BlockFaceElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
@@ -50,6 +51,8 @@ public class CodeBodyBuilder {
                 .direction(ElementDirection.ROW)
                 .mainAlign(MainAxisAlignment.START)
                 .crossAlign(CrossAxisAlignment.CENTER);
+
+        element.addChild(new BlockFaceElement(line.getBlockId(), 0, 0, 10, 10));
 
         element.addChild(ButtonElement.create(30, 10)
                 .message(Text.literal(lineNumber+++"").setStyle(Styles.LINE_NUM.getStyle()))

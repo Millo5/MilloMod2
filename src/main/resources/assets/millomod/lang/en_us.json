@@ -33,6 +33,13 @@
   "millo.feature.toggle_sprint_display": "Toggle Sprint Display",
   "millo.feature.notifications": "Notifications",
   "millo.feature.skin_preview": "Skin Preview",
-  "millo.feature.debug": "Debug"
+  "millo.feature.debug": "Debug",
 
+  "key.category.minecraft.category.millomod2": "MilloMod 2",
+  "key.millomod2.command_wheel.key": "Command Wheel",
+  "key.millomod2.editor.key": "Open Editor",
+  "key.millomod2.flight_speed_toggle.key": "Toggle Flight Speed",
+  "key.millomod2.pick_chest_value.key": "Pick Chest Value",
+  "key.millomod2.show_item_tags.key": "Show Item Tags",
+  "key.millomod2.spectator_toggle.key": "Spectator Toggle"
 }

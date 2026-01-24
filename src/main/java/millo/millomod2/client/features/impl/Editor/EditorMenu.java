@@ -3,7 +3,6 @@ package millo.millomod2.client.features.impl.Editor;
 import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
-import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.template.Template;
@@ -19,6 +18,9 @@ import net.minecraft.client.gui.screen.Screen;
 public class EditorMenu extends Menu {
 
     private static EditorPlot loadedPlot;
+
+    private static MainBody cachedBody;
+    private static int cachedId = -1;
 
     private TitleBar titleBar;
     private MainBody mainBody;
@@ -45,7 +47,14 @@ public class EditorMenu extends Menu {
         titleBar = new TitleBar(this);
         titleBar.setLoadedPlot(loadedPlot);
 
-        mainBody = new MainBody(this);
+        if (cachedBody != null && cachedId == loadedPlot.getPlotId()) {
+            mainBody = cachedBody;
+        } else {
+            mainBody = new MainBody(this);
+            cachedBody = mainBody;
+            cachedId = loadedPlot.getPlotId();
+        }
+
 
         main.addChildren(
                 titleBar,

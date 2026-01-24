@@ -2,7 +2,6 @@ package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.ListElement;
-import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
@@ -14,7 +13,7 @@ import java.util.HashMap;
 public class CodeBrowser extends FlexElement<CodeBrowser> {
 
     private Tab currentTab = null;
-    private HashMap<String, Tab> openTabs = new HashMap<>();
+    private final HashMap<String, Tab> openTabs = new HashMap<>();
 
     private ListElement tabList;
     private CodeTextArea codeTextArea;
@@ -50,7 +49,7 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
         if (!openTabs.containsKey(template.getName())) {
             Tab tab = new Tab(this, template.getName(), template);
             openTabs.put(template.getName(), tab);
-            tabList.addChild(tab.button);
+            tabList.addChild(tab);
         }
 
         openTab(template.getName());
@@ -58,25 +57,23 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
 
     public void openTab(String name) {
         if (openTabs.containsKey(name)) {
+            if (currentTab != null) currentTab.setSelected(false);
             Tab tab = openTabs.get(name);
             currentTab = tab;
-            codeTextArea.loadTemplate(tab.template);
+            tab.setSelected(true);
+            codeTextArea.loadTemplate(tab.getTemplate());
         }
     }
 
-    private static class Tab {
-        String name;
-        Template template;
-        ButtonElement button;
+    public void closeTab(Tab tab) {
+        openTabs.remove(tab.getTemplate().getName());
+        tabList.removeChild(tab);
+        if (currentTab == tab) {
+            codeTextArea.clearContents();
+            currentTab = null;
 
-        public Tab(CodeBrowser browser, String name, Template template) {
-            this.name = name;
-            this.template = template;
-            button = ButtonElement.create(100, 20)
-                    .message(Text.literal(name))
-                    .onPress((button) -> {
-                        browser.openTemplate(template);
-                    });
+            var tabs = openTabs.keySet().stream().toList();
+            if (!tabs.isEmpty()) openTab(tabs.getFirst());
         }
     }
 }

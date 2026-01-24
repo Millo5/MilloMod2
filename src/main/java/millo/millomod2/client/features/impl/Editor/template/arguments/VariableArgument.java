@@ -13,7 +13,8 @@ public class VariableArgument extends Argument<VariableArgument> {
 
     @Override
     public Text getDisplayText() {
-        return Text.literal(name).setStyle(Styles.VAR.getStyle());
+        return Text.literal(name).setStyle(Styles.VAR.getStyle())
+                .append(Text.literal("°").setStyle(scope.getStyle()));
     }
 
     @Override

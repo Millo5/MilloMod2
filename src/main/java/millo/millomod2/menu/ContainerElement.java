@@ -4,7 +4,6 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -146,10 +145,6 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         for (ClickableWidget child : children) {
             addChild(child);
         }
-    }
-
-    protected TextRenderer getTextRenderer() {
-        return MilloMod.MC.textRenderer;
     }
 
     protected record RenderArgs(DrawContext context, int mouseX, int mouseY, float deltaTicks) {}

@@ -15,6 +15,7 @@ import net.minecraft.text.Text;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Notifications extends Feature implements Toggleable, Positional, HUDRendered, Configurable {
@@ -91,7 +92,7 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
         context.getMatrices().pushMatrix();
         context.getMatrices().translate(position.getX(), position.getY());
 
-        for (Notification notification : notifications) {
+        for (Notification notification : List.copyOf(notifications)) {
             float visible = renderInfo.lerp(notification.getVisible(), notification.isFadingOut() ? 0f : 1f, 1f);
             notification.setVisible(visible);
             if (visible > 0.9f) notification.age(renderInfo.deltaTime() * 0.05f);

@@ -145,6 +145,10 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
         if (searchBox.isFocused()) {
             searchBox.keyPressed(input);
             cir.setReturnValue(true);
+
+            if (keyCode == 10) { // TODO: enter click if one highlighted
+
+            }
         }
 
         if (keyCode == 257 || keyCode == 256) {

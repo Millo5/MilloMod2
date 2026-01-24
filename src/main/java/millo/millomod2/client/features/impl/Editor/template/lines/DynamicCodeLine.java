@@ -5,6 +5,7 @@ import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,11 @@ public class DynamicCodeLine implements CodeLine {
         this.block = block;
         this.name = name;
         this.arguments = arguments;
+    }
+
+    @Override
+    public Identifier getBlockId() {
+        return Identifier.of(block.getItem().material.toLowerCase());
     }
 
     @Override

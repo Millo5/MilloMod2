@@ -7,9 +7,10 @@
     "core.MMouse",
     "network.MClientCommonNetworkHandler",
     "network.MClientPlayNetworkHandler",
+    "render.MClickableWidget",
     "render.MContainerScreen",
-    "render.MDebugMenu",
     "render.MInGameHUD",
+    "render.accessors.ClickableWidgetAccessor",
     "render.accessors.HandledScreenAccessor",
     "render.accessors.ScreenAccessor"
   ],

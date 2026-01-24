@@ -38,7 +38,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         boolean hovered = isMouseOver(mouseX, mouseY);
 
         int background = this.background;
-        if (hoverBackgroundColor >= 0) background(hovered ? hoverBackgroundColor : background);
+        if (hoverBackgroundColor >= 0) background(hovered ? hoverBackgroundColor : this.background);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
         this.background = background;
 
@@ -65,4 +65,9 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         this.hoverBackgroundColor = -1;
         return self();
     }
+
+    public int getHoverBackgroundColor() {
+        return hoverBackgroundColor;
+    }
+
 }
