@@ -4,14 +4,18 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
 import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.font.DrawnTextConsumer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
 import org.joml.Vector2f;
 
+import java.util.function.Supplier;
+
 public class TextElement extends TextWidget implements FadeElement {
 
     private TextAlignment alignment = TextAlignment.LEFT;
+    private Supplier<Boolean> onClick = null;
 
     private TextElement(Text message) {
         super(message, MilloMod.MC.textRenderer);
@@ -51,12 +55,30 @@ public class TextElement extends TextWidget implements FadeElement {
     }
 
     @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (!isMouseOver(click.x(), click.y())) return false;
+        if (onClick == null) return false;
+
+        if (onClick.get()) {
+            ClickableElement.playClickSound(MilloMod.MC.getSoundManager());
+        }
+
+        return true;
+    }
+
+    @Override
     public void draw(DrawnTextConsumer textConsumer) {
         super.draw(textConsumer);
     }
 
     public TextElement align(TextAlignment alignment) {
         this.alignment = alignment;
+        return this;
+    }
+
+    public TextElement onClickListener(Supplier<Boolean> runnable) {
+        this.onClick = runnable;
+        this.active = true;
         return this;
     }
 

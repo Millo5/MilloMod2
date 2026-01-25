@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 public class Tab extends ButtonElement {
 
     private final ButtonElement closeButton;
-    private final Template template;
+    private Template template;
     private final CodeBrowser browser;
     private final int textWidth;
     private boolean selected = false;
@@ -63,5 +63,9 @@ public class Tab extends ButtonElement {
 
     public Template getTemplate() {
         return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 }

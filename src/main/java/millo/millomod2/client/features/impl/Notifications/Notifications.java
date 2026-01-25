@@ -31,12 +31,12 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
     @Override
     public void setupConfig(FeatureConfig config) {
         rules = new HashMap<>();
-        rules.put("friend_messages", new ChatMatchRule(Pattern.compile("» your friend (.+) has joined!")));
-        rules.put("plot_votes", new ChatMatchRule(Pattern.compile("⭐ (.+) has voted for this plot! ⭐|⭐ (.+) voted for .+")));
-        rules.put("player_joins_plot", new ChatMatchRule(Pattern.compile("▷ (.+) joined .+|○ (.+) played on .+")));
-        rules.put("player_joins_node", new ChatMatchRule(Pattern.compile("\\[.+\\](.+) joined!?|(.+) joined!")));
+        rules.put("friend_messages", new ChatMatchRule(Pattern.compile("^» your friend (.+) has joined!")));
+        rules.put("plot_votes", new ChatMatchRule(Pattern.compile("^⭐ (.+) has voted for this plot! ⭐|⭐ (.+) voted for .+")));
+        rules.put("player_joins_plot", new ChatMatchRule(Pattern.compile("^▷ (.+) joined .+|○ (.+) played on .+")));
+        rules.put("player_joins_node", new ChatMatchRule(Pattern.compile("^\\[.+\\](.+) joined!|(.+) joined!")));
         rules.put("plot_info_messages", new ChatMatchRule(
-                "Note: This plot may hide, log, or change your chat messages. Use /gchat or /gc to bypass and talk to global chat.",
+                "Note: This plot may hide, log, or change your chat messages.",
                 "Note: Your whitelist bypass permission was applied.",
                 "\\n» The plot's resource pack was automatically enabled due to your preference.\\n  [Disable]\\n"
         ));
@@ -44,9 +44,11 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
                 "Note: You can view your past 5 created templates with /templatehistory!",
                 "Error: Invalid template placement."
         ));
-        rules.put("fly_speed_changes", new ChatMatchRule(Pattern.compile("» Set fly speed to: (\\d+)% of default speed.")));
+        rules.put("fly_speed_changes", new ChatMatchRule(Pattern.compile("^» Set fly speed to: (\\d+)% of default speed.")));
 
         config.addChoice("direction", "down", new String[]{"up", "down"});
+
+        config.addString("custom", "");
 
         for (String ruleKey : rules.keySet()) {
             config.addBoolean(ruleKey, false);
@@ -58,6 +60,14 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
         if (!isEnabled()) return false;
 
         String message = packet.content().getString();
+
+        String customMatch = config.getString("custom");
+        if (!customMatch.isBlank()) {
+            if (Pattern.compile(customMatch).matcher(message).find()) {
+                notify(packet.content());
+                return true;
+            }
+        }
 
         for (String ruleKey : rules.keySet()) {
             ChatMatchRule rule = rules.get(ruleKey);

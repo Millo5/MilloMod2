@@ -16,9 +16,9 @@ public class ParameterArgument extends Argument<ParameterArgument> {
     public Text getDisplayText() {
         StringBuilder display = new StringBuilder();
         if (optional) display.append("[");
-        display.append(parameter);
+        display.append(type);
         if (plural) display.append("...");
-        display.append(": ").append(type);
+        display.append(" ").append(parameter);
         if (optional) display.append("]");
 
         Styles style;

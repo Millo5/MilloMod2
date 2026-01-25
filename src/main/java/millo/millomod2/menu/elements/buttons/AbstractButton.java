@@ -5,6 +5,9 @@ import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundManager;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 public abstract class AbstractButton<T extends AbstractButton<T>> extends ClickableElement<T> {
@@ -32,6 +35,10 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         return false;
     }
 
+    @Override
+    public void playDownSound(SoundManager soundManager) {
+        soundManager.play(PositionedSoundInstance.ui(SoundEvents.ENTITY_GLOW_ITEM_FRAME_ADD_ITEM, 1.0F));
+    }
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {

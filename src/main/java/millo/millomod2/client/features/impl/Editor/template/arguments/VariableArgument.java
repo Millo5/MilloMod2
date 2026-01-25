@@ -2,9 +2,12 @@ package millo.millomod2.client.features.impl.Editor.template.arguments;
 
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
+import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+
+import java.util.function.Supplier;
 
 public class VariableArgument extends Argument<VariableArgument> {
 
@@ -20,6 +23,20 @@ public class VariableArgument extends Argument<VariableArgument> {
     @Override
     public Text getTooltip() {
         return Text.literal(scope.name()).setStyle(scope.getStyle());
+    }
+
+    @Override
+    public Supplier<Boolean> getOnClick() {
+        return () -> {
+            String cmd = "var " + name + switch (scope) {
+                case SAVED -> " -s";
+                case LOCAL -> " -l";
+                case LINE -> " -i";
+                default -> "";
+            };
+            PlayerUtil.sendCommand(cmd);
+            return true;
+        };
     }
 
     @Override

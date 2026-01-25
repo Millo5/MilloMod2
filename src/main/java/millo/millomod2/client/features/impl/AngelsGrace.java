@@ -10,7 +10,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
 
+import java.util.Random;
+
 public class AngelsGrace extends Feature implements Toggleable {
+
+    private static String[] messages = new String[] {
+            "Saved by Millo...", "Helium consumed...", "Lowered density...",
+            "+1 Pair of Wings", "Hoppoo Feather Consumed", "Walking on sunshine...",
+            "Ascended to greater bounds..."
+    };
 
     @Override
     public String getId() {
@@ -28,7 +36,8 @@ public class AngelsGrace extends Feature implements Toggleable {
                 if (player().getVelocity().y < -0.3 && !player().isOnGround()) {
                     player().getAbilities().flying = true;
                     player().sendAbilitiesUpdate();
-                    Notifications.notify(Text.literal("Saved by grace...").setStyle(Styles.VARIABLE.getStyle()));
+                    String message = messages[new Random().nextInt(messages.length)];
+                    Notifications.notify(Text.literal(message).setStyle(Styles.VARIABLE.getStyle()));
                 }
             }
         }

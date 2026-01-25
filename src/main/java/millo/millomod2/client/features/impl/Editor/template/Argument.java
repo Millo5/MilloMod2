@@ -1,18 +1,18 @@
 package millo.millomod2.client.features.impl.Editor.template;
 
-import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.template.arguments.*;
 import millo.millomod2.client.hypercube.template.ArgumentItem;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
+import millo.millomod2.menu.elements.ItemStackElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.ItemStackWidget;
 import net.minecraft.text.Text;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class Argument<T extends Argument<?>> {
 
@@ -28,6 +28,10 @@ public abstract class Argument<T extends Argument<?>> {
 
     public abstract Text getDisplayText();
     public Text getTooltip() {
+        return null;
+    }
+
+    public Supplier<Boolean> getOnClick() {
         return null;
     }
 
@@ -58,15 +62,17 @@ public abstract class Argument<T extends Argument<?>> {
 
     public ClickableWidget toTextElement() {
         if (this instanceof ItemArgument item) {
-            return new ItemStackWidget(MilloMod.MC, -2, -4, 12, 8, Text.empty(), item.getItemStack(), true, true);
+            return new ItemStackElement(-2, -4, 12, 8, Text.empty(), item.getItemStack(), true, true);
         }
         TextElement element = TextElement.create(getDisplayText());
         Text tooltip = getTooltip();
         if (tooltip != null) {
             element.setTooltip(Tooltip.of(tooltip));
         }
+        element.onClickListener(getOnClick());
         return element;
     }
+
 
     public static void buildArgumentsOn(FlexElement<?> lineElement, List<Argument<?>> arguments) {
         for (int i = 0; i < arguments.size(); i++) {

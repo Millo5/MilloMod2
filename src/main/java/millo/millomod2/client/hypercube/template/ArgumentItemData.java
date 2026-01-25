@@ -36,6 +36,7 @@ public class ArgumentItemData {
     public String sound;
     public double pitch;
     public double vol;
+    public String variant;
 
     public String pot;
     public int amp;
@@ -69,6 +70,7 @@ public class ArgumentItemData {
                 ", cluster=" + cluster +
                 ", sound='" + sound + '\'' +
                 ", pitch=" + pitch +
+                ", variant=" + variant +
                 ", vol=" + vol +
                 ", pot='" + pot + '\'' +
                 ", amp=" + amp +

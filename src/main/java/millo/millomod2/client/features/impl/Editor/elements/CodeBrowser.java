@@ -13,9 +13,9 @@ import java.util.HashMap;
 public class CodeBrowser extends FlexElement<CodeBrowser> {
 
     private Tab currentTab = null;
-    private final HashMap<String, Tab> openTabs = new HashMap<>();
+    private final HashMap<String, Tab> tabNameMap = new HashMap<>();
 
-    private ListElement tabList;
+    private ListElement tabListElement;
     private CodeTextArea codeTextArea;
 
     protected CodeBrowser(int x, int y, int width, int height, Text message) {
@@ -30,7 +30,7 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
         crossAlign(CrossAxisAlignment.STRETCH);
 //        background(0x22000000);
 
-        tabList = ListElement.create(width, 20)
+        tabListElement = ListElement.create(width, 20)
                 .gap(1)
                 .padding(0)
                 .border(new Border().top(0xFFFFFFFF).bottom(0xFFFFFFFF))
@@ -40,25 +40,28 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
         codeTextArea = new CodeTextArea(this);
 
         addChildren(
-                tabList,
+                tabListElement,
                 codeTextArea
         );
     }
 
     public void openTemplate(Template template) {
-        if (!openTabs.containsKey(template.getName())) {
+        if (!tabNameMap.containsKey(template.getName())) {
             Tab tab = new Tab(this, template.getName(), template);
-            openTabs.put(template.getName(), tab);
-            tabList.addChild(tab);
+            tabNameMap.put(template.getName(), tab);
+            tabListElement.addChild(tab);
+        } else {
+            Tab tab = tabNameMap.get(template.getName());
+            tab.setTemplate(template);
         }
 
         openTab(template.getName());
     }
 
     public void openTab(String name) {
-        if (openTabs.containsKey(name)) {
+        if (tabNameMap.containsKey(name)) {
             if (currentTab != null) currentTab.setSelected(false);
-            Tab tab = openTabs.get(name);
+            Tab tab = tabNameMap.get(name);
             currentTab = tab;
             tab.setSelected(true);
             codeTextArea.loadTemplate(tab.getTemplate());
@@ -66,14 +69,15 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     }
 
     public void closeTab(Tab tab) {
-        openTabs.remove(tab.getTemplate().getName());
-        tabList.removeChild(tab);
+        int currentIndex = Math.min(tabListElement.getChildren().indexOf(tab), tabListElement.getChildren().size() - 2);
+
+        tabNameMap.remove(tab.getTemplate().getName());
+        tabListElement.removeChild(tab);
         if (currentTab == tab) {
             codeTextArea.clearContents();
             currentTab = null;
 
-            var tabs = openTabs.keySet().stream().toList();
-            if (!tabs.isEmpty()) openTab(tabs.getFirst());
+            if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getName());
         }
     }
 }

@@ -2,8 +2,11 @@ package millo.millomod2.client.features.impl.Editor.template.arguments;
 
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
+import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.text.Text;
+
+import java.util.function.Supplier;
 
 public class SimpleArgument extends Argument<SimpleArgument> {
 
@@ -19,6 +22,18 @@ public class SimpleArgument extends Argument<SimpleArgument> {
         return switch (type) {
             case TEXT -> Text.literal("\"" + value + "\"").setStyle(Styles.TEXT.getStyle());
             case NUMBER -> Text.literal(value).setStyle(Styles.NUMBER.getStyle());
+        };
+    }
+
+    @Override
+    public Supplier<Boolean> getOnClick() {
+        return () -> {
+            String cmd = switch (type) {
+                case TEXT -> "str";
+                case NUMBER -> "num";
+            };
+            PlayerUtil.sendCommand(cmd + " " + value);
+            return true;
         };
     }
 
