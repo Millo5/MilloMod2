@@ -1,5 +1,6 @@
 package millo.millomod2.client.mixin.render.accessors;
 
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
@@ -11,6 +12,9 @@ public interface ScreenAccessor {
 
     @Invoker("addSelectableChild")
     <T extends Element & Selectable> T iAddSelectableChild(T child);
+
+    @Invoker("addDrawableChild")
+    <T extends Element & Drawable & Selectable> T iAddDrawableChild(T drawableElement);
 
     @Invoker("remove")
     void iRemove(Element child);

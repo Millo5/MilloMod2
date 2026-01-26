@@ -16,12 +16,18 @@ public class SoundArgument extends Argument<SoundArgument> {
 
     private String sound;
     private String variant;
+    private String key; // custom
     private double pitch;
     private double volume;
 
     private boolean run() {
         ActionDump dump = ActionDump.getActionDump().orElseThrow();
         Sound sound = dump.getSoundFromName(this.sound);
+
+        if (key != null) {
+            SoundUtil.playSound(key, (float) volume, (float) pitch);
+            return false;
+        }
 
         if (variant != null && !variant.isBlank()) {
             for (SoundVariant variant : sound.variants) {
@@ -40,7 +46,8 @@ public class SoundArgument extends Argument<SoundArgument> {
 
     @Override
     public Text getDisplayText() {
-        return Text.literal(sound).setStyle(Styles.SOUND.getStyle());
+        String txt = sound == null ? key : sound;
+        return Text.literal(txt).setStyle(Styles.SOUND.getStyle());
     }
 
     @Override
@@ -61,6 +68,7 @@ public class SoundArgument extends Argument<SoundArgument> {
         this.pitch = data.pitch;
         this.volume = data.vol;
         this.variant = data.variant;
+        this.key = data.key;
         return this;
     }
 }

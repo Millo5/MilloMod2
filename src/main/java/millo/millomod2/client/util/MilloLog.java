@@ -27,6 +27,11 @@ public class MilloLog {
         MilloMod.player().sendMessage(Text.literal("[MilloMod2] " + message), false);
     }
 
+    public static void logInGame(Text text) {
+        LOGGER.info(text.getString());
+        MilloMod.player().sendMessage(Text.literal("[MilloMod2] ").append(text), false);
+    }
+
     public static void error(String message) {
         LOGGER.error(message);
     }
@@ -40,4 +45,5 @@ public class MilloLog {
         LOGGER.error("Exception: ", e);
         if (DEBUG) e.printStackTrace();
     }
+
 }

@@ -13,6 +13,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.PlayerInput;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.util.function.Consumer;
+
 public class PlayerUtil {
 
     /***

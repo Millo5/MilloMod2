@@ -37,6 +37,7 @@ public class ArgumentItemData {
     public double pitch;
     public double vol;
     public String variant;
+    public String key;
 
     public String pot;
     public int amp;

@@ -68,7 +68,9 @@ public final class FeatureHandler {
                 new ActionDumpReader(),
                 new Debug(),
                 new TemporaryTracker(),
-                new TimeTracker()
+                new TimeTracker(),
+                new SoundPreview(),
+                new ParticleColorShorthand()
         );
 
         featureMap = Map.copyOf(initialFeatureMap);

@@ -4,6 +4,7 @@ import millo.millomod2.client.features.impl.Editor.elements.CodeTextArea;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
+import millo.millomod2.client.features.impl.Editor.template.lines.ErrorLine;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.BlockFaceElement;
 import millo.millomod2.menu.elements.TextElement;
@@ -63,7 +64,12 @@ public class CodeBodyBuilder {
         element.addChild(TextElement.create(Text.literal("  ".repeat(indentLevel)).setStyle(Styles.LINE_NUM.getStyle()))
                 .align(TextElement.TextAlignment.CENTER));
 
-        line.buildOn(element);
-        codeTextArea.addChild(element);
+        try {
+            line.buildOn(element);
+            codeTextArea.addChild(element);
+        } catch (Exception e) {
+            lineNumber--;
+            buildLine(new ErrorLine("Error while building", e));
+        }
     }
 }
