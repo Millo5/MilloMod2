@@ -70,7 +70,8 @@ public final class FeatureHandler {
                 new TemporaryTracker(),
                 new TimeTracker(),
                 new SoundPreview(),
-                new ParticleColorShorthand()
+                new ParticleColorShorthand(),
+                new TeleportHandler()
         );
 
         featureMap = Map.copyOf(initialFeatureMap);
