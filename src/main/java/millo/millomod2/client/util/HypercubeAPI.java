@@ -3,6 +3,7 @@ package millo.millomod2.client.util;
 import millo.millomod2.client.features.impl.TemporaryTracker;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.hypercube.data.Spawn;
 import net.minecraft.util.math.Vec3d;
 
 public class HypercubeAPI {
@@ -31,6 +32,8 @@ public class HypercubeAPI {
     }
 
     public static int getPlotId() {
+        if (TemporaryTracker.getHypercubeLocation() instanceof HypercubeLocation.UnknownLocation) return -1;
+        if (TemporaryTracker.getHypercubeLocation() instanceof Spawn) return -1;
         return ((Plot) TemporaryTracker.getHypercubeLocation()).getId();
     }
 

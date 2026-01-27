@@ -17,6 +17,9 @@ public class TextElement extends TextWidget implements FadeElement {
     private TextAlignment alignment = TextAlignment.LEFT;
     private Supplier<Boolean> onClick = null;
 
+    private int xOffset = 0;
+    private int yOffset = 0;
+
     private TextElement(Text message) {
         super(message, MilloMod.MC.textRenderer);
         setWidth(MilloMod.MC.textRenderer.getWidth(message));
@@ -42,6 +45,8 @@ public class TextElement extends TextWidget implements FadeElement {
         } else if (alignment == TextAlignment.RIGHT) {
             context.getMatrices().translate(this.width - textWidth, 0);
         }
+
+        context.getMatrices().translate(xOffset, yOffset);
 
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
@@ -86,6 +91,12 @@ public class TextElement extends TextWidget implements FadeElement {
     @Override
     public Fade getFade() {
         return fade;
+    }
+
+    public TextElement offset(int x, int y) {
+        xOffset = x;
+        yOffset = y;
+        return this;
     }
 
     public enum TextAlignment {

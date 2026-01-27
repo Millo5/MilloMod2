@@ -1,4 +1,4 @@
-package millo.millomod2.client.options;
+package millo.millomod2.client.menus;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
@@ -17,9 +17,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 
-public class ConfigScreen extends Menu {
+public class ConfigMenu extends Menu {
 
-    public ConfigScreen(Screen previousScreen) {
+    public ConfigMenu(Screen previousScreen) {
         super(previousScreen);
     }
 
@@ -33,6 +33,7 @@ public class ConfigScreen extends Menu {
 //                .gap(10);
         ListElement list = ListElement.create(width/4 * 3, height)
                 .position(width/8, 0)
+                .maxExpansion(height)
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(40)
                 .gap(10);

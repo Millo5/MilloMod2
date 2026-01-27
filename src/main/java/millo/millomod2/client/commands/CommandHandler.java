@@ -3,6 +3,7 @@ package millo.millomod2.client.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.commands.impl.CommandActionDump;
+import millo.millomod2.client.commands.impl.CommandColors;
 import millo.millomod2.client.commands.impl.CommandSettings;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -28,7 +29,8 @@ public class CommandHandler {
     private CommandHandler(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess context) {
         register(dispatcher, context,
                 new CommandSettings(),
-                new CommandActionDump()
+                new CommandActionDump(),
+                new CommandColors()
         );
     }
 

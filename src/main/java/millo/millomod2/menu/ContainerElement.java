@@ -3,19 +3,22 @@ package millo.millomod2.menu;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class ContainerElement<T extends ContainerElement<?>> extends ClickableElement<T> {
 
+    private ClickableWidget focus;
     private final ArrayList<ClickableWidget> children = new ArrayList<>();
 
     public ContainerElement(int x, int y, int width, int height, Text message) {
@@ -52,17 +55,44 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (!active || !visible) return false;
-        if (!isValidClickButton(click.buttonInfo())) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
+
+        if (focus != null) focus.setFocused(false);
+        focus = null;
 
         click = transformClickToLocal(click);
         for (ClickableWidget child : getChildren()) {
             if (child.mouseClicked(click, doubled)) {
-                if (MinecraftClient.getInstance().currentScreen != null) {
-                    MinecraftClient.getInstance().currentScreen.setFocused(child);
-                }
+                focus = child;
+                focus.setFocused(true);
                 return true;
             }
+        }
+        return false;
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+        if (!focused && focus != null) focus.setFocused(false);
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        if (focus != null) return focus.keyPressed(input);
+        return false;
+    }
+
+    @Override
+    public boolean keyReleased(KeyInput input) {
+        if (focus != null) return focus.keyReleased(input);
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        if (focus != null) {
+            return focus.charTyped(input);
         }
         return false;
     }
@@ -78,8 +108,11 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
 
     @Override
     public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        Click local = transformClickToLocal(click);
+        if (focus != null) return focus.mouseDragged(local, offsetX, offsetY);
+
         for (ClickableWidget child : getChildren()) {
-            child.mouseDragged(transformClickToLocal(click), offsetX, offsetY);
+            child.mouseDragged(local, offsetX, offsetY);
         }
         return false;
     }
@@ -135,8 +168,8 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
     }
 
-    public <T extends ClickableWidget> void addChildren(List<T> children) {
-        for (T child : children) {
+    public <K extends ClickableWidget> void addChildren(Collection<K> children) {
+        for (K child : children) {
             addChild(child);
         }
     }

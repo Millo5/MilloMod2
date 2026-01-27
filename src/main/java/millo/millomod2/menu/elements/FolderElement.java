@@ -68,9 +68,11 @@ public class FolderElement extends ContainerElement<FolderElement> {
         if (!isValidClickButton(click.buttonInfo())) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
 
-        if (click.y() <= getY() + 12) setOpened(!isOpened());
-        else contentList.mouseClicked(transformClickToLocal(click), doubled);
-        return true;
+        if (click.y() <= getY() + 12) {
+            setOpened(!isOpened());
+            return true;
+        }
+        return super.mouseClicked(click, doubled);
     }
 
 
