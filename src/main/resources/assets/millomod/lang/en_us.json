@@ -22,6 +22,7 @@
   "millo.feature.config.label_scale": "Label Scale",
   "millo.feature.config.label_focus_scale": "Label Focus Scale",
   "millo.feature.config.label_hide_distance": "Label Hide Distance",
+  "millo.feature.config.enter_click": "Enter to Click",
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",

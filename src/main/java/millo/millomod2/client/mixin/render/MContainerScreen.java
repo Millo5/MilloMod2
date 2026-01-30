@@ -83,7 +83,7 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
     private void keyPressedInject(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerKeyPressed(input, cir);
+                rendered.containerKeyPressed(this.handler, input, cir);
             }
         });
     }

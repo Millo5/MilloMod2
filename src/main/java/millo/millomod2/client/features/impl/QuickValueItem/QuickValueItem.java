@@ -267,7 +267,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
     }
 
     @Override
-    public void containerKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    public <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (isTextInputShown() && argumentTextField != null) {
             argumentTextField.keyPressed(input);

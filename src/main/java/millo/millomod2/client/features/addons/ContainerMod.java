@@ -20,7 +20,7 @@ public interface ContainerMod {
 
     default void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {}
 
-    default void containerKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {}
+    default <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {}
 
     default void containerClose(CallbackInfo ci) {}
 

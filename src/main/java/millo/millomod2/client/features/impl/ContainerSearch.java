@@ -18,6 +18,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -37,6 +38,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     @Override
     public void setupConfig(FeatureConfig config) {
         config.addBoolean("always_show", true);
+        config.addBoolean("enter_click", true);
     }
 
     private boolean isShown() {
@@ -128,7 +130,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public void containerKeyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    public <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (MilloMod.MC.currentScreen == null) return;
         if (searchBox == null) return;
@@ -146,8 +148,22 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
             searchBox.keyPressed(input);
             cir.setReturnValue(true);
 
-            if (keyCode == 10) { // TODO: enter click if one highlighted
+            if (keyCode == 257 && config.getBoolean("enter_click")) {
+                String searchTerm = searchBox.getText().trim();
+                if (searchTerm.isEmpty()) return;
+                searchBox.setFocused(false);
 
+                String[] searchTerms = searchTerm.toLowerCase().split(" ");
+
+                if (MilloMod.MC.interactionManager == null) return;
+
+                for (Slot slot : handler.slots) {
+                    String itemName = slot.getStack().getName().getString().toLowerCase();
+                    if (Arrays.stream(searchTerms).allMatch(itemName::contains)) {
+                        MilloMod.MC.interactionManager.clickSlot(handler.syncId, slot.id, 0, SlotActionType.PICKUP, MilloMod.MC.player);
+                        break;
+                    }
+                }
             }
         }
 
@@ -164,6 +180,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
         searchBox.setEditable(true);
         searchBox.setSelectionStart(0);
         searchBox.setSelectionEnd(searchBox.getText().length());
+        searchBox.setFocused(true);
 
         if (MilloMod.MC.currentScreen != null) MilloMod.MC.currentScreen.setFocused(searchBox);
     }
