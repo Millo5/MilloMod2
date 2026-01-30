@@ -33,14 +33,17 @@ public class FileUtil {
     }
 
     public static void writeJson(String name, JsonObject json) {
+        writeJson(name, json.toString());
+    }
+
+    public static void writeJson(String name, String data) {
         try {
             File file = getModFolder().resolve(name).toFile();
             Files.deleteIfExists(file.toPath());
             Files.createFile(file.toPath());
-            Files.write(file.toPath(), json.toString().getBytes(), StandardOpenOption.WRITE);
+            Files.write(file.toPath(), data.getBytes(), StandardOpenOption.WRITE);
         } catch (IOException e) {
             MilloLog.error("Couldn't save json: " + e);
         }
     }
-
 }

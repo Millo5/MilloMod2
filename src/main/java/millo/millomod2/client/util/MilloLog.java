@@ -21,15 +21,19 @@ public class MilloLog {
         logInGame(message, true);
     }
 
+    private static void sendToPlayer(Text text) {
+        if (MilloMod.player() == null) return;
+        MilloMod.MC.send(() -> MilloMod.player().sendMessage(text, false));
+    }
+
     public static void logInGame(String message, boolean debugOnly) {
         LOGGER.info(message);
-        if (debugOnly && !DEBUG) return;
-        MilloMod.player().sendMessage(Text.literal("[MilloMod2] " + message), false);
+        sendToPlayer(Text.literal("[MilloMod2] " + message));
     }
 
     public static void logInGame(Text text) {
         LOGGER.info(text.getString());
-        MilloMod.player().sendMessage(Text.literal("[MilloMod2] ").append(text), false);
+        sendToPlayer(Text.literal("[MilloMod2] ").append(text));
     }
 
     public static void error(String message) {
@@ -38,7 +42,7 @@ public class MilloLog {
 
     public static void errorInGame(String message) {
         error(message);
-        MilloMod.player().sendMessage(Text.literal("[MilloMod2] Error: " + message).setStyle(Styles.SCARY.getStyle()), false);
+        sendToPlayer(Text.literal("[MilloMod2] Error: " + message).setStyle(Styles.SCARY.getStyle()));
     }
 
     public static void stackTrace(Exception e) {

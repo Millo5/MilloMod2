@@ -5,8 +5,6 @@ import millo.millomod2.client.commands.Arg;
 import millo.millomod2.client.commands.Command;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.ActionDumpReader;
-import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
-import millo.millomod2.client.util.MilloLog;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
@@ -25,6 +23,6 @@ public class CommandActionDump extends Command {
 
     @Override
     public String getId() {
-        return "settings";
+        return "milloactiondump";
     }
 }

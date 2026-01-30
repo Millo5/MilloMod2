@@ -5,6 +5,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.commands.impl.CommandActionDump;
 import millo.millomod2.client.commands.impl.CommandColors;
 import millo.millomod2.client.commands.impl.CommandSettings;
+import millo.millomod2.client.commands.impl.CommandWaypoint;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 
@@ -30,7 +31,8 @@ public class CommandHandler {
         register(dispatcher, context,
                 new CommandSettings(),
                 new CommandActionDump(),
-                new CommandColors()
+                new CommandColors(),
+                new CommandWaypoint()
         );
     }
 

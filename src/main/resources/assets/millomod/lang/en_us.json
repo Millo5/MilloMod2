@@ -18,6 +18,10 @@
   "millo.feature.config.plot_info_annoying": "Annoying Plot Info",
   "millo.feature.config.fly_speed_changes": "Fly Speed Changes",
   "millo.feature.config.plot_info_messages": "Plot Info Messages",
+  "millo.feature.config.shown_in_world": "Shown In World",
+  "millo.feature.config.label_scale": "Label Scale",
+  "millo.feature.config.label_focus_scale": "Label Focus Scale",
+  "millo.feature.config.label_hide_distance": "Label Hide Distance",
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",
@@ -34,6 +38,10 @@
   "millo.feature.notifications": "Notifications",
   "millo.feature.skin_preview": "Skin Preview",
   "millo.feature.debug": "Debug",
+  "millo.feature.time_tracker": "Time Tracker",
+  "millo.feature.sound_preview": "Sound Preview",
+  "millo.feature.particle_color_shorthand": "Particle Color Shorthand",
+  "millo.feature.waypoints": "Waypoints",
 
   "key.category.minecraft.category.millomod2": "MilloMod 2",
   "key.millomod2.command_wheel.key": "Command Wheel",
@@ -41,5 +49,6 @@
   "key.millomod2.flight_speed_toggle.key": "Toggle Flight Speed",
   "key.millomod2.pick_chest_value.key": "Pick Chest Value",
   "key.millomod2.show_item_tags.key": "Show Item Tags",
-  "key.millomod2.spectator_toggle.key": "Spectator Toggle"
+  "key.millomod2.spectator_toggle.key": "Spectator Toggle",
+  "key.millomod2.waypoints.key": "TP to Waypoint"
 }

@@ -4,6 +4,7 @@ import millo.millomod2.menu.ContainerElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 public class FolderElement extends ContainerElement<FolderElement> {
 
@@ -50,9 +51,16 @@ public class FolderElement extends ContainerElement<FolderElement> {
 
     @Override
     protected void renderElement(RenderArgs args) {
-        args.context().drawText(getTextRenderer(), title, 0, 0, 0xFFFFFFFF, true);
+        args.context().drawText(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
 
         float targetHeight = opened ? Math.min(maxHeightWhenOpened, contentList.getHeight() + 12) : 12;
+
+        Matrix3x2fStack mats = args.context().getMatrices();
+        mats.pushMatrix();
+        mats.rotateAbout((contentList.getHeight() / visualHeight) * 1.570796f, 9f, 5);
+        args.context().drawText(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
+        mats.popMatrix();
+
         visualHeight += (targetHeight - visualHeight) * 0.2f;
         setHeight((int) visualHeight);
 

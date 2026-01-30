@@ -12,6 +12,7 @@ public class TextFieldElement extends TextFieldWidget implements FadeElement {
 
     public TextFieldElement(int width, int height, Text text) {
         super(MilloMod.MC.textRenderer, width, height, text);
+        setText(text.getString());
 
         setDrawsBackground(false);
     }

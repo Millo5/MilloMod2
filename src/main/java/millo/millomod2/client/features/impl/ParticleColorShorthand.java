@@ -3,22 +3,21 @@ package millo.millomod2.client.features.impl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import millo.millomod2.client.features.Feature;
-import millo.millomod2.client.features.addons.OnSendPacket;
+import millo.millomod2.client.features.addons.ChatSendInjector;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 
-public class ParticleColorShorthand extends Feature implements Toggleable {
+public class ParticleColorShorthand extends Feature implements Toggleable, ChatSendInjector {
 
     @Override
     public String getId() {
         return "particle_color_shorthand";
     }
 
-    @OnSendPacket
-    public boolean onSendMessage(ChatMessageC2SPacket packet) {
+    @Override
+    public boolean onSendMessage(String msg) {
         if (!isEnabled() || player() == null) return false;
 
         ItemStack heldItem = player().getMainHandStack();
@@ -30,13 +29,16 @@ public class ParticleColorShorthand extends Feature implements Toggleable {
         String id = obj.get("id").getAsString();
         if (!id.equals("part")) return false;
 
-        String msg = packet.chatMessage();
-        if (!msg.matches("^<?#[0-9a-fA-F]{6}>?$")) return false;
+        if (msg.matches("^<?#[0-9a-fA-F]{6}>?$")) {
+            msg = msg.replaceAll("[<>]", "");
+            PlayerUtil.sendCommand("par color " + msg);
+            return true;
+        }
 
+        if (!msg.matches("^f<?#[0-9a-fA-F]{6}>?$")) return false;
         msg = msg.replaceAll("[<>]", "");
+        PlayerUtil.sendCommand("par fade " + msg);
 
-        PlayerUtil.sendCommand("par color " + msg);
         return true;
     }
-
 }

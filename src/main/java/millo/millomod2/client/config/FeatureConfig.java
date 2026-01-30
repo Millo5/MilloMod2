@@ -72,6 +72,10 @@ public class FeatureConfig {
         return this;
     };
 
+    public void addFloat(String key, float def) {
+        addValue(key, new FloatConfigValue(def));
+    }
+
     public FeatureConfig addString(String key, String def) {
         addValue(key, new StringConfigValue(def));
         return this;
@@ -109,6 +113,10 @@ public class FeatureConfig {
 
     public boolean getBoolean(String key) {
         return ((BooleanConfigValue) get(key)).getValue();
+    }
+
+    public float getFloat(String key) {
+        return ((FloatConfigValue) get(key)).getValue();
     }
 
     public String getString(String key) {

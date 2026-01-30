@@ -9,6 +9,7 @@
     "network.MClientPlayNetworkHandler",
     "render.MClickableWidget",
     "render.MContainerScreen",
+    "render.MGameRenderer",
     "render.MInGameHUD",
     "render.accessors.ClickableWidgetAccessor",
     "render.accessors.HandledScreenAccessor",

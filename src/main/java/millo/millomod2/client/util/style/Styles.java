@@ -89,6 +89,14 @@ public enum Styles {
         return MilloMod.translatable("disabled").setStyle(FALSE.getStyle());
     }
 
+    public static Style ofHex(String hex) {
+        if (hex.matches("^#[0-9a-fA-F]{6}$")) {
+            var col = Color.decode(hex);
+            return Style.EMPTY.withColor(col.hashCode());
+        }
+        return Styles.UNSAVED.getStyle();
+    }
+
     public Style getStyle() {
         return style;
     }

@@ -5,18 +5,20 @@ import millo.millomod2.menu.elements.TextFieldElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
-public class IntegerConfigValue extends ConfigValue<Integer> {
+public class FloatConfigValue extends ConfigValue<Float> {
 
-    public IntegerConfigValue(Integer defaultValue) {
+    public FloatConfigValue(Float defaultValue) {
         super(defaultValue);
     }
 
     @Override
     public ClickableWidget createWidget() {
-        TextFieldElement element = new TextFieldElement(150, 20, Text.literal(String.valueOf(value)));
+        String value = String.valueOf(this.value).replaceAll(",", ".");
+        TextFieldElement element = new TextFieldElement(150, 20, Text.literal(value));
+        element.setText(value);
         element.setChangedListener((str) -> {
             try {
-                setValue(Integer.parseInt(str));
+                setValue(Float.parseFloat(str));
             } catch (NumberFormatException e) {
                 // Ignore invalid input
             }
@@ -26,7 +28,7 @@ public class IntegerConfigValue extends ConfigValue<Integer> {
 
     @Override
     public void deserialize(Object obj) {
-        if (obj instanceof Number n) setValue(n.intValue());
+        if (obj instanceof Number n) setValue(n.floatValue());
     }
 
 }

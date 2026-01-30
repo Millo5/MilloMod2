@@ -28,6 +28,8 @@ public class TemporaryTracker extends Feature {
     private static int requestPlotIdDelay = 0;
     private static Vec3d localPlayerPos;
 
+    private static Vec3d lastModePlayerPos;
+
 
     @Override
     public String getId() {
@@ -64,6 +66,7 @@ public class TemporaryTracker extends Feature {
     @OnReceivePacket
     public boolean positionLook(PlayerPositionLookS2CPacket packet) {
         if (step == Sequence.WAIT_FOR_POS) {
+            lastModePlayerPos = player().getEntityPos();
             x = packet.change().position().getX();
             z = packet.change().position().getZ();
             step = Sequence.WAIT_FOR_MESSAGE;
@@ -153,6 +156,10 @@ public class TemporaryTracker extends Feature {
 
     //
 
+
+    public static Vec3d getLastModePlayerPos() {
+        return lastModePlayerPos;
+    }
 
     public static HypercubeAPI.Mode getMode() {
         return mode;

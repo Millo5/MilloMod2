@@ -20,6 +20,7 @@ public class TeleportHandler extends Feature {
     private Vec3d target;
 
 
+
     @Override
     public String getId() {
         return "teleport_handler";
@@ -52,11 +53,16 @@ public class TeleportHandler extends Feature {
         return cancel;
     }
 
+    public static void teleportTo(Vec3d position) {
+        teleportTo(position, false);
+    }
+
     public static void teleportTo(Vec3d target, boolean cancel) {
         PlayerUtil.sendCommand("p tp " + target.x + " " + target.y + " " + target.z);
         instance.active = true;
         instance.cancel = cancel;
         instance.target = target;
+        instance.callback = null;
     }
 
     public static void teleportToMethod(String methodName, boolean cancel, Consumer<Vec3d> callback) {

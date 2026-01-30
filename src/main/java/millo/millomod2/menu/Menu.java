@@ -1,5 +1,6 @@
 package millo.millomod2.menu;
 
+import millo.millomod2.client.MilloMod;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -58,5 +59,9 @@ public abstract class Menu extends Screen {
         addDrawableChild(menu);
     }
 
+
+    public void open() {
+        MilloMod.MC.send(() -> MilloMod.MC.setScreen(this));
+    }
 
 }

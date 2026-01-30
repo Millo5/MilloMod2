@@ -50,7 +50,7 @@ public class ConfigMenu extends Menu {
             folder.getContent().crossAlign(CrossAxisAlignment.CENTER);
 
             config.forEach(configValue -> {
-                FlexElement setting = FlexElement.create(width / 2 - 10, 20)
+                FlexElement<?> setting = FlexElement.create(width / 2 - 10, 20)
                         .direction(ElementDirection.ROW)
                         .mainAlign(MainAxisAlignment.SPACE_BETWEEN)
                         .crossAlign(CrossAxisAlignment.CENTER)

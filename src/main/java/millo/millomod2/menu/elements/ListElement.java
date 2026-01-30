@@ -74,22 +74,22 @@ public class ListElement extends ContainerElement<ListElement> {
     @Override
     public void setWidth(int width) {
         super.setWidth(width);
-        if (direction == ElementDirection.ROW) {
-            minExpansion = width;
-        }
+//        if (direction == ElementDirection.ROW) {
+//            minExpansion = width;
+//        }
     }
 
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
-        if (direction == ElementDirection.COLUMN) {
-            minExpansion = height;
-        }
+        // I hope commenting these out doesn't break anything :)
+//        if (direction == ElementDirection.COLUMN) {
+//            minExpansion = height;
+//        }
     }
 
 
     //
-
     @Override
     public void layoutChildren() {
         List<ClickableWidget> children = getChildren();
@@ -102,7 +102,6 @@ public class ListElement extends ContainerElement<ListElement> {
         boolean vertical = direction == ElementDirection.COLUMN;
 
         int cursor = padding - (int) renderedScrollOffset;
-        int contentCross = 0;
 
         for (ClickableWidget child : children) {
             if (children instanceof ContainerElement<?> ce) {
@@ -111,11 +110,9 @@ public class ListElement extends ContainerElement<ListElement> {
             if (vertical) {
                 child.setPosition(padding + crossOffset(child.getWidth()), cursor);
                 cursor += child.getHeight() + gap;
-                contentCross = Math.max(contentCross, child.getWidth());
             } else {
                 child.setPosition(cursor, padding + crossOffset(child.getHeight()));
                 cursor += child.getWidth() + gap;
-                contentCross = Math.max(contentCross, child.getHeight());
             }
         }
 
