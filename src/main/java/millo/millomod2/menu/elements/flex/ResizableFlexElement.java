@@ -59,8 +59,9 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
                     }
                 }
             }
-
         }
+
+        super.renderElement(args);
     }
 
     @Override

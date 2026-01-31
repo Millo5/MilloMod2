@@ -12,7 +12,7 @@ import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.TemporaryTracker;
 import millo.millomod2.client.hypercube.data.Plot;
-import millo.millomod2.client.menus.AddWaypointMenu;
+import millo.millomod2.client.menus.WaypointMenu;
 import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.HypercubeAPI;
@@ -73,7 +73,8 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
                 selected.teleport();
                 break;
             }
-            if (player().isSneaking()) new AddWaypointMenu(null, player().getEntityPos()).open();
+//            if (player().isSneaking()) new AddWaypointMenu(null, player().getEntityPos()).open();
+            if (player().isSneaking()) new WaypointMenu(null).open();
         }
 
         Vec3d pos = player().getEyePos();

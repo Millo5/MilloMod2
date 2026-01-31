@@ -62,7 +62,7 @@ public class Editor extends Feature implements Keybound {
 
         legacy.getMethodFromPosition(pos, player(), net(), (template) -> {
             if (template == null) {
-                MilloLog.logInGame("No template found for this block.");
+                MilloLog.error("No template found for this block.");
                 return;
             }
             if (screen == null) return;

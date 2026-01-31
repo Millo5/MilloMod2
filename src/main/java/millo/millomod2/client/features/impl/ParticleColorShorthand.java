@@ -36,7 +36,7 @@ public class ParticleColorShorthand extends Feature implements Toggleable, ChatS
         }
 
         if (!msg.matches("^f<?#[0-9a-fA-F]{6}>?$")) return false;
-        msg = msg.replaceAll("[<>]", "");
+        msg = msg.replaceAll("[<>]", "").substring(1);
         PlayerUtil.sendCommand("par fade " + msg);
 
         return true;

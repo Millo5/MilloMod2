@@ -62,6 +62,16 @@ public class Template {
         return name;
     }
 
+    public MethodType getTemplateMethodType() {
+        if (blocks == null || blocks.isEmpty()) return MethodType.FUNC;
+
+        return MethodType.valueOf(blocks.getFirst().block.toUpperCase());
+    }
+
+    public String getMethodName() {
+        return getTemplateMethodType().suffixString(getName());
+    }
+
     public ItemStack getItem() {
         ItemStack item = new ItemStack(Items.ENDER_CHEST);
 

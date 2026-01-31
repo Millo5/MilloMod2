@@ -28,7 +28,7 @@ public class MainBody extends FlexElement<MainBody> {
 
         background(0x11000000);
 
-        hierarchy = new Hierarchy(menu.width / 5, height)
+        hierarchy = new Hierarchy(menu, menu.width / 5, height)
                 .maxWidth(menu.width / 2)
                 .minWidth(20);
         codeBrowser = new CodeBrowser(width - hierarchy.getWidth(), height);
@@ -54,5 +54,9 @@ public class MainBody extends FlexElement<MainBody> {
             codeBrowser.layoutChildren();
         }
         super.renderElement(args);
+    }
+
+    public Hierarchy getHierarchy() {
+        return hierarchy;
     }
 }

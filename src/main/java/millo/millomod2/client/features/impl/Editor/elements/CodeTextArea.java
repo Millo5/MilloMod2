@@ -32,15 +32,15 @@ public class CodeTextArea extends ListElement {
 
         MilloMod.MC.send(() -> {
             clearContents();
-            loadCodeBody(result, template.getName());
+            loadCodeBody(result, template);
         });
     }
 
 
     // Code loading
 
-    private void loadCodeBody(CodeBody body, String name) {
-        CodeBodyBuilder builder = new CodeBodyBuilder(body, this, name);
+    private void loadCodeBody(CodeBody body, Template template) {
+        CodeBodyBuilder builder = new CodeBodyBuilder(body, this, template);
         builder.build();
 
 

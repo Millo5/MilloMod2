@@ -1,5 +1,6 @@
 package millo.millomod2.client.menus;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Waypoints.Waypoint;
 import millo.millomod2.client.features.impl.Waypoints.Waypoints;
@@ -65,9 +66,17 @@ public class WaypointMenu extends Menu {
             var wpLabel = TextElement.create(waypoint.label());
             box.addChildren(wpLabel, wpButtons);
 
-
             main.addChild(box);
         }
+
+        main.addChild(ButtonElement.create(200, 20)
+                .message(Text.literal("Add Waypoint"))
+                .onPress((b) -> {
+                    if (MilloMod.player() == null) return;
+                    new AddWaypointMenu(this, MilloMod.player().getEntityPos()).open();
+                })
+                .background(0x80000000)
+        );
 
 
     }

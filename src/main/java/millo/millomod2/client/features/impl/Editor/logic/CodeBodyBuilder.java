@@ -6,6 +6,7 @@ import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
 import millo.millomod2.client.features.impl.Editor.template.lines.ErrorLine;
 import millo.millomod2.client.features.impl.TeleportHandler;
+import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.BlockFaceElement;
 import millo.millomod2.menu.elements.TextElement;
@@ -21,14 +22,16 @@ public class CodeBodyBuilder {
     private final CodeBody root;
     private final CodeTextArea codeTextArea;
 
+    private final Template template;
     private final String methodName;
 
     private int indentLevel = 0;
     private int lineNumber = 1;
     private int physicalOffset = 0;
 
-    public CodeBodyBuilder(CodeBody body, CodeTextArea codeTextArea, String name) {
-        this.methodName = name;
+    public CodeBodyBuilder(CodeBody body, CodeTextArea codeTextArea, Template template) {
+        this.methodName = template.getName();
+        this.template = template;
         this.root = body;
         this.codeTextArea = codeTextArea;
     }
@@ -68,7 +71,7 @@ public class CodeBodyBuilder {
                 .hoverBackground(0x33000000)
                 .background(0)
                 .onPress((button) -> {
-                    TeleportHandler.teleportToMethod(methodName, true, (pos) -> {
+                    TeleportHandler.teleportToMethod(template.getTemplateMethodType().prefixString(methodName), true, (pos) -> {
                         TeleportHandler.teleportTo(pos.add(-1, -1.5, physicalOffset), false);
                     });
                 })

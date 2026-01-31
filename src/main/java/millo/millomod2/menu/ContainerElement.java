@@ -13,7 +13,6 @@ import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class ContainerElement<T extends ContainerElement<?>> extends ClickableElement<T> {
@@ -26,7 +25,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     public List<ClickableWidget> getChildren() {
-        return Collections.unmodifiableList(children);
+        return List.copyOf(children);
     }
 
     public void addChild(ClickableWidget child) {
@@ -155,7 +154,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     protected void renderChildren(RenderArgs args) {
-        for (ClickableWidget child : getChildren()) {
+        for (ClickableWidget child : List.copyOf(getChildren())) {
             child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
         }
     }

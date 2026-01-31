@@ -70,7 +70,7 @@ public class TemporaryTracker extends Feature {
     @OnReceivePacket
     public boolean positionLook(PlayerPositionLookS2CPacket packet) {
         if (step == Sequence.WAIT_FOR_POS) {
-            lastModePlayerPos = player().getEntityPos();
+            if (player() != null) lastModePlayerPos = player().getEntityPos();
             x = packet.change().position().getX();
             z = packet.change().position().getZ();
             step = Sequence.WAIT_FOR_MESSAGE;

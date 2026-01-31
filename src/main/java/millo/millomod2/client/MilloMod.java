@@ -82,13 +82,8 @@ public class MilloMod implements ClientModInitializer {
         find tab in hierarchy (highlight in hierarchy)
         "else" block looks weird
 
-    dev movement
-        air strafing
-        layers to stand on (codeclient)
-        teleporting (codeclient)
-        ultrakill mode
-
-        airhits
+    ultrakill mode
+    airhits in dev
 
     action reference display
     action argument display (per slot)

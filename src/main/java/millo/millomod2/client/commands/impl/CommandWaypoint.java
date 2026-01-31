@@ -32,8 +32,7 @@ public class CommandWaypoint extends Command {
                         .then(Arg.argument("name", StringArgumentType.greedyString())
                                 .executes(ctx -> {
                                     if (instance.player == null) return 1;
-                                    var menu = new AddWaypointMenu(null, instance.player.getEntityPos());
-                                    menu.setName(StringArgumentType.getString(ctx, "name"));
+                                    var menu = new AddWaypointMenu(null, instance.player.getEntityPos(), StringArgumentType.getString(ctx, "name"));
                                     menu.open();
                                     return 1;
                                 })

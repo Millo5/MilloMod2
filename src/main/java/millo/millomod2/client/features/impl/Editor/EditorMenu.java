@@ -54,6 +54,7 @@ public class EditorMenu extends Menu {
             cachedBody = mainBody;
             cachedId = loadedPlot.getPlotId();
         }
+        mainBody.getHierarchy().reload();
 
 
         main.addChildren(
@@ -65,10 +66,14 @@ public class EditorMenu extends Menu {
 
 
     public void openTemplate(Template template) {
-//        TemplateParser parser = new TemplateParser(template);
+        loadedPlot.addTemplate(template);
         mainBody.getCodeBrowser().openTemplate(template);
+        mainBody.getHierarchy().reload();
     }
 
+    public EditorPlot getLoadedPlot() {
+        return loadedPlot;
+    }
 
     public static void unloadPlot() {
         loadedPlot = null;
@@ -82,4 +87,7 @@ public class EditorMenu extends Menu {
 
     }
 
+    public MainBody getMain() {
+        return mainBody;
+    }
 }

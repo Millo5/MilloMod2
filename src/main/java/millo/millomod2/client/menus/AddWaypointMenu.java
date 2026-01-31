@@ -30,6 +30,14 @@ public class AddWaypointMenu extends Menu {
     private TextFieldElement inputTitle;
     private TextFieldElement inputColor;
 
+
+    private String preInputTitle = "New Waypoint";
+
+    public AddWaypointMenu(Screen parent, Vec3d pos, String name) {
+        this(parent, pos);
+        preInputTitle = name;
+    }
+
     public AddWaypointMenu(Screen parent, Vec3d pos) {
         super(parent == null ? new WaypointMenu(null) : parent);
         defaultPos = pos;
@@ -82,8 +90,8 @@ public class AddWaypointMenu extends Menu {
                 .padding(20)
                 .gap(5);
         main.addChild(titleInput);
-        inputTitle = new TextFieldElement(200, 14, Text.literal("New Waypoint"));
-        inputTitle.setText("New Waypoint");
+        inputTitle = new TextFieldElement(200, 14, Text.literal(preInputTitle));
+        inputTitle.setText(preInputTitle);
         inputColor = new TextFieldElement(40, 14, Text.literal("#ffffff"));
         inputColor.setText("#ffffff");
 

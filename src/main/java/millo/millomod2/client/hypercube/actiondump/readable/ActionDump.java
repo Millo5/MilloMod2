@@ -18,7 +18,7 @@ public class ActionDump {
 
         Optional<RawActionDump> raw = RawActionDump.getActionDump();
         if (raw.isEmpty()) {
-            MilloLog.logInGame("ActionDump not found!");
+            MilloLog.error("ActionDump not found!");
             return Optional.empty();
         }
 

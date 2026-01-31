@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 
 public class FileUtil {
 
@@ -43,7 +44,43 @@ public class FileUtil {
             Files.createFile(file.toPath());
             Files.write(file.toPath(), data.getBytes(), StandardOpenOption.WRITE);
         } catch (IOException e) {
-            MilloLog.error("Couldn't save json: " + e);
+            MilloLog.errorInGame("Couldn't save json: " + e);
         }
+    }
+
+    public static void write(Path path, String data) {
+        try {
+            File file = path.toFile();
+            Files.deleteIfExists(file.toPath());
+            Files.createFile(file.toPath());
+            Files.write(file.toPath(), data.getBytes(), StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            MilloLog.errorInGame("Couldn't save file: " + e);
+        }
+    }
+
+    public static String read(Path filePath) {
+        File file = filePath.toFile();
+        if (!file.exists()) return null;
+
+        try {
+            return new String(Files.readAllBytes(file.toPath()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Iterable<Path> listFiles(Path plotFolder) {
+        File folder = plotFolder.toFile();
+        if (!folder.exists()) return null;
+
+        ArrayList<Path> paths = new ArrayList<>();
+        File[] files = folder.listFiles();
+        if (files == null) return null;
+
+        for (File file : files) {
+            paths.add(file.toPath());
+        }
+        return paths;
     }
 }
