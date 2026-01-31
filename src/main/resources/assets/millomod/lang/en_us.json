@@ -23,6 +23,12 @@
   "millo.feature.config.label_focus_scale": "Label Focus Scale",
   "millo.feature.config.label_hide_distance": "Label Hide Distance",
   "millo.feature.config.enter_click": "Enter to Click",
+  "millo.feature.config.no_clip": "No Clip",
+  "millo.feature.config.down_angle": " - Layer Down Angle",
+  "millo.feature.config.down_sneak": " - Layer Down Sneak Required",
+  "millo.feature.config.up_angle": " - Layer Up Angle",
+  "millo.feature.config.acceleration": "Acceleration",
+  "millo.feature.config.acceleration_amount": " - Multiplier",
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",
@@ -43,6 +49,7 @@
   "millo.feature.sound_preview": "Sound Preview",
   "millo.feature.particle_color_shorthand": "Particle Color Shorthand",
   "millo.feature.waypoints": "Waypoints",
+  "millo.feature.dev_movement": "Dev Movement",
 
   "key.category.minecraft.category.millomod2": "MilloMod 2",
   "key.millomod2.command_wheel.key": "Command Wheel",

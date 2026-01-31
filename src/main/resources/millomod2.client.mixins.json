@@ -6,6 +6,7 @@
   "client": [
     "core.MMouse",
     "network.MClientCommonNetworkHandler",
+    "network.MClientPlayerEntity",
     "network.MClientPlayNetworkHandler",
     "render.MClickableWidget",
     "render.MContainerScreen",
@@ -22,7 +23,10 @@
     "requireAnnotations": true
   },
   "mixins": [
+    "core.MEntity",
+    "core.MLivingEntity",
     "network.MClientConnection",
+    "network.MPlayerEntity",
     "render.MItemStack"
   ]
 }

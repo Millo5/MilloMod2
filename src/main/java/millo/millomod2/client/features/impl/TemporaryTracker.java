@@ -4,13 +4,17 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
+import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.regex.Matcher;
@@ -40,10 +44,10 @@ public class TemporaryTracker extends Feature {
         TemporaryTracker.mode = mode;
         step = Sequence.WAIT_FOR_CLEAR;
         requestPlotId = true;
-        requestPlotIdDelay = 20;
+        requestPlotIdDelay = 5;
 
         if (mode == HypercubeAPI.Mode.DEV) {
-            hypercubeLocation.setPos(new Vec3d(x + 9.5, 0, z - 10.5));
+            hypercubeLocation.setPos(new Vec3d(x + 9.5 + 2, 0, z - 10.5));
         }
     }
 
@@ -95,6 +99,25 @@ public class TemporaryTracker extends Feature {
         if (player() != null && hypercubeLocation.getPos() != null) {
             localPlayerPos = hypercubeLocation.getPos().relativize(player().getEntityPos()).add(-1, 0, 0);
         }
+
+        if (hypercubeLocation instanceof Plot plot && mode == HypercubeAPI.Mode.DEV) {
+            if (MC.world != null) {
+                BlockState undergroundCheckBlock = MC.world.getBlockState(new BlockPos(
+                        (int) plot.getPos().x-1,
+                        49,
+                        (int) plot.getPos().z
+                ));
+                if (!undergroundCheckBlock.isOf(Blocks.VOID_AIR)) plot.setHasUnderground(undergroundCheckBlock.isOf(Blocks.AIR));
+
+                BlockState megaCheckBlock = MC.world.getBlockState(new BlockPos(
+                        (int) plot.getPos().x-21,
+                        49,
+                        (int) plot.getPos().z
+                ));
+                if (!megaCheckBlock.isOf(Blocks.VOID_AIR)) plot.setMega(megaCheckBlock.isOf(Blocks.STONE) || megaCheckBlock.isOf(Blocks.AIR));
+            }
+        }
+
     }
 
     @OnReceivePacket
@@ -129,7 +152,7 @@ public class TemporaryTracker extends Feature {
                     int id = Integer.parseInt(plotIdString);
                     setHypercubeLocation(hypercubeLocation.update(plotName, id, plotOwner));
                     if (mode == HypercubeAPI.Mode.DEV) {
-                        hypercubeLocation.setPos(new Vec3d(x + 9.5, 0, z - 10.5));
+                        hypercubeLocation.setPos(new Vec3d(x + 11.5, 0, z - 10.5));
                     }
                     requestPlotId = false;
                     return true;

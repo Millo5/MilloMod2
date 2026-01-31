@@ -7,14 +7,15 @@ public class Plot extends HypercubeLocation {
     private final int id;
     private final String name;
     private final String owner;
-    private Maybe hasUnderground;
+    private boolean hasUnderground;
+    private boolean isMega;
 
 
     public Plot(int id, String name, String owner) {
         this.id = id;
         this.name = name;
         this.owner = owner;
-        this.hasUnderground = Maybe.UNKNOWN;
+        this.hasUnderground = false;
 
         FeatureHandler.onEnterPlot(this);
     }
@@ -33,18 +34,26 @@ public class Plot extends HypercubeLocation {
     }
 
     public boolean hasUnderground() {
-        return hasUnderground == Maybe.TRUE;
+        return hasUnderground;
     }
 
     public void setHasUnderground(boolean hasUnderground) {
-        this.hasUnderground = hasUnderground ? Maybe.TRUE : Maybe.FALSE;
+        this.hasUnderground = hasUnderground;
     }
 
-
-    private enum Maybe {
-        TRUE,
-        FALSE,
-        UNKNOWN
+    public boolean isMega() {
+        return isMega;
     }
 
+    public void setMega(boolean mega) {
+        isMega = mega;
+    }
+
+    public int getFloorHeight() {
+        return hasUnderground ? 5 : 50;
+    }
+
+    public double getDepth() {
+        return isMega ? 300 : 20;
+    }
 }

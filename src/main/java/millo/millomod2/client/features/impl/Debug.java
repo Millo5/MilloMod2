@@ -73,6 +73,7 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
             lines.add("  Id: " + plot.getId());
             lines.add("  Name: " + plot.getName());
             lines.add("  Has Underground: " + plot.hasUnderground());
+            lines.add("  Mega: " + plot.isMega());
         }
         lines.add("  " + location.toString());
 
