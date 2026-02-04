@@ -1,7 +1,9 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
+import millo.millomod2.client.features.FeatureHandler;
+import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
-import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyEntry;
+import millo.millomod2.menu.elements.FolderElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
@@ -25,10 +27,10 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         crossAlign(CrossAxisAlignment.STRETCH);
         padding(5);
 
-        list = ListElement.create(20, height)
+        list = ListElement.create(20, height - 10)
                 .direction(ElementDirection.COLUMN)
                 .crossAlign(CrossAxisAlignment.STRETCH)
-                .maxExpansion(height);
+                .maxExpansion(height - 12);
 
         addChild(list);
     }
@@ -38,8 +40,37 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         if (menu == null) return;
         if (menu.getLoadedPlot() == null) return;
 
-        for (HierarchyEntry entry : menu.getLoadedPlot().getHierarchyEntries()) {
-            list.addChild(entry.getElement(menu.getMain().getCodeBrowser()));
+        list.addChild(menu.getLoadedPlot().getRootFolder().getElement(menu.getMain().getCodeBrowser()));
+    }
+
+    public void focus(String methodName) {
+        String folderRegex = FeatureHandler.get(Editor.class).getFolderRegex();
+        String[] pathParts = methodName.split(folderRegex);
+
+        if (pathParts.length == 0) return;
+
+        FolderElement root = (FolderElement) list.getChildren().getFirst();
+        root.setOpened(true);
+
+        focusFolder(root.getContent(), pathParts, 0);
+    }
+
+    private void focusFolder(ListElement listElement, String[] pathParts, int index) {
+        if (index >= pathParts.length) return;
+
+        for (var child : listElement.getChildren()) {
+            if (child instanceof FolderElement folder) {
+                String folderName = folder.getTitle().getString();
+                if (folderName.equals(pathParts[index])) {
+                    folder.setOpened(true);
+                    listElement.layoutChildren();
+
+                    if (index + 1 < pathParts.length) {
+                        focusFolder(folder.getContent(), pathParts, index + 1);
+                    }
+                    return;
+                }
+            }
         }
     }
 

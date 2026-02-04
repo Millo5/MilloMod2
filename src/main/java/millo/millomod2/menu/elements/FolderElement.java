@@ -4,6 +4,7 @@ import millo.millomod2.menu.ContainerElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix3x2fStack;
 
 public class FolderElement extends ContainerElement<FolderElement> {
@@ -20,12 +21,14 @@ public class FolderElement extends ContainerElement<FolderElement> {
         contentList = ListElement.create(width, height - 12)
                 .gap(4)
                 .padding(4)
-                .position(0, 12);
+                .position(0, 12)
+                .maxExpansion(height - 12);
         super.addChild(contentList);
         maxHeightWhenOpened = height;
     }
     public static FolderElement create(int width, int height, Text title) {
-        return new FolderElement(0, 0, width, height, title);
+        return new FolderElement(0, 0, width, height, title)
+                .background(0x40000000);
     }
 
     public FolderElement position(int x, int y) {
@@ -51,6 +54,8 @@ public class FolderElement extends ContainerElement<FolderElement> {
 
     @Override
     protected void renderElement(RenderArgs args) {
+        args.context().fill(0, 0, getWidth(), getHeight(), background);
+
         args.context().drawText(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
 
         float targetHeight = opened ? Math.min(maxHeightWhenOpened, contentList.getHeight() + 12) : 12;
@@ -61,10 +66,10 @@ public class FolderElement extends ContainerElement<FolderElement> {
         args.context().drawText(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
         mats.popMatrix();
 
-        visualHeight += (targetHeight - visualHeight) * 0.2f;
-        setHeight((int) visualHeight);
+//        visualHeight += (targetHeight - visualHeight) * 0.2f;
+        visualHeight = MathHelper.clampedLerp(args.deltaTicks(), visualHeight, targetHeight);
+        setHeight(Math.round(visualHeight));
 
-        args.context().fill(0, 0, getWidth(), getHeight(), 0x22000000);
 
         renderChildren(args);
     }
@@ -87,5 +92,9 @@ public class FolderElement extends ContainerElement<FolderElement> {
     @Override
     public void addChild(ClickableWidget child) {
         contentList.addChild(child);
+    }
+
+    public Text getTitle() {
+        return title;
     }
 }

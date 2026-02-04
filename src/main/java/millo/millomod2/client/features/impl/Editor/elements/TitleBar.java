@@ -1,6 +1,8 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.features.FeatureHandler;
+import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.menu.elements.ClickableElement;
@@ -41,15 +43,21 @@ public class TitleBar extends FlexElement<TitleBar> {
 
 
         currentPlotDropDown = DropDownElement.create(100, 15)
+                .offsetY(3)
                 .background(0x33000000)
                 .message(Text.literal("No Plot Loaded"))
-                .addOption(Text.literal("Open..."), menu::openPlotSelector)
+                .addOption(Text.literal("Open..."), menu::openPlotSelector);
+
+        if (false) {
+            currentPlotDropDown
                 .addSpacer()
-                .addHeader(Text.literal("Recent Plots").withColor(0x33AAAAAA))
-                .addOption(Text.literal("Menaces (42044)"), (button) -> {})
-                .addOption(Text.literal("Example Plot (12345)"), (button) -> {})
-                .addOption(Text.literal("cliffs (not happening)"), (button) -> {})
-                .offsetY(3);
+                .addHeader(Text.literal("Recent Plots").withColor(0x33AAAAAA));
+
+            for (int i = 0; i < 5; i++) {
+                currentPlotDropDown
+                    .addOption(Text.literal("Menaces (42044)"), (button) -> menu.loadPlot(42044));
+            }
+        }
 
 
         ///
@@ -60,11 +68,11 @@ public class TitleBar extends FlexElement<TitleBar> {
         );
 
 
-//        right.addChild(
-//                ButtonElement.create(60, 15)
-//                        .message(Text.literal("Fetch All"))
-//                        .onPress(this::search)
-//        );
+        right.addChild(
+                ButtonElement.create(60, 15)
+                        .message(Text.literal("Fetch All"))
+                        .onPress(this::getAllTemplates)
+        );
 
         right.addChildren(
 //                ButtonElement.create(60, 15)
@@ -83,6 +91,11 @@ public class TitleBar extends FlexElement<TitleBar> {
                 left,
                 right
         );
+    }
+
+    private void getAllTemplates(ButtonElement button) {
+        Editor editor = FeatureHandler.get(Editor.class);
+        editor.getAllTemplates();
     }
 
     public TitleBar(EditorMenu menu) {

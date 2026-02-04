@@ -1,7 +1,5 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
-import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyEntry;
-import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMethod;
 import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.FileUtil;
 
@@ -12,11 +10,9 @@ public class EditorFileManager {
 
     private final EditorPlot plot;
 
-
     public EditorFileManager(EditorPlot plot) {
         this.plot = plot;
     }
-
 
     private Path getRootFolder() {
         return FileUtil.getModFolder().resolve("plots");
@@ -26,6 +22,10 @@ public class EditorFileManager {
         return getRootFolder().resolve(String.valueOf(plot.getPlotId()));
     }
 
+    public static boolean plotExists(int plotId) {
+        Path plotFolder = FileUtil.getModFolder().resolve("plots").resolve(String.valueOf(plotId));
+        return plotFolder.toFile().exists();
+    }
 
 
     public static String serializeMethodName(String name) {
@@ -82,16 +82,14 @@ public class EditorFileManager {
         return Template.parseBase64(b64Code);
     }
 
-    public void load(ArrayList<HierarchyEntry> hierarchyEntries) {
-        hierarchyEntries.clear();
-        if (!getPlotFolder().toFile().exists()) return;
+    public ArrayList<Template> load() {
+        ArrayList<Template> templates = new ArrayList<>();
+        if (!getPlotFolder().toFile().exists()) return templates;
 
         FileUtil.listFiles(getPlotFolder()).forEach(path -> {
-            String fileName = path.getFileName().toString();
-            Template template = readTemplate(deserializeMethodName(fileName));
-            if (template != null) {
-                hierarchyEntries.add(new HierarchyMethod(template));
-            }
+            Template template = readTemplate(deserializeMethodName(path.getFileName().toString()));
+            if (template != null) templates.add(template);
         });
+        return templates;
     }
 }

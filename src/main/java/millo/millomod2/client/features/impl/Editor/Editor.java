@@ -1,23 +1,35 @@
 package millo.millomod2.client.features.impl.Editor;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.HypercubeAPI;
+import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.PlayerUtil;
+import millo.millomod2.client.util.style.Styles;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class Editor extends Feature implements Keybound {
+public class Editor extends Feature implements Keybound, Configurable {
 
     // this feature doesn't contain any logic for the Editor Menu itself
     // only the interaction logic with hypercube.
@@ -25,9 +37,22 @@ public class Editor extends Feature implements Keybound {
     private final LegacyEditorSupport legacy;
     private EditorMenu screen;
 
+    private boolean fetchingAllTemplates = false;
+    private int waitForShulkers = 0;
+    private HashMap<String, Template> methodStack;
+
     @Override
     public String getId() {
         return "editor";
+    }
+
+    @Override
+    public void setupConfig(FeatureConfig config) {
+        config.addString("folder_regex", "[.:]");
+    }
+
+    public String getFolderRegex() {
+        return config.getString("folder_regex");
     }
 
     public Editor() {
@@ -39,10 +64,42 @@ public class Editor extends Feature implements Keybound {
         while (getKeybind().wasPressed()) {
             onKeyPress();
         }
+
+        if (fetchingAllTemplates && waitForShulkers > 0) {
+            // if we're waiting for shulker boxes, but they haven't come in for 5 seconds, abort.
+            waitForShulkers++;
+            if (waitForShulkers > 10) {
+                // all shulkers have been received.
+                fetchingAllTemplates = false;
+                waitForShulkers = 0;
+                player().sendMessage(Text.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()), false);
+            }
+        }
     }
 
     @OnReceivePacket
     public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
+        if (fetchingAllTemplates) {
+            ComponentMap shulkerComponents = packet.getStack().getComponents();
+            if (shulkerComponents == null) return false;
+
+            ContainerComponent containerComponent = shulkerComponents.get(DataComponentTypes.CONTAINER);
+            if (containerComponent == null) return false;
+
+            for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
+
+                String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
+                if (codeTemplateData == null) continue;
+
+                Template template = Template.parseItemNBT(codeTemplateData);
+
+                if (screen == null) continue;
+                screen.addTemplate(template);
+            }
+
+            waitForShulkers = 1;
+            return false;
+        }
         return legacy.slotUpdate(packet);
     }
 
@@ -82,4 +139,25 @@ public class Editor extends Feature implements Keybound {
         });
     }
 
+    // ALSO "LEGACY" SUPPORT:
+
+    public void getAllTemplates() {
+        if (fetchingAllTemplates) {
+            abort();
+            return;
+        }
+
+        player().sendMessage(Text.literal("Fetching all templates...").setStyle(Styles.ANY.getStyle()), false);
+        fetchingAllTemplates = true;
+        waitForShulkers = 0;
+        PlayerUtil.sendCommand("p totemplate");
+    }
+
+    public void abort() {
+        player().sendMessage(Text.literal("Aborting template fetching...").setStyle(Styles.SCARY.getStyle()), false);
+
+        fetchingAllTemplates = false;
+        waitForShulkers = 0;
+        methodStack = null;
+    }
 }

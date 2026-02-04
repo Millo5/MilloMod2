@@ -14,16 +14,15 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
 
     private Tab currentTab = null;
     private final HashMap<String, Tab> tabNameMap = new HashMap<>();
+    private final Hierarchy hierarchy;
 
     private ListElement tabListElement;
     private CodeTextArea codeTextArea;
 
-    protected CodeBrowser(int x, int y, int width, int height, Text message) {
-        super(x, y, width, height, message);
-    }
 
-    public CodeBrowser(int width, int height) {
+    public CodeBrowser(Hierarchy hierarchy, int width, int height) {
         super(0, 0, width, height, Text.empty());
+        this.hierarchy = hierarchy;
 
         direction(ElementDirection.COLUMN);
         mainAlign(MainAxisAlignment.START);
@@ -59,13 +58,15 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     }
 
     public void openTab(String name) {
-        if (tabNameMap.containsKey(name)) {
-            if (currentTab != null) currentTab.setSelected(false);
-            Tab tab = tabNameMap.get(name);
-            currentTab = tab;
-            tab.setSelected(true);
-            codeTextArea.loadTemplate(tab.getTemplate());
-        }
+        if (!tabNameMap.containsKey(name)) return;
+
+        if (currentTab != null) currentTab.setSelected(false);
+        Tab tab = tabNameMap.get(name);
+        currentTab = tab;
+        tab.setSelected(true);
+        codeTextArea.loadTemplate(tab.getTemplate());
+
+        hierarchy.focus(name);
     }
 
     public void closeTab(Tab tab) {

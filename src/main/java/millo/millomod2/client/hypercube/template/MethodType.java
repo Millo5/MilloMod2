@@ -5,7 +5,8 @@ public enum MethodType {
     EVENT("e "),
     ENTITY_EVENT("e "),
     FUNC,
-    PROCESS("p ")
+    PROCESS("p "),
+    GAME_EVENT("e ")
 
     ;
     private final String prefix;

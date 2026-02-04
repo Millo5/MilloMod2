@@ -9,7 +9,9 @@ public enum LineStarterType {
     PLAYER_EVENT(Styles.PLAYER_EVENT, "pev"),
     ENTITY_EVENT(Styles.ENTITY_EVENT, "eev"),
     PROCESS(Styles.PROCESS, "prc"),
-    FUNCTION(Styles.FUNCTION, "fun");
+    FUNCTION(Styles.FUNCTION, "fun"),
+    GAME_EVENT(Styles.GAME_EVENT, "gev")
+    ;
 
     private final Styles style;
     private final String extension;

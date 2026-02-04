@@ -36,6 +36,11 @@ public class Tab extends ButtonElement {
     public void onClick(Click click, boolean doubled) {
         if (closeButton.mouseClicked(click, doubled)) return;
 
+        if (click.button() == 2) {
+            browser.closeTab(this);
+            return;
+        }
+
         browser.openTemplate(template);
     }
 

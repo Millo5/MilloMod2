@@ -65,7 +65,9 @@ public enum Styles {
     PLAYER_EVENT(new Color(0xFF52EACA)),
     ENTITY_EVENT(new Color(0xFFEAD536)),
     PROCESS(new Color(0xFF48EA2B)),
-    FUNCTION(new Color(0xFF028AEA))
+    FUNCTION(new Color(0xFF028AEA)),
+    GAME_EVENT(new Color(0x2E2121)),
+
 
     ;
 
