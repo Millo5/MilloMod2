@@ -57,7 +57,7 @@ public class Editor extends Feature implements Keybound {
         BlockPos pos = hit.getBlockPos();
         if (MilloMod.MC.world.getBlockEntity(pos) instanceof SignBlockEntity) pos = pos.add(1, 0, 0);
         Block block = MilloMod.MC.world.getBlockState(pos).getBlock();
-        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()) return;
+        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold|netherite)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()) return;
 
 
         legacy.getMethodFromPosition(pos, player(), net(), (template) -> {
