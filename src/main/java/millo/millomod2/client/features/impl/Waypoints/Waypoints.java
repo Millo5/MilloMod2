@@ -55,6 +55,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         config.addFloat("label_scale", 1.0f);
         config.addFloat("label_focus_scale", 1.0f);
         config.addFloat("label_hide_distance", 5.0f);
+        config.addBoolean("auto_dev_mode", true);
     }
 
 

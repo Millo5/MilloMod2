@@ -57,11 +57,15 @@ public class ErrorLine implements CodeLine {
     @Override
     public void buildOn(FlexElement<?> lineElement) {
         TextElement element = TextElement.create(Text.literal("Error: " + message).setStyle(Styles.SCARY.getStyle()));
-        element.setTooltip(Tooltip.of(getTooltip()));
-        element.onClickListener(() -> {
-            MilloLog.logInGame(getTooltip());
-            return true;
-        });
+
+        Text tooltip = getTooltip();
+        if (tooltip != null) {
+            element.setTooltip(Tooltip.of(tooltip));
+            element.onClickListener(() -> {
+                MilloLog.logInGame(tooltip);
+                return true;
+            });
+        }
         append(lineElement, element);
     }
 }

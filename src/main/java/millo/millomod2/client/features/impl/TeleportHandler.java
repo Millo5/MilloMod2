@@ -54,11 +54,15 @@ public class TeleportHandler extends Feature {
     }
 
     public static void teleportTo(Vec3d position) {
-        teleportTo(position, false);
+        teleportTo(position, false, false);
     }
 
     public static void teleportTo(Vec3d target, boolean cancel) {
-        PlayerUtil.sendCommand("p tp " + target.x + " " + target.y + " " + target.z);
+        teleportTo(target, cancel, false);
+    }
+
+    public static void teleportTo(Vec3d target, boolean cancel, boolean devmode) {
+        PlayerUtil.sendCommand("p tp " + target.x + " " + target.y + " " + target.z + (devmode ? " -d" : ""));
         instance.active = true;
         instance.cancel = cancel;
         instance.target = target;

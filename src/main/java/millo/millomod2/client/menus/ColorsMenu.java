@@ -176,14 +176,14 @@ public class ColorsMenu extends Menu {
             });
             inputFields.put("hex", hexInput);
             topColumn.addChild(hexInput);
-            topColumn.addChild(ButtonElement.create(50, 15)
+            topColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
                     .message(Text.literal("Copy"))
                     .onPress((button) -> {
                         client.keyboard.setClipboard(hexInput.getText());
                         saveAsRecent();
                     }));
-            topColumn.addChild(ButtonElement.create(50, 15)
+            topColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
                     .message(Text.literal("<Copy>"))
                     .onPress((button) -> {
@@ -194,12 +194,12 @@ public class ColorsMenu extends Menu {
 
 
             ListElement bottomColumn = ListElement.create(50, topHalf.getHeight() / 2)
-                    .padding(2)
+                    .padding(4)
                     .gap(2)
                     .crossAlign(CrossAxisAlignment.CENTER)
                     .direction(ElementDirection.COLUMN);
             column.addChildren(bottomColumn);
-            bottomColumn.addChild(ButtonElement.create(50, 15)
+            bottomColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
                     .message(Text.literal("Save"))
                     .onPress((button) -> {

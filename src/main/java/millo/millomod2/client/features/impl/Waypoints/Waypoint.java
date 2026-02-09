@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Waypoints;
 
+import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.TeleportHandler;
 import millo.millomod2.client.rendering.world.Renderer;
 import net.minecraft.text.Text;
@@ -80,7 +81,7 @@ public final class Waypoint {
     }
 
     public void teleport() {
-        TeleportHandler.teleportTo(position.get());
+        TeleportHandler.teleportTo(position.get(), false, FeatureHandler.get(Waypoints.class).getConfig().getBoolean("auto_dev_mode"));
     }
 
 
