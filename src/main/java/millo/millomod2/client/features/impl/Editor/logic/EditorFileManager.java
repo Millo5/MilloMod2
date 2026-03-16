@@ -5,28 +5,30 @@ import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EditorFileManager {
-
+    private final EditorFileReader reader;
     private final EditorPlot plot;
+    private HashMap<String, Template> templateCache = new HashMap<>();
 
     public EditorFileManager(EditorPlot plot) {
         this.plot = plot;
+        this.reader = new EditorFileReader(plot, this);
     }
 
-    private Path getRootFolder() {
+    public static Path getRootFolder() {
         return FileUtil.getModFolder().resolve("plots");
     }
 
-    private Path getPlotFolder() {
+    public Path getPlotFolder() {
         return getRootFolder().resolve(String.valueOf(plot.getPlotId()));
     }
 
     public static boolean plotExists(int plotId) {
-        Path plotFolder = FileUtil.getModFolder().resolve("plots").resolve(String.valueOf(plotId));
+        Path plotFolder = getRootFolder().resolve(String.valueOf(plotId));
         return plotFolder.toFile().exists();
     }
-
 
     public static String serializeMethodName(String name) {
         StringBuilder sb = new StringBuilder();
@@ -71,25 +73,31 @@ public class EditorFileManager {
     }
 
     public Template readTemplate(String methodName) {
-        String fileName = serializeMethodName(methodName);
-        Path filePath = getPlotFolder().resolve(fileName);
-
-        if (!filePath.toFile().exists()) return null;
-
-        String b64Code = FileUtil.read(filePath);
-        if (b64Code == null) return null;
-
-        return Template.parseBase64(b64Code);
+        Template template = reader.readTemplate(methodName);
+        if (template != null) templateCache.put(methodName, template);
+        return template;
     }
 
-    public ArrayList<Template> load() {
-        ArrayList<Template> templates = new ArrayList<>();
-        if (!getPlotFolder().toFile().exists()) return templates;
+    public ArrayList<String> getAllTemplateNames() {
+        ArrayList<String> templateNames = new ArrayList<>();
+        if (!getPlotFolder().toFile().exists()) return templateNames;
 
         FileUtil.listFiles(getPlotFolder()).forEach(path -> {
-            Template template = readTemplate(deserializeMethodName(path.getFileName().toString()));
-            if (template != null) templates.add(template);
+            String methodName = deserializeMethodName(path.getFileName().toString());
+            templateNames.add(methodName);
         });
-        return templates;
+        return templateNames;
     }
+
+
+//    public ArrayList<Template> load() {
+//        ArrayList<Template> templates = new ArrayList<>();
+//        if (!getPlotFolder().toFile().exists()) return templates;
+//
+//        FileUtil.listFiles(getPlotFolder()).forEach(path -> {
+//            Template template = readTemplate(deserializeMethodName(path.getFileName().toString()));
+//            if (template != null) templates.add(template);
+//        });
+//        return templates;
+//    }
 }

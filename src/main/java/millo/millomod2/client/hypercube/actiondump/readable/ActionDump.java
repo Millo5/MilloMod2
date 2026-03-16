@@ -18,7 +18,7 @@ public class ActionDump {
 
         Optional<RawActionDump> raw = RawActionDump.getActionDump();
         if (raw.isEmpty()) {
-            MilloLog.error("ActionDump not found!");
+            MilloLog.error("ActionDump not found! Use /milloactiondump on node beta");
             return Optional.empty();
         }
 

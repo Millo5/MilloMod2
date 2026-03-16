@@ -127,7 +127,12 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
     }
 
     public static void notify(Notification notification) {
-        Notifications feature = FeatureHandler.get(Notifications.class);
+        Notifications feature;
+        try {
+            feature = FeatureHandler.get(Notifications.class);
+        } catch (Exception e) {
+            return;
+        }
         if (feature == null || !feature.isEnabled()) return;
 
         feature.notifications.add(notification);

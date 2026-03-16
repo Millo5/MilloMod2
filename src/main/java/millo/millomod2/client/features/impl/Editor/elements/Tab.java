@@ -10,17 +10,17 @@ import net.minecraft.text.Text;
 public class Tab extends ButtonElement {
 
     private final ButtonElement closeButton;
-    private Template template;
     private final CodeBrowser browser;
     private final int textWidth;
     private boolean selected = false;
+    private Template template;
 
-    public Tab(CodeBrowser browser, String name, Template template) {
-        super(0, 0, 100, 20, Text.literal(name));
+    public Tab(CodeBrowser browser, String displayName, Template template) {
+        super(0, 0, 100, 20, Text.literal(displayName));
         this.template = template;
         this.browser = browser;
 
-        textWidth = getTextRenderer().getWidth(name);
+        textWidth = getTextRenderer().getWidth(displayName);
         setWidth(textWidth + 22);
 
         hoverBackground(0x30ffffff);

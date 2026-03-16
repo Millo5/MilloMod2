@@ -20,6 +20,7 @@ public class ArgumentItemData {
     public boolean plural;
     public boolean optional;
     public String description;
+    public ArgumentItem default_value;
 
     // Game Value
     public String target;

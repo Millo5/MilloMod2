@@ -2,8 +2,11 @@ package millo.millomod2.client.features.impl.Editor.template.arguments;
 
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
+import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.text.Text;
+
+import java.util.function.Supplier;
 
 public class ParameterArgument extends Argument<ParameterArgument> {
 
@@ -11,6 +14,7 @@ public class ParameterArgument extends Argument<ParameterArgument> {
     private String type;
     private boolean optional;
     private boolean plural;
+    private String defaultValue;
 
     @Override
     public Text getDisplayText() {
@@ -19,7 +23,10 @@ public class ParameterArgument extends Argument<ParameterArgument> {
         display.append(type);
         if (plural) display.append("...");
         display.append(" ").append(parameter);
-        if (optional) display.append("]");
+        if (optional) {
+            if (defaultValue != null) display.append(" = ").append(defaultValue);
+            display.append("]");
+        }
 
         Styles style;
         try {
@@ -32,11 +39,20 @@ public class ParameterArgument extends Argument<ParameterArgument> {
     }
 
     @Override
+    public Supplier<Boolean> getOnClick() {
+        return () -> {
+            PlayerUtil.sendCommand("/var " + parameter + " -i");
+            return true;
+        };
+    }
+
+    @Override
     public ParameterArgument from(ArgumentItemData data) {
         this.parameter = data.name;
         this.type = data.type;
         this.optional = data.optional;
         this.plural = data.plural;
+        if (data.default_value != null) this.defaultValue = data.default_value.data.name;
         return this;
     }
 }

@@ -6,7 +6,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public interface CodeLine extends CodeEntry{
+public interface CodeLine extends CodeEntry {
     Text DOT = Text.literal(".");
     Text SPACE = Text.literal(" ");
 

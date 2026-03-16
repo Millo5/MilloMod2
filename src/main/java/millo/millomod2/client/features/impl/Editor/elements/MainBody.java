@@ -1,11 +1,14 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
+import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.text.Text;
+
+import java.util.Optional;
 
 public class MainBody extends FlexElement<MainBody> {
 
@@ -13,10 +16,6 @@ public class MainBody extends FlexElement<MainBody> {
     private CodeBrowser codeBrowser;
 
     private EditorMenu menu;
-
-    protected MainBody(int x, int y, int width, int height, Text message) {
-        super(x, y, width, height, message);
-    }
 
     public MainBody(EditorMenu menu) {
         super(0, 0, menu.width, menu.height - 20, Text.empty());
@@ -59,4 +58,14 @@ public class MainBody extends FlexElement<MainBody> {
     public Hierarchy getHierarchy() {
         return hierarchy;
     }
+
+    public void tryOpenTemplate(String name) {
+        menu.getMain().getCodeBrowser().openTemplate(name);
+
+        if (true) return; // TODO
+
+        Optional<Template> templateOpt = menu.getLoadedPlot().getCachedTemplate(name);
+        templateOpt.ifPresent(template -> codeBrowser.openTemplate(template));
+    }
+
 }

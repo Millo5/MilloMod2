@@ -1,11 +1,12 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
+import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.util.Identifier;
 
-public class BracketLine implements CodeLine {
+public class BracketLine implements CodeLine, CodeLineIndentationMutation {
 
     private final boolean open;
     private final String type;

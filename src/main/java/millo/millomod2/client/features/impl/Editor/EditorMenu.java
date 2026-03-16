@@ -18,6 +18,22 @@ import net.minecraft.client.gui.screen.Screen;
 
 public class EditorMenu extends Menu {
 
+    /**
+     * EditorMenu
+     *  - TitleBar
+     *  - MainBody
+     *      - Hierarchy
+     *          - Folders / Methods
+     *      - CodeBrowser
+     *          - Tabs
+     *          - CodeTextArea
+     * Data:
+     *  - EditorPlot
+     *      # Current opened plot & plot metadata
+     *      - EditorFileManager
+     *
+     */
+
     private static EditorPlot loadedPlot;
 
     private static MainBody cachedBody;
@@ -118,4 +134,9 @@ public class EditorMenu extends Menu {
     public MainBody getMain() {
         return mainBody;
     }
+
+    public static MainBody getCachedBody() {
+        return cachedBody;
+    }
+
 }

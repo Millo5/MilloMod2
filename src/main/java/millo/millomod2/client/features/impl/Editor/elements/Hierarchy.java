@@ -3,6 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
+import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.FolderElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
@@ -77,5 +78,12 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
     @Override
     protected void renderElement(RenderArgs args) {
         super.renderElement(args);
+    }
+
+    public Template getTemplate(String templateName) {
+        if (menu == null) return null;
+        if (menu.getLoadedPlot() == null) return null;
+
+        return menu.getLoadedPlot().getTemplate(templateName);
     }
 }

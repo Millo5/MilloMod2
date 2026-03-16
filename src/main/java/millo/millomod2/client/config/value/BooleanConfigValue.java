@@ -22,7 +22,7 @@ public class BooleanConfigValue extends ConfigValue<Boolean> {
                 }
         ).build();
     }
-//
+
 //    @Override
 //    public Widget<?> createWidget() {
 //        return new ButtonWidget()

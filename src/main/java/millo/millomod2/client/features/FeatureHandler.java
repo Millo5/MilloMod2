@@ -24,15 +24,7 @@ import java.util.Map;
 
 /**
  *
- * *Cache GUI
- * SoundPreview (actiondump)
  * SideChat
- * *Play/Dev/Build time per plot (or spawn)
- *
- * ? SocketServe
- *
- * SaveStates
- * /colors | /cols
  * /dfgive
  *
  */
@@ -128,6 +120,9 @@ public final class FeatureHandler {
 
     @SuppressWarnings("unchecked")
     public static <T extends Feature> T get(Class<T> clazz) {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("FeatureHandler not initialized");
+        }
         for (Feature feature : INSTANCE.featureMap.values()) {
             if (clazz.isInstance(feature)) {
                 return (T) feature;

@@ -58,7 +58,7 @@ public class Template {
 
         String name = blocks.getFirst().data;
         if (name == null) name = blocks.getFirst().action;
-        if (name.isEmpty()) name = blocks.getFirst().block + (int)(Math.random()*1000);
+        if (name.isEmpty()) name = blocks.getFirst().block + "_empty";
         return name;
     }
 
@@ -68,6 +68,9 @@ public class Template {
         return MethodType.valueOf(blocks.getFirst().block.toUpperCase());
     }
 
+    /**
+     * @return The method name with a ".type" suffix, where type is determined by the first block in the template
+     */
     public String getMethodName() {
         return getTemplateMethodType().suffixString(getName());
     }

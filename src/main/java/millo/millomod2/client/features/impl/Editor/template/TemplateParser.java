@@ -3,10 +3,7 @@ package millo.millomod2.client.features.impl.Editor.template;
 import millo.millomod2.client.features.impl.Editor.template.lines.*;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
-import millo.millomod2.client.hypercube.template.ArgumentItemSlot;
-import millo.millomod2.client.hypercube.template.Arguments;
-import millo.millomod2.client.hypercube.template.Template;
-import millo.millomod2.client.hypercube.template.TemplateBlock;
+import millo.millomod2.client.hypercube.template.*;
 
 import java.util.ArrayList;
 
@@ -74,8 +71,18 @@ public class TemplateParser {
         ArrayList<Argument<?>> arguments = parseArguments(templateBlock.args);
 
         return switch (block.getIdentifier()) {
-            case "call_func", "start_process", "process", "func" -> new DynamicCodeLine(block, templateBlock.data, arguments);
+            case "call_func" -> new CallFunctionLine(block, templateBlock.data, arguments, MethodType.FUNC);
+            case "start_process" -> new CallFunctionLine(block, templateBlock.data, arguments, MethodType.PROCESS);
+
+            case "func" -> new StarterLine(block, templateBlock.data, arguments, MethodType.FUNC);
+            case "process" -> new StarterLine(block, templateBlock.data, arguments, MethodType.PROCESS);
+            case "event" -> new StarterLine(block, templateBlock.action, arguments, MethodType.EVENT);
+            case "entity_event" -> new StarterLine(block, templateBlock.action, arguments, MethodType.ENTITY_EVENT);
+            case "game_event" -> new StarterLine(block, templateBlock.action, arguments, MethodType.GAME_EVENT);
+
             case "set_var" -> new SetVarCodeLine(block, templateBlock.action, arguments);
+            case "select_obj" -> new UniqueCodeLine(block, templateBlock.action, arguments, CodeBlockType.SELECT_OBJECT);
+            case "control" -> new UniqueCodeLine(block, templateBlock.action, arguments, CodeBlockType.CONTROL);
             default -> {
                 CodeActionLine line = new CodeActionLine(block, templateBlock.action == null ? "-" : templateBlock.action, arguments);
                 if (templateBlock.attribute != null) line.setAttribute(templateBlock.attribute);

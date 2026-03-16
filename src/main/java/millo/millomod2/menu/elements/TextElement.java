@@ -50,6 +50,10 @@ public class TextElement extends TextWidget implements FadeElement {
 
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
+        if (onClick != null && hovered) {
+            context.fill(getX(), getBottom() - 1, getRight(), getBottom(), 0xFFFFFFFF);
+        }
+
         ClickableWidgetAccessor accessor = (ClickableWidgetAccessor) this;
         if (accessor.getTooltipState().getTooltip() != null) {
             var pos = context.getMatrices().transformPosition(mouseX, mouseY, new Vector2f());
@@ -65,7 +69,7 @@ public class TextElement extends TextWidget implements FadeElement {
         if (onClick == null) return false;
 
         if (onClick.get()) {
-            ClickableElement.playClickSound(MilloMod.MC.getSoundManager());
+            ClickableElement.playClickSound(MilloMod.MC.getSoundManager()); // TODO: fix click sound to be correct sound
         }
 
         return true;

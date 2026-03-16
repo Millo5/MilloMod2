@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.logic;
 import millo.millomod2.client.features.impl.Editor.elements.CodeTextArea;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
-import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
+import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
 import millo.millomod2.client.features.impl.Editor.template.lines.ErrorLine;
 import millo.millomod2.client.features.impl.TeleportHandler;
 import millo.millomod2.client.hypercube.template.Template;
@@ -43,14 +43,14 @@ public class CodeBodyBuilder {
     private void buildBody(CodeBody body) {
         for (var entry : body.getLines()) {
 
-            if (entry instanceof BracketLine bracket) indentLevel += bracket.getIndentationChange() < 0 ? -1 : 0;
+            if (entry instanceof CodeLineIndentationMutation mut) indentLevel += mut.getIndentationChange() < 0 ? -1 : 0;
 
             if (entry instanceof CodeBody nestedBody) buildBody(nestedBody);
             if (entry instanceof CodeLine line) {
                 buildLine(line);
             }
 
-            if (entry instanceof BracketLine bracket) indentLevel += bracket.getIndentationChange() > 0 ? 1 : 0;
+            if (entry instanceof CodeLineIndentationMutation mut) indentLevel += mut.getIndentationChange() > 0 ? 1 : 0;
             else physicalOffset += 2;
         }
     }

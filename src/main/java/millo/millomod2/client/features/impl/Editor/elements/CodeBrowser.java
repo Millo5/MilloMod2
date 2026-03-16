@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
+import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
@@ -45,16 +46,24 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     }
 
     public void openTemplate(Template template) {
-        if (!tabNameMap.containsKey(template.getName())) {
-            Tab tab = new Tab(this, template.getName(), template);
-            tabNameMap.put(template.getName(), tab);
+        openTemplate(template.getMethodName());
+    }
+
+    public void openTemplate(String templateName) {
+        String suffixlessName = MethodType.trimSuffix(templateName);
+
+        if (!tabNameMap.containsKey(templateName)) {
+            Template template = hierarchy.getTemplate(templateName);
+            if (template == null) return;
+
+            Tab tab = new Tab(this, suffixlessName, template);
+            tabNameMap.put(templateName, tab);
             tabListElement.addChild(tab);
-        } else {
-            Tab tab = tabNameMap.get(template.getName());
-            tab.setTemplate(template);
         }
 
-        openTab(template.getName());
+        Tab tab = tabNameMap.get(templateName);
+        openTab(suffixlessName);
+        codeTextArea.loadTemplate(tab.getTemplate());
     }
 
     public void openTab(String name) {

@@ -37,10 +37,14 @@ public class CodeActionLine implements CodeLine {
         return blockId;
     }
 
-    @Override
-    public void buildOn(FlexElement<?> lineElement) {
+    protected void prefix(FlexElement<?> lineElement) {
         append(lineElement, Text.literal(block.getIdentifier()));
         append(lineElement, DOT);
+    }
+
+    @Override
+    public void buildOn(FlexElement<?> lineElement) {
+        prefix(lineElement);
         append(lineElement, Text.literal(action));
 
         if (attribute != null || subAction != null) append(lineElement, DOT);

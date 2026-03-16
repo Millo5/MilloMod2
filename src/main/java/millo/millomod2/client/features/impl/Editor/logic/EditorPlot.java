@@ -8,13 +8,16 @@ import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMeth
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.template.Template;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 // Like a Project
 public class EditorPlot {
 
-    private final HashMap<String, File> methodFiles = new HashMap<>();
+    private final HashMap<String, Template> templateCache = new HashMap<>();
+    private final ArrayList<String> templateNames = new ArrayList<>();
+
     private final HierarchyFolder rootFolder;
     private Metadata metadata;
     private final int plotId;
@@ -38,12 +41,17 @@ public class EditorPlot {
 
 
     private void load() {
-        var templates = fileManager.load();
+        templateNames.clear();
+        templateNames.addAll(fileManager.getAllTemplateNames());
 
         rootFolder.clear();
-        for (Template template : templates) {
-            addTemplate(template);
+        for (String templateName : templateNames) {
+            addTemplate(templateName);
         }
+
+//        for (Template template : templates) {
+//            addTemplate(template);
+//        }
 
         //        if (!getPlotFolder().toFile().exists()) return;
 //
@@ -66,6 +74,7 @@ public class EditorPlot {
 //        }
     }
 
+
 //    public Optional<Template> getMethod(String methodName) {
 //        String serializedName = serializeMethodName(methodName);
 //
@@ -83,11 +92,14 @@ public class EditorPlot {
 
     public void addTemplate(Template template) {
         fileManager.saveTemplate(template);
+        addTemplate(template.getMethodName());
+    }
 
-        if (rootFolder.contains(template.getMethodName())) return;
+    private void addTemplate(String templateName) {
+        if (rootFolder.contains(templateName)) return;
 
         String regex = FeatureHandler.get(Editor.class).getFolderRegex();
-        String[] parts = template.getMethodName().split(regex);
+        String[] parts = templateName.split(regex);
         HierarchyFolder currentFolder = rootFolder;
         for (int i = 0; i < parts.length - 2; i++) {
             String part = parts[i];
@@ -106,11 +118,23 @@ public class EditorPlot {
                 currentFolder = (HierarchyFolder) nextEntry;
             }
         }
-        currentFolder.addEntry(new HierarchyMethod(template));
+        currentFolder.addEntry(new HierarchyMethod(templateName));
     }
 
     public HierarchyFolder getRootFolder() {
         return rootFolder;
+    }
+
+    public Template getTemplate(String templateName) {
+        if (templateCache.containsKey(templateName)) return templateCache.get(templateName);
+        Template template = fileManager.readTemplate(templateName);
+        if (template != null) templateCache.put(templateName, template);
+        return template;
+    }
+
+    public Optional<Template> getCachedTemplate(String name) {
+        if (!templateCache.containsKey(name)) return Optional.empty();
+        return Optional.of(templateCache.get(name));
     }
 
     public record Metadata(String name, String owner) {}

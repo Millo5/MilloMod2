@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 public class DynamicCodeLine implements CodeLine {
 
-    private final CodeBlock block;
-    private final String name;
-    private final ArrayList<Argument<?>> arguments;
+    protected final CodeBlock block;
+    protected final String name;
+    protected final ArrayList<Argument<?>> arguments;
 
     public DynamicCodeLine(CodeBlock block, String name, ArrayList<Argument<?>> arguments) {
         this.block = block;

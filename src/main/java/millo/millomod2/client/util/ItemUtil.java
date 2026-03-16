@@ -3,6 +3,7 @@ package millo.millomod2.client.util;
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.DataResult;
 import millo.millomod2.client.MilloMod;
+import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStringReader;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -53,7 +54,7 @@ public class ItemUtil {
             try {
                 ItemStringReader stringReader = new ItemStringReader(MilloMod.MC.world.getRegistryManager());
                 ItemStringReader.ItemResult result = stringReader.consume(new StringReader(data));
-                return new ItemStack(result.item());
+                return new ItemStackArgument(result.item(), result.components()).createStack(1, false);
             } catch (Exception e2) {
                 System.out.println("Error parsing item NBT: " + e2.getMessage());
             }

@@ -72,11 +72,11 @@ public class FileUtil {
 
     public static Iterable<Path> listFiles(Path plotFolder) {
         File folder = plotFolder.toFile();
-        if (!folder.exists()) return null;
+        if (!folder.exists()) return new ArrayList<>();
 
         ArrayList<Path> paths = new ArrayList<>();
         File[] files = folder.listFiles();
-        if (files == null) return null;
+        if (files == null) return paths;
 
         for (File file : files) {
             paths.add(file.toPath());
