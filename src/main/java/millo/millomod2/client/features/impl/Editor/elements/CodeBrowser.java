@@ -46,6 +46,10 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     }
 
     public void openTemplate(Template template) {
+        Tab tab = tabNameMap.get(template.getMethodName());
+        if (tab != null) {
+            tab.setTemplate(template);
+        }
         openTemplate(template.getMethodName());
     }
 
@@ -62,7 +66,7 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
         }
 
         Tab tab = tabNameMap.get(templateName);
-        openTab(suffixlessName);
+        openTab(templateName);
         codeTextArea.loadTemplate(tab.getTemplate());
     }
 
@@ -81,13 +85,13 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     public void closeTab(Tab tab) {
         int currentIndex = Math.min(tabListElement.getChildren().indexOf(tab), tabListElement.getChildren().size() - 2);
 
-        tabNameMap.remove(tab.getTemplate().getName());
+        tabNameMap.remove(tab.getTemplate().getMethodName());
         tabListElement.removeChild(tab);
         if (currentTab == tab) {
             codeTextArea.clearContents();
             currentTab = null;
 
-            if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getName());
+            if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getMethodName());
         }
     }
 }
