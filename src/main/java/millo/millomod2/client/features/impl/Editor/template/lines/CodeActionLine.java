@@ -1,9 +1,9 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
-import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -37,13 +37,13 @@ public class CodeActionLine implements CodeLine {
         return blockId;
     }
 
-    protected void prefix(FlexElement<?> lineElement) {
+    protected void prefix(CodeLineElement lineElement) {
         append(lineElement, Text.literal(block.getIdentifier()));
         append(lineElement, DOT);
     }
 
     @Override
-    public void buildOn(FlexElement<?> lineElement) {
+    public void buildOn(CodeLineElement lineElement) {
         prefix(lineElement);
         append(lineElement, Text.literal(action));
 

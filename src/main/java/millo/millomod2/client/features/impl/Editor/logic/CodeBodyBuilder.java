@@ -1,9 +1,11 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.elements.CodeTextArea;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
+import millo.millomod2.client.features.impl.Editor.template.lines.BracketLine;
 import millo.millomod2.client.features.impl.Editor.template.lines.ErrorLine;
 import millo.millomod2.client.features.impl.TeleportHandler;
 import millo.millomod2.client.hypercube.template.Template;
@@ -63,7 +65,11 @@ public class CodeBodyBuilder {
                 .mainAlign(MainAxisAlignment.START)
                 .crossAlign(CrossAxisAlignment.CENTER);
 
-        element.addChild(new BlockFaceElement(line.getBlockId(), 0, 0, 10, 10));
+        BlockFaceElement block = new BlockFaceElement(line.getBlockId(), 0, 0, 10, 10);
+        if (line instanceof BracketLine bracket) {
+            if (bracket.getIndentationChange() == 1) block.rotate(3.14159f);
+        }
+        element.addChild(block);
 
         int physicalOffset = this.physicalOffset;
         element.addChild(ButtonElement.create(30, 10)
@@ -80,8 +86,11 @@ public class CodeBodyBuilder {
         element.addChild(TextElement.create(Text.literal("  ".repeat(indentLevel)).setStyle(Styles.LINE_NUM.getStyle()))
                 .align(TextElement.TextAlignment.CENTER));
 
+        CodeLineElement codeLineElement = new CodeLineElement(0, 0, codeTextArea.getWidth(), 10);
+        element.addChild(codeLineElement);
+
         try {
-            line.buildOn(element);
+            line.buildOn(codeLineElement);
             codeTextArea.addChild(element);
         } catch (Exception e) {
             lineNumber--;

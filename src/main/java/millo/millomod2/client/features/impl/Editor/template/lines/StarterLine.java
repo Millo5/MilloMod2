@@ -1,11 +1,11 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
-import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class StarterLine extends DynamicCodeLine implements CodeLineIndentationM
     }
 
     @Override
-    public void buildOn(FlexElement<?> lineElement) {
+    public void buildOn(CodeLineElement lineElement) {
         append(lineElement, switch (type) {
             case FUNC -> FUNC_PREFIX;
             case PROCESS -> PROC_PREFIX;

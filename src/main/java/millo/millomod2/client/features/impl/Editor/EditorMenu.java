@@ -15,6 +15,7 @@ import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 
 public class EditorMenu extends Menu {
 
@@ -101,6 +102,19 @@ public class EditorMenu extends Menu {
         this.init();
     }
 
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        if (input.hasCtrl() && input.key() == 70) {
+            search();
+            return true;
+        }
+        return super.keyPressed(input);
+    }
+
+    public void search() {
+        mainBody.openAndFocusSearch();
+    }
+
     public void openTemplate(Template template) {
         addTemplate(template);
         mainBody.getCodeBrowser().openTemplate(template);
@@ -125,10 +139,6 @@ public class EditorMenu extends Menu {
 
     public void openPlotSelector(ButtonElement button) {
         client.setScreen(new PlotSelectorMenu(this));
-    }
-
-    public void searchContext(ButtonElement button) {
-
     }
 
     public MainBody getMain() {

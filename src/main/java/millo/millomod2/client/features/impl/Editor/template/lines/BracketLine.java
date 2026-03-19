@@ -1,9 +1,9 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
 import millo.millomod2.menu.elements.TextElement;
-import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.util.Identifier;
 
 public class BracketLine implements CodeLine, CodeLineIndentationMutation {
@@ -28,7 +28,7 @@ public class BracketLine implements CodeLine, CodeLineIndentationMutation {
     }
 
     @Override
-    public void buildOn(FlexElement<?> lineElement) {
+    public void buildOn(CodeLineElement lineElement) {
         lineElement.addChild(TextElement.create(open ? "{" : "}"));
     }
 }

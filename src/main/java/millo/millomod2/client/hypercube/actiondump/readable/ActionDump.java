@@ -1,6 +1,7 @@
 package millo.millomod2.client.hypercube.actiondump.readable;
 
 import millo.millomod2.client.hypercube.actiondump.Action;
+import millo.millomod2.client.hypercube.actiondump.Particle;
 import millo.millomod2.client.hypercube.actiondump.RawActionDump;
 import millo.millomod2.client.hypercube.actiondump.Sound;
 import millo.millomod2.client.util.MilloLog;
@@ -31,10 +32,13 @@ public class ActionDump {
     private final Map<String, Sound> soundMap;
     private final Map<String, String> codeBlockIdNameMap;
     private final Map<String, CodeBlock> codeBlockMap;
+    private final Map<String, String[]> particleFieldsMap;
+
     public ActionDump(RawActionDump raw) {
         this.codeBlockMap = new HashMap<>(raw.codeblocks.length);
         this.codeBlockIdNameMap = new HashMap<>(raw.codeblocks.length);
         this.soundMap = new HashMap<>(raw.sounds.length);
+        this.particleFieldsMap = new HashMap<>(raw.particles.length);
 
         for (int i = 0; i < raw.codeblocks.length; i++) {
             CodeBlock codeBlock = new CodeBlock(raw.codeblocks[i]);
@@ -50,6 +54,10 @@ public class ActionDump {
 
         for (Sound sound : raw.sounds) {
             soundMap.put(sound.icon.name, sound);
+        }
+
+        for (Particle particle : raw.particles) {
+            particleFieldsMap.put(particle.icon.name, particle.fields);
         }
     }
 
@@ -67,5 +75,8 @@ public class ActionDump {
         return soundMap.get(name);
     }
 
+    public String[] getParticleFields(String particle) {
+        return particleFieldsMap.get(particle);
+    }
 
 }

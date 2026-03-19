@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.template;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.menu.elements.TextElement;
-import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -14,13 +14,13 @@ public interface CodeLine extends CodeEntry {
 
     Identifier getBlockId();
 
-    void buildOn(FlexElement<?> lineElement);
+    void buildOn(CodeLineElement lineElement);
 
-    default void append(FlexElement<?> lineElement, Text text) {
+    default void append(CodeLineElement lineElement, Text text) {
         lineElement.addChild(TextElement.create(text));
     }
 
-    default void append(FlexElement<?> lineElement, ClickableWidget textElement) {
+    default void append(CodeLineElement lineElement, ClickableWidget textElement) {
         lineElement.addChild(textElement);
     }
 }

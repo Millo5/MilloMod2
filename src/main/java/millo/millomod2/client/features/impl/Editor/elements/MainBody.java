@@ -12,10 +12,11 @@ import java.util.Optional;
 
 public class MainBody extends FlexElement<MainBody> {
 
-    private Hierarchy hierarchy;
-    private CodeBrowser codeBrowser;
+    private final Hierarchy hierarchy;
+    private final CodeBrowser codeBrowser;
+    private final SearchBar searchBar;
 
-    private EditorMenu menu;
+    private final EditorMenu menu;
 
     public MainBody(EditorMenu menu) {
         super(0, 0, menu.width, menu.height - 20, Text.empty());
@@ -35,6 +36,11 @@ public class MainBody extends FlexElement<MainBody> {
                 hierarchy,
                 codeBrowser
         );
+
+        searchBar = new SearchBar(250, 20, codeBrowser);
+        searchBar.setAbsoluteX(width - searchBar.getWidth() - 5);
+        searchBar.setAbsoluteY(25);
+        addChild(searchBar);
     }
 
     private int getAvailableWidth() {
@@ -68,4 +74,11 @@ public class MainBody extends FlexElement<MainBody> {
         templateOpt.ifPresent(template -> codeBrowser.openTemplate(template));
     }
 
+    public void openAndFocusSearch() {
+//        hierarchy.openAndFocusSearch();
+    }
+
+    public SearchBar getSearchBar() {
+        return searchBar;
+    }
 }

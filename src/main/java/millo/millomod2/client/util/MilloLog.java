@@ -50,4 +50,14 @@ public class MilloLog {
         if (DEBUG) e.printStackTrace();
     }
 
+
+    public static RuntimeException throwError(String s) {
+        errorInGame(s);
+        return new RuntimeException(s);
+    }
+
+    public static void logWarning(String s) {
+        LOGGER.warn("Warning: {}", s);
+        sendToPlayer(Text.literal("[MilloMod2] Warning: " + s).setStyle(Styles.ITEM.getStyle()));
+    }
 }

@@ -78,9 +78,9 @@ public class TitleBar extends FlexElement<TitleBar> {
 //                ButtonElement.create(60, 15)
 //                        .message(Text.literal("Clear"))
 //                        .onPress(menu::clear),
-//                ButtonElement.create(60, 15)
-//                        .message(Text.literal("Search"))
-//                        .onPress(menu::search),
+                ButtonElement.create(60, 15)
+                        .message(Text.literal("Search"))
+                        .onPress(button -> menu.search()),
                 ButtonElement.create(15, 15)
                         .message(Text.literal("X"))
                         .background(0xAAFF0000)

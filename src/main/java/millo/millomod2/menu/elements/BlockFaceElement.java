@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 public class BlockFaceElement extends ClickableElement<BlockFaceElement> {
 
     private final Sprite sprite;
+    private float rotation = 0;
 
     public BlockFaceElement(Identifier id, int x, int y, int width, int height) {
         super(x, y, width, height, Text.empty());
@@ -30,6 +31,15 @@ public class BlockFaceElement extends ClickableElement<BlockFaceElement> {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, getX(), getY(), getWidth(), getHeight(),0xFFFFFFFF);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
+        if (rotation != 0) context.getMatrices().rotate(rotation);
+        context.getMatrices().translate(-getWidth() / 2f, -getHeight() / 2f);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, getWidth(), getHeight(),0xFFFFFFFF);
+        context.getMatrices().popMatrix();
+    }
+
+    public void rotate(float amount) {
+        rotation = amount;
     }
 }

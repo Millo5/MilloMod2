@@ -1,10 +1,10 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
+import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import millo.millomod2.menu.elements.flex.FlexElement;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -55,7 +55,7 @@ public class ErrorLine implements CodeLine {
     }
 
     @Override
-    public void buildOn(FlexElement<?> lineElement) {
+    public void buildOn(CodeLineElement lineElement) {
         TextElement element = TextElement.create(Text.literal("Error: " + message).setStyle(Styles.SCARY.getStyle()));
 
         Text tooltip = getTooltip();

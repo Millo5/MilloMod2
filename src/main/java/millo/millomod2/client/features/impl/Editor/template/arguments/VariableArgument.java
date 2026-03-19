@@ -1,10 +1,10 @@
 package millo.millomod2.client.features.impl.Editor.template.arguments;
 
 import millo.millomod2.client.features.impl.Editor.template.Argument;
+import millo.millomod2.client.hypercube.data.VariableScope;
 import millo.millomod2.client.hypercube.template.ArgumentItemData;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.util.function.Supplier;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class VariableArgument extends Argument<VariableArgument> {
 
     private String name;
-    private Scope scope;
+    private VariableScope scope;
 
     @Override
     public Text getDisplayText() {
@@ -42,26 +42,8 @@ public class VariableArgument extends Argument<VariableArgument> {
     @Override
     public VariableArgument from(ArgumentItemData data) {
         this.name = data.name;
-        this.scope = Scope.valueOf(data.scope.toUpperCase());
+        this.scope = VariableScope.valueOf(data.scope.toUpperCase());
         return this;
-    }
-
-
-    @SuppressWarnings("unused")
-    public enum Scope {
-        UNSAVED(Styles.UNSAVED.getStyle()),
-        SAVED(Styles.SAVED.getStyle()),
-        LOCAL(Styles.LOCAL.getStyle()),
-        LINE(Styles.LINE.getStyle());
-
-        private final Style style;
-        Scope(Style style) {
-            this.style = style;
-        }
-
-        public Style getStyle() {
-            return style;
-        }
     }
 
 }

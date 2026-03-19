@@ -10,6 +10,7 @@ public class RawActionDump {
     public Sound[] sounds;
     public RawCodeBlock[] codeblocks;
     public Action[] actions;
+    public Particle[] particles;
 
     private static RawActionDump instance;
     public static Optional<RawActionDump> getActionDump() {

@@ -1,5 +1,6 @@
 package millo.millomod2.menu.elements.flex;
 
+import millo.millomod2.menu.AbsoluteElement;
 import millo.millomod2.menu.ContainerElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
@@ -80,6 +81,7 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
         int totalMainSize = 0;
         int totalGrow = 0;
         for (ClickableWidget child : children) {
+            if (child instanceof AbsoluteElement) continue; // Skip absolute elements
             totalMainSize += row ? child.getWidth() : child.getHeight();
             totalGrow += growMap.getOrDefault(child, 0);
         }
@@ -101,6 +103,11 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
         }
 
         for (ClickableWidget child : children) {
+            if (child instanceof AbsoluteElement absolute) {
+                // Position absolute elements at their current position + padding
+                child.setPosition(contentX + absolute.getAbsoluteX(), contentY + absolute.getAbsoluteY());
+                continue;
+            }
             int grow = growMap.getOrDefault(child, 0);
 
             if (grow > 0 && freeSpace > 0 && totalGrow > 0) {
