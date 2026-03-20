@@ -32,6 +32,7 @@ public class ModelUtil {
             JsonObject json = JsonParser.parseString(decompressed).getAsJsonObject();
             TemplateModel model = new TemplateModel().deserialize(json);
 
+            // Warn for missing data
             JsonUtil.compare(model.serialize(), json);
 
             return model;

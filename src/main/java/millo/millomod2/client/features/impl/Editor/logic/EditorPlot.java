@@ -5,8 +5,8 @@ import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyEntry;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyFolder;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMethod;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.Plot;
-import millo.millomod2.client.hypercube.template.Template;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.Optional;
 // Like a Project
 public class EditorPlot {
 
-    private final HashMap<String, Template> templateCache = new HashMap<>();
+    private final HashMap<String, TemplateModel> templateCache = new HashMap<>();
     private final ArrayList<String> templateNames = new ArrayList<>();
 
     private final HierarchyFolder rootFolder;
@@ -90,9 +90,9 @@ public class EditorPlot {
     }
 
 
-    public void addTemplate(Template template) {
+    public void addTemplate(TemplateModel template) {
         fileManager.saveTemplate(template);
-        addTemplate(template.getMethodName());
+        addTemplate(template.getFileName());
     }
 
     private void addTemplate(String templateName) {
@@ -125,14 +125,14 @@ public class EditorPlot {
         return rootFolder;
     }
 
-    public Template getTemplate(String templateName) {
+    public TemplateModel getTemplate(String templateName) {
         if (templateCache.containsKey(templateName)) return templateCache.get(templateName);
-        Template template = fileManager.readTemplate(templateName);
+        TemplateModel template = fileManager.readTemplate(templateName);
         if (template != null) templateCache.put(templateName, template);
         return template;
     }
 
-    public Optional<Template> getCachedTemplate(String name) {
+    public Optional<TemplateModel> getCachedTemplate(String name) {
         if (!templateCache.containsKey(name)) return Optional.empty();
         return Optional.of(templateCache.get(name));
     }

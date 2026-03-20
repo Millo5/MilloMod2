@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.hypercube.template.MethodType;
-import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
@@ -45,19 +45,19 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
         );
     }
 
-    public void openTemplate(Template template) {
-        Tab tab = tabNameMap.get(template.getMethodName());
+    public void openTemplate(TemplateModel template) {
+        Tab tab = tabNameMap.get(template.getFileName());
         if (tab != null) {
             tab.setTemplate(template);
         }
-        openTemplate(template.getMethodName());
+        openTemplate(template.getFileName());
     }
 
     public void openTemplate(String templateName) {
         String suffixlessName = MethodType.trimSuffix(templateName);
 
         if (!tabNameMap.containsKey(templateName)) {
-            Template template = hierarchy.getTemplate(templateName);
+            TemplateModel template = hierarchy.getTemplate(templateName);
             if (template == null) return;
 
             Tab tab = new Tab(this, suffixlessName, template);
@@ -85,13 +85,13 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     public void closeTab(Tab tab) {
         int currentIndex = Math.min(tabListElement.getChildren().indexOf(tab), tabListElement.getChildren().size() - 2);
 
-        tabNameMap.remove(tab.getTemplate().getMethodName());
+        tabNameMap.remove(tab.getTemplate().getFileName());
         tabListElement.removeChild(tab);
         if (currentTab == tab) {
             codeTextArea.clearContents();
             currentTab = null;
 
-            if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getMethodName());
+            if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getFileName());
         }
     }
 }

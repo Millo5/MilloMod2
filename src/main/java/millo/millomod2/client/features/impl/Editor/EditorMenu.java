@@ -4,9 +4,9 @@ import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorFileManager;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
-import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -115,13 +115,13 @@ public class EditorMenu extends Menu {
         mainBody.openAndFocusSearch();
     }
 
-    public void openTemplate(Template template) {
+    public void openTemplate(TemplateModel template) {
         addTemplate(template);
         mainBody.getCodeBrowser().openTemplate(template);
         refresh();
     }
 
-    public void addTemplate(Template template) {
+    public void addTemplate(TemplateModel template) {
         loadedPlot.addTemplate(template);
     }
 

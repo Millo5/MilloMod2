@@ -4,7 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
@@ -92,7 +93,8 @@ public class MilloWebSocketServer extends WebSocketServer {
         }
 
         if (type.equals("template")) {
-            Template template = Template.parseBase64(data);
+//            Template template = Template.parseBase64(data);
+            TemplateModel template = ModelUtil.parseFromGzip(data);
             if (template == null) {
                 message(MessageType.ERROR, source, "Failed to parse provided template data.");
                 return null;

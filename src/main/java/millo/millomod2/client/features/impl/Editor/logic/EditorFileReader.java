@@ -1,6 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;
@@ -14,7 +15,7 @@ public class EditorFileReader {
         this.fileManager = editorFileManager;
     }
 
-    public Template readTemplate(String methodName) {
+    public TemplateModel readTemplate(String methodName) {
         String fileName = EditorFileManager.serializeMethodName(methodName);
         Path filePath = fileManager.getPlotFolder().resolve(fileName);
 
@@ -23,6 +24,6 @@ public class EditorFileReader {
         String b64Code = FileUtil.read(filePath);
         if (b64Code == null) return null;
 
-        return Template.parseBase64(b64Code);
+        return ModelUtil.parseFromGzip(b64Code);
     }
 }

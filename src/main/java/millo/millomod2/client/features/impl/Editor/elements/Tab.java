@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -13,9 +13,9 @@ public class Tab extends ButtonElement {
     private final CodeBrowser browser;
     private final int textWidth;
     private boolean selected = false;
-    private Template template;
+    private TemplateModel template;
 
-    public Tab(CodeBrowser browser, String displayName, Template template) {
+    public Tab(CodeBrowser browser, String displayName, TemplateModel template) {
         super(0, 0, 100, 20, Text.literal(displayName));
         this.template = template;
         this.browser = browser;
@@ -66,11 +66,11 @@ public class Tab extends ButtonElement {
         this.selected = selected;
     }
 
-    public Template getTemplate() {
+    public TemplateModel getTemplate() {
         return template;
     }
 
-    public void setTemplate(Template template) {
+    public void setTemplate(TemplateModel template) {
         this.template = template;
     }
 }

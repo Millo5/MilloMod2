@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
@@ -70,8 +70,8 @@ public class MainBody extends FlexElement<MainBody> {
 
         if (true) return; // TODO
 
-        Optional<Template> templateOpt = menu.getLoadedPlot().getCachedTemplate(name);
-        templateOpt.ifPresent(template -> codeBrowser.openTemplate(template));
+        Optional<TemplateModel> templateOpt = menu.getLoadedPlot().getCachedTemplate(name);
+        templateOpt.ifPresent(codeBrowser::openTemplate);
     }
 
     public void openAndFocusSearch() {

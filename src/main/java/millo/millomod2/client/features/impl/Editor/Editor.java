@@ -6,8 +6,9 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.Plot;
-import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.MilloLog;
@@ -26,7 +27,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class Editor extends Feature implements Keybound, Configurable {
@@ -39,7 +39,6 @@ public class Editor extends Feature implements Keybound, Configurable {
 
     private boolean fetchingAllTemplates = false;
     private int waitForShulkers = 0;
-    private HashMap<String, Template> methodStack;
 
     @Override
     public String getId() {
@@ -91,10 +90,10 @@ public class Editor extends Feature implements Keybound, Configurable {
                 String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
                 if (codeTemplateData == null) continue;
 
-                Template template = Template.parseItemNBT(codeTemplateData);
+                TemplateModel templateModel = ModelUtil.parseFromItemNBT(codeTemplateData);
 
                 if (screen == null) continue;
-                screen.addTemplate(template);
+                screen.addTemplate(templateModel);
             }
 
             waitForShulkers = 1;
@@ -158,6 +157,5 @@ public class Editor extends Feature implements Keybound, Configurable {
 
         fetchingAllTemplates = false;
         waitForShulkers = 0;
-        methodStack = null;
     }
 }

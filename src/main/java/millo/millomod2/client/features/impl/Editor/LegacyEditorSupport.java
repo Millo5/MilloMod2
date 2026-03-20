@@ -1,7 +1,8 @@
 package millo.millomod2.client.features.impl.Editor;
 
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -50,7 +51,7 @@ public class LegacyEditorSupport {
         if (codeTemplateData == null) return false;
         lastRequest = 0;
 
-        if (callback != null) callback.onReceive(Template.parseItemNBT(codeTemplateData));
+        if (callback != null) callback.onReceive(ModelUtil.parseFromItemNBT(codeTemplateData));
 
         MilloMod.schedule(() -> MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), ItemStack.EMPTY)), 50);
 
@@ -58,6 +59,6 @@ public class LegacyEditorSupport {
     }
 
     public interface TemplateCallback {
-        void onReceive(Template template);
+        void onReceive(TemplateModel template);
     }
 }

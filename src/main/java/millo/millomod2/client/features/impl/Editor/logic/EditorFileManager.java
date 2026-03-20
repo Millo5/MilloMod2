@@ -1,16 +1,14 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class EditorFileManager {
     private final EditorFileReader reader;
     private final EditorPlot plot;
-    private HashMap<String, Template> templateCache = new HashMap<>();
 
     public EditorFileManager(EditorPlot plot) {
         this.plot = plot;
@@ -63,19 +61,17 @@ public class EditorFileManager {
     }
 
 
-    public void saveTemplate(Template template) {
-        String fileName = serializeMethodName(template.getMethodName());
+    public void saveTemplate(TemplateModel template) {
+        String fileName = serializeMethodName(template.getFileName());
         Path filePath = getPlotFolder().resolve(fileName);
 
         if (!filePath.getParent().toFile().exists()) filePath.getParent().toFile().mkdirs();
 
-        FileUtil.write(filePath, template.b64Code);
+        FileUtil.write(filePath, template.serialize().toString());
     }
 
-    public Template readTemplate(String methodName) {
-        Template template = reader.readTemplate(methodName);
-        if (template != null) templateCache.put(methodName, template);
-        return template;
+    public TemplateModel readTemplate(String methodName) {
+        return reader.readTemplate(methodName);
     }
 
     public ArrayList<String> getAllTemplateNames() {

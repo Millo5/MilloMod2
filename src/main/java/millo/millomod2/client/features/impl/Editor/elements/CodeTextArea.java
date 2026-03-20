@@ -2,8 +2,8 @@ package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.logic.CodeBodyBuilder;
+import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
 import millo.millomod2.client.features.impl.Editor.template.CodeBody;
-import millo.millomod2.client.features.impl.Editor.template.TemplateParser;
 import millo.millomod2.client.hypercube.template.Template;
 import millo.millomod2.menu.elements.ListElement;
 
@@ -26,13 +26,13 @@ public class CodeTextArea extends ListElement {
         this.clearChildren();
     }
 
-    public void loadTemplate(Template template) {
-        TemplateParser parser = new TemplateParser(template);
-        CodeBody result = parser.getResult();
+    public void loadTemplate(TemplateModel template) {
+//        TemplateParser parser = new TemplateParser(template); TODO
+//        CodeBody result = parser.getResult();
 
         MilloMod.MC.send(() -> {
             clearContents();
-            loadCodeBody(result, template);
+//            loadCodeBody(result, template);
         });
     }
 
