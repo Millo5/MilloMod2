@@ -54,4 +54,17 @@ public class BlockCodeBlockModel extends CodeBlockModel<BlockCodeBlockModel> {
         codeFields.serializeOn(root);
         return root;
     }
+
+
+    public String getBlock() {
+        return block;
+    }
+
+    public CodeFields getCodeFields() {
+        return codeFields;
+    }
+
+    public ArrayList<ArgumentModel<?>> getArgs() {
+        return args;
+    }
 }

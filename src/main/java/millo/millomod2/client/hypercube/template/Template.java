@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
-import millo.millomod2.client.util.PlayerUtil;
+import millo.millomod2.client.util.JsonUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+@Deprecated(forRemoval = true)
 public class Template {
 
     public String b64Code;
@@ -37,9 +38,9 @@ public class Template {
 
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             TemplateModel model = new TemplateModel().deserialize(json);
-            model.compare(json);
+            JsonUtil.compare(model.serialize(), json);
 
-            PlayerUtil.giveItem(createTemplateItem(toCompressedBase64(model.serialize().toString())));
+//            PlayerUtil.giveItem(createTemplateItem(toCompressedBase64(model.serialize().toString())));
 
             Template template = new Gson().fromJson(jsonString, Template.class);
             template.b64Code = data;

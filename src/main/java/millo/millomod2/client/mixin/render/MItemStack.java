@@ -2,7 +2,7 @@ package millo.millomod2.client.mixin.render;
 
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.ShowItemTags;
-import millo.millomod2.client.util.GlobalUtil;
+import millo.millomod2.client.util.KeyUtil;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.component.ComponentMap;
@@ -35,7 +35,7 @@ public abstract class MItemStack {
         if (player == null) return;
         ShowItemTags feature = FeatureHandler.get(ShowItemTags.class);
 
-        if (!GlobalUtil.isKeyDown(feature.getKeybind())) return;
+        if (!KeyUtil.isKeyDown(feature.getKeybind())) return;
 
         Map<String, Object> tags = ItemUtil.getItemTags(copy());
         if (tags == null) return;

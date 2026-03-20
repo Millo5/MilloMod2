@@ -8,7 +8,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.util.HashMap;
 
-public class GlobalUtil {
+public class KeyUtil {
 
     public static boolean isKeyDown(KeyBinding keyBind) {
         try {
@@ -21,7 +21,7 @@ public class GlobalUtil {
         }
     }
 
-    private static HashMap<KeyBinding, Integer> keyDuration = new HashMap<>();
+    private static final HashMap<KeyBinding, Integer> keyDuration = new HashMap<>();
     public static boolean isKeyPressed(KeyBinding keyBind) {
         if (!keyDuration.containsKey(keyBind)) keyDuration.put(keyBind, 0);
         if (isKeyDown(keyBind)) {

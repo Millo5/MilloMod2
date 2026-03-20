@@ -8,7 +8,7 @@ import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.HUDRendered;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.MouseScrollable;
-import millo.millomod2.client.util.GlobalUtil;
+import millo.millomod2.client.util.KeyUtil;
 import millo.millomod2.client.util.RenderInfo;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -92,7 +92,7 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
 
     @Override
     public void onTick() {
-        if (!GlobalUtil.isKeyDown(getKeybind()) || MilloMod.MC.currentScreen != null) {
+        if (!KeyUtil.isKeyDown(getKeybind()) || MilloMod.MC.currentScreen != null) {
             if ( open) {
                 MilloMod.MC.mouse.lockCursor();
 

@@ -4,20 +4,32 @@ import com.google.gson.JsonObject;
 
 public class ActionCodeFields extends CodeFields {
 
-    private String actionName;
-    private String targetName;
-    private String attributeText;
+    private String action;
+    private String target;
+    private String attribute;
 
     public ActionCodeFields(String actionName, String targetName, String attributeText) {
-        this.actionName = actionName;
-        this.targetName = targetName;
-        this.attributeText = attributeText;
+        this.action = actionName;
+        this.target = targetName;
+        this.attribute = attributeText;
     }
 
     @Override
     public void serializeOn(JsonObject jsonObject) {
-        if (actionName != null) jsonObject.addProperty("action", actionName);
-        if (targetName != null) jsonObject.addProperty("target", targetName);
-        if (attributeText != null) jsonObject.addProperty("attribute", attributeText);
+        if (action != null) jsonObject.addProperty("action", action);
+        if (target != null) jsonObject.addProperty("target", target);
+        if (attribute != null) jsonObject.addProperty("attribute", attribute);
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public String getAttribute() {
+        return attribute;
     }
 }
