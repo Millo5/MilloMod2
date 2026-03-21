@@ -1,8 +1,8 @@
 package millo.millomod2.client.features.impl.Editor;
 
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.ModelUtil;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.client.network.ClientPlayNetworkHandler;

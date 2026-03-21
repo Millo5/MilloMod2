@@ -1,6 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.ModelUtil;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;
@@ -67,7 +68,7 @@ public class EditorFileManager {
 
         if (!filePath.getParent().toFile().exists()) filePath.getParent().toFile().mkdirs();
 
-        FileUtil.write(filePath, template.serialize().toString());
+        FileUtil.write(filePath, ModelUtil.compress(template));
     }
 
     public TemplateModel readTemplate(String methodName) {

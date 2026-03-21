@@ -1,6 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
-import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.CodeLine;
 import millo.millomod2.client.features.impl.Editor.template.CodeLineIndentationMutation;
 import millo.millomod2.menu.elements.TextElement;

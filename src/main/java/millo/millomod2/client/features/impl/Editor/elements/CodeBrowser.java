@@ -1,6 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
@@ -54,13 +54,12 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
     }
 
     public void openTemplate(String templateName) {
-        String suffixlessName = MethodType.trimSuffix(templateName);
 
         if (!tabNameMap.containsKey(templateName)) {
             TemplateModel template = hierarchy.getTemplate(templateName);
             if (template == null) return;
 
-            Tab tab = new Tab(this, suffixlessName, template);
+            Tab tab = new Tab(this, MethodType.trimSuffix(templateName), template);
             tabNameMap.put(templateName, tab);
             tabListElement.addChild(tab);
         }

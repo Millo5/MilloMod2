@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.template.lines;
 
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
-import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.template.Argument;
 import millo.millomod2.client.hypercube.actiondump.readable.CodeBlock;
 import millo.millomod2.client.hypercube.template.MethodType;

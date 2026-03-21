@@ -5,7 +5,7 @@ import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyEntry;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyFolder;
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMethod;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.Plot;
 
 import java.util.ArrayList;
@@ -92,6 +92,7 @@ public class EditorPlot {
 
     public void addTemplate(TemplateModel template) {
         fileManager.saveTemplate(template);
+        templateCache.put(template.getFileName(), template);
         addTemplate(template.getFileName());
     }
 

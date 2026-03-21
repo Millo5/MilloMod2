@@ -4,7 +4,7 @@ import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorFileManager;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;

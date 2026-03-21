@@ -1,6 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.template;
 
-import millo.millomod2.client.features.impl.Editor.elements.CodeLineElement;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.menu.elements.TextElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;

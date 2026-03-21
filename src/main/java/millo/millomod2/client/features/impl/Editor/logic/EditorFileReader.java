@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
-import millo.millomod2.client.features.impl.Editor.logic.model.ModelUtil;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.ModelUtil;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;

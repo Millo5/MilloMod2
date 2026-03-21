@@ -2,9 +2,7 @@ package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.logic.CodeBodyBuilder;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
-import millo.millomod2.client.features.impl.Editor.template.CodeBody;
-import millo.millomod2.client.hypercube.template.Template;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.ListElement;
 
 public class CodeTextArea extends ListElement {
@@ -27,20 +25,20 @@ public class CodeTextArea extends ListElement {
     }
 
     public void loadTemplate(TemplateModel template) {
-//        TemplateParser parser = new TemplateParser(template); TODO
+//        TemplateParser parser = new TemplateParser(template);
 //        CodeBody result = parser.getResult();
 
         MilloMod.MC.send(() -> {
             clearContents();
-//            loadCodeBody(result, template);
+            loadCodeBody(template);
         });
     }
 
 
     // Code loading
 
-    private void loadCodeBody(CodeBody body, Template template) {
-        CodeBodyBuilder builder = new CodeBodyBuilder(body, this, template);
+    private void loadCodeBody(TemplateModel template) {
+        CodeBodyBuilder builder = new CodeBodyBuilder(this, template);
         builder.build();
 
 

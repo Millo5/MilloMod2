@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;

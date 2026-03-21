@@ -3,7 +3,7 @@ package millo.millomod2.client.hypercube.template;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.JsonUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.component.DataComponentTypes;

@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
-import millo.millomod2.client.features.impl.Editor.logic.model.TemplateModel;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.FolderElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
