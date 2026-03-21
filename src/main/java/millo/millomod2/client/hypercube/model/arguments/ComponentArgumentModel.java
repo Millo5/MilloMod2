@@ -25,4 +25,8 @@ public class ComponentArgumentModel extends ArgumentModel<ComponentArgumentModel
     protected void serializeItem(JsonObject jsonObject) {
         jsonObject.addProperty("name", value);
     }
+
+    public String getValue() {
+        return value;
+    }
 }

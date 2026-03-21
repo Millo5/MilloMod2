@@ -90,6 +90,7 @@ public abstract class CodeLineSegment<T> {
         register(ParameterArgumentModel.class, ParameterArgumentSegment::new);
         register(PotionArgumentModel.class, PotionArgumentSegment::new);
         register(LocationArgumentModel.class, LocationArgumentSegment::new);
+        register(ComponentArgumentModel.class, ComponentArgumentSegment::new);
     }
     private static <K> void register(Class<K> clazz, Function<K, CodeLineSegment<K>> supplier) {
         segmentRegistry.put(clazz, new SegmentEntry<>(clazz, supplier));
