@@ -74,23 +74,12 @@ public class MilloMod implements ClientModInitializer {
     /*
 
     editor:
-        hierarchy
-            folders
-            saving
-        searching
         pinning tabs
-        find tab in hierarchy (highlight in hierarchy)
-        "else" block looks weird
 
     ultrakill mode
-    airhits in dev
 
     action reference display
     action argument display (per slot)
-
-
-    Icon
-
 
      */
 
