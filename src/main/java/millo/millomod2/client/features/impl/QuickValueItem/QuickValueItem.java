@@ -213,7 +213,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
 
         animationProgress = info.lerp(animationProgress, selectorShown ? 1f : 0f, 15f);
 
-        if (slot != -1 && slot <= handler.slots.size()) {
+        if (slot != -1 && slot < handler.slots.size()) {
             Slot slot = handler.getSlot(this.slot);
             slotX = slot.x;
             slotY = slot.y;

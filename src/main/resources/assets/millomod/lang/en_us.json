@@ -29,6 +29,14 @@
   "millo.feature.config.up_angle": " - Layer Up Angle",
   "millo.feature.config.acceleration": "Acceleration",
   "millo.feature.config.acceleration_amount": " - Multiplier",
+  "millo.feature.config.show_icons": "Show Icons",
+  "millo.feature.config.hud_info": "Hud Info",
+  "millo.feature.config.show_tracker": "Show Tracker",
+  "millo.feature.config.log_commands": "Log Commands",
+  "millo.feature.config.auto_dev_mode": "Auto Dev Mode",
+  "millo.feature.config.custom": "Custom",
+  "millo.feature.config.folder_regex": "Folder Regex",
+
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",
@@ -50,6 +58,8 @@
   "millo.feature.particle_color_shorthand": "Particle Color Shorthand",
   "millo.feature.waypoints": "Waypoints",
   "millo.feature.dev_movement": "Dev Movement",
+  "millo.feature.argument_display": "Argument Display",
+  "millo.feature.editor": "Editor",
 
   "key.category.minecraft.category.millomod2": "MilloMod 2",
   "key.millomod2.command_wheel.key": "Command Wheel",

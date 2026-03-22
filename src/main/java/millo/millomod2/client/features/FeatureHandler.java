@@ -70,6 +70,7 @@ public final class FeatureHandler {
                 new ParticleColorShorthand(),
                 new TeleportHandler(),
                 new Waypoints(),
+                new ArgumentDisplay(),
                 DevMovement.getInstance(),
 
 
