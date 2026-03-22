@@ -34,7 +34,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build mod
-        run: ./gradlew build
+        run: |
+          chmod +x gradlew
+          ./gradlew build
 
       - name: Create release
         uses: softprops/action-gh-release@v2
