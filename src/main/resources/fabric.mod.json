@@ -12,6 +12,9 @@
   "entrypoints": {
     "client": [
       "millo.millomod2.client.MilloMod"
+    ],
+    "modmenu": [
+      "millo.millomod2.client.config.ModMenuIntegration"
     ]
   },
   "mixins": [

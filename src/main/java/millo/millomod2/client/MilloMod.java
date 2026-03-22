@@ -89,7 +89,6 @@ public class MilloMod implements ClientModInitializer {
     action argument display (per slot)
 
 
-    ModMenu integration
     Icon
 
 
