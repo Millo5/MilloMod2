@@ -40,6 +40,8 @@ repositories {
         }
     }
 
+    maven { url "https://maven.terraformersmc.com/releases" }
+
 }
 
 dependencies {
@@ -60,6 +62,8 @@ dependencies {
     // Protocol Buffers.
     implementation("com.google.protobuf:protobuf-java:4.32.0")
     implementation("com.google.protobuf:protobuf-java-util:4.32.0")
+
+    modApi "com.terraformersmc:modmenu:17.0.0-beta.2"
 }
 
 processResources {
