@@ -23,9 +23,13 @@ public class CodeLineElement extends FlexElement<CodeLineElement> implements Sea
 
         for (ClickableWidget child : getChildren()) {
             if (child instanceof TextElement textElement) {
-//                textElement.getMessage().getString()
+                int index = textElement.getMessage().getString().indexOf(searchQuery);
+                if (index != -1) {
+                    results.add(new SearchResult(textElement, index, index + searchQuery.length()));
+                }
             }
         }
         return results;
     }
+
 }

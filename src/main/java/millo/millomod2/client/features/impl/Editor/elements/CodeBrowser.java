@@ -1,5 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
+import millo.millomod2.client.features.impl.Editor.logic.search.SearchResult;
+import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.menu.elements.ListElement;
@@ -9,9 +11,11 @@ import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.text.Text;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
-public class CodeBrowser extends FlexElement<CodeBrowser> {
+public class CodeBrowser extends FlexElement<CodeBrowser> implements Searchable {
 
     private Tab currentTab = null;
     private final HashMap<String, Tab> tabNameMap = new HashMap<>();
@@ -93,4 +97,11 @@ public class CodeBrowser extends FlexElement<CodeBrowser> {
             if (currentIndex >= 0) openTab(((Tab) tabListElement.getChildren().get(currentIndex)).getTemplate().getFileName());
         }
     }
+
+    @Override
+    public Collection<? extends SearchResult> search(String searchQuery) {
+        if (currentTab == null) return List.of();
+        return codeTextArea.search(searchQuery);
+    }
+
 }

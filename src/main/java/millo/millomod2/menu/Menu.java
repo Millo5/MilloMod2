@@ -19,6 +19,7 @@ public abstract class Menu extends Screen {
 
     @Override
     public void close() {
+        setFocused(null);
         this.client.setScreen(parent);
     }
 

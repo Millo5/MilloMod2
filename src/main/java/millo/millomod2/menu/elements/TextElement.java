@@ -20,6 +20,10 @@ public class TextElement extends TextWidget implements FadeElement {
     private int xOffset = 0;
     private int yOffset = 0;
 
+    private int highlight = 0;
+    private int highlightStart = 0;
+    private int highlightEnd = 0;
+
     private TextElement(Text message) {
         super(message, MilloMod.MC.textRenderer);
         setWidth(MilloMod.MC.textRenderer.getWidth(message));
@@ -39,6 +43,8 @@ public class TextElement extends TextWidget implements FadeElement {
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
 
+
+
         int textWidth = MilloMod.MC.textRenderer.getWidth(this.getMessage());
         if (alignment == TextAlignment.CENTER) {
             context.getMatrices().translate((this.width - textWidth) / 2f, 0);
@@ -47,6 +53,14 @@ public class TextElement extends TextWidget implements FadeElement {
         }
 
         context.getMatrices().translate(xOffset, yOffset);
+
+        if (highlight != 0) {
+            context.fill(getX(), getY() - 1, getRight(), getBottom(), 0x40000000 | highlight);
+            int highlightXStart = getX() + MilloMod.MC.textRenderer.getWidth(getMessage().getString().substring(0, highlightStart));
+            int highlightXWidth = getX() + MilloMod.MC.textRenderer.getWidth(getMessage().getString().substring(0, highlightEnd)) - highlightXStart;
+//            context.fill(highlightXStart, getY() - 1, highlightXStart + highlightXWidth, getBottom(), 0x80000000 | highlight);
+            context.drawStrokedRectangle(highlightXStart, getY()-1, highlightXWidth, getHeight()+1, 0xFF000000 | highlight);
+        }
 
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
@@ -101,6 +115,12 @@ public class TextElement extends TextWidget implements FadeElement {
         xOffset = x;
         yOffset = y;
         return this;
+    }
+
+    public void setHighlight(int highlight, int start, int end) {
+        this.highlight = highlight;
+        this.highlightStart = start;
+        this.highlightEnd = end;
     }
 
     public enum TextAlignment {

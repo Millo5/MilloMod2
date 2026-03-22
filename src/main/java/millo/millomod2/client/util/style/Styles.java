@@ -68,7 +68,7 @@ public enum Styles {
     FUNCTION(new Color(0xFF028AEA)),
     GAME_EVENT(new Color(0x2E2121)),
 
-
+    HIGHLIGHT(new Color(0x2AFFAA))
     ;
 
     private final Style style;

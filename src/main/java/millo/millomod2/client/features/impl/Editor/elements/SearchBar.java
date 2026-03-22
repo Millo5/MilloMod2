@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.logic.search.SearchResult;
 import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.util.style.Styles;
@@ -25,6 +26,7 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     private HashSet<Searchable> subscribers = new HashSet<>();
     private ArrayList<SearchResult> currentResults = new ArrayList<>();
 
+    private boolean active = false;
 
     public SearchBar(int width, int height, CodeBrowser browser) {
         super(0, 0, width, height, Text.empty());
@@ -33,7 +35,7 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
         mainAlign(MainAxisAlignment.CENTER);
         crossAlign(CrossAxisAlignment.CENTER);
 
-        searchField = new TextFieldElement(width, 12, Text.literal(""));
+        searchField = new TextFieldElement(width, 16, Text.literal(""));
         searchField.setPlaceholder(Text.literal("Search...").setStyle(Styles.COMMENT.getStyle()));
         searchField.setMaxLength(1000);
         searchField.setChangedListener((value) -> {
@@ -45,10 +47,39 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     }
 
     private void search() {
+        for (SearchResult currentResult : currentResults) {
+            currentResult.clearHighlight();
+        }
+
+        if (searchQuery.isEmpty()) {
+            currentResults.clear();
+            return;
+        }
+
         currentResults.clear();
         for (Searchable searchable : subscribers) {
             currentResults.addAll(searchable.search(searchQuery));
         }
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+        if (!active) {
+            searchField.setText("");
+            searchQuery = "";
+            search();
+        }
+
+        searchField.setVisible(active);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void focus() {
+        if (MilloMod.MC.currentScreen == null) return;
+        MilloMod.MC.currentScreen.setFocused(searchField);
     }
 
     public ArrayList<SearchResult> getCurrentResults() {

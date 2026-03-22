@@ -40,6 +40,8 @@ public class MainBody extends FlexElement<MainBody> {
         searchBar = new SearchBar(250, 20, codeBrowser);
         searchBar.setAbsoluteX(width - searchBar.getWidth() - 5);
         searchBar.setAbsoluteY(25);
+        searchBar.addSubscriber(codeBrowser);
+        searchBar.setActive(false);
         addChild(searchBar);
     }
 
@@ -76,6 +78,8 @@ public class MainBody extends FlexElement<MainBody> {
 
     public void openAndFocusSearch() {
 //        hierarchy.openAndFocusSearch();
+        searchBar.setActive(true);
+        searchBar.focus();
     }
 
     public SearchBar getSearchBar() {

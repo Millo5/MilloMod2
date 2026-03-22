@@ -2,10 +2,15 @@ package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.logic.CodeBodyBuilder;
+import millo.millomod2.client.features.impl.Editor.logic.search.SearchResult;
+import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.ListElement;
 
-public class CodeTextArea extends ListElement {
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class CodeTextArea extends ListElement implements Searchable {
 
     private CodeBrowser browser;
 
@@ -25,9 +30,6 @@ public class CodeTextArea extends ListElement {
     }
 
     public void loadTemplate(TemplateModel template) {
-//        TemplateParser parser = new TemplateParser(template);
-//        CodeBody result = parser.getResult();
-
         MilloMod.MC.send(() -> {
             clearContents();
             loadCodeBody(template);
@@ -40,23 +42,18 @@ public class CodeTextArea extends ListElement {
     private void loadCodeBody(TemplateModel template) {
         CodeBodyBuilder builder = new CodeBodyBuilder(this, template);
         builder.build();
-
-
-//        for (CodeEntry entry : body.getLines()) {
-//            if (entry instanceof BracketLine bracket) indentLevel += bracket.getIndentationChange() < 0 ? -1 : 0;
-//
-//            if (entry instanceof CodeBody nestedBody) loadCodeBody(nestedBody, indentLevel);
-//            if (entry instanceof CodeLine line) {
-////                this.addChild(line.getElement());
-////                TextElement text = TextElement.create(Text.literal("  ".repeat(indentLevel)).append(line.getDisplayText()));
-////                Text tooltip = line.getTooltip();
-////                if (tooltip != null) text.setTooltip(Tooltip.of(tooltip));
-////                this.addChild(text);
-//            }
-//
-//            if (entry instanceof BracketLine bracket) indentLevel += bracket.getIndentationChange() > 0 ? 1 : 0;
-//        }
     }
 
+
+    @Override
+    public Collection<? extends SearchResult> search(String searchQuery) {
+        ArrayList<SearchResult> results = new ArrayList<>();
+        for (var child : getChildren()) {
+            if (child instanceof Searchable searchable) {
+                results.addAll(searchable.search(searchQuery));
+            }
+        }
+        return results;
+    }
 
 }

@@ -51,7 +51,7 @@ public class CodeBodyBuilder {
         if (indent != null) indentLevel += indent.getPreIndent();
         String indentString = "  ".repeat(indentLevel);
         if (indent != null) indentLevel += indent.getPostIndent();
-        if (indent == null || indent.getPreIndent() >= 0) physicalOffset += 2;
+        if (indent == null || indent.getPostIndent() == 0) physicalOffset += 2;
 
         // Initialize line element
         CodeLineElement element = new CodeLineElement(0, 0, codeTextArea.getWidth(), 10)
