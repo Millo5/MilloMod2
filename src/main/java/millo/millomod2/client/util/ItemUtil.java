@@ -7,9 +7,12 @@ import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStringReader;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringNbtReader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,5 +74,13 @@ public class ItemUtil {
         if (!pbv.contains(key)) return null;
 
         return pbv.getString(key).orElse(null);
+    }
+
+    public static LoreComponent getLore(ItemStack stack) {
+        return stack.get(DataComponentTypes.LORE);
+    }
+
+    public static String getItemTagAsString(ItemStack stack, String tag) {
+        return (String) getItemTags(stack).get(tag);
     }
 }

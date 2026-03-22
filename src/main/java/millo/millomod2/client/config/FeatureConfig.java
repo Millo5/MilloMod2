@@ -86,6 +86,11 @@ public class FeatureConfig {
         return this;
     }
 
+    public FeatureConfig addColor(String color, int def) {
+        addValue(color, new ColorConfigValue(def));
+        return this;
+    }
+
     // Unique Adders
     public <T extends ConfigValue<?> & Instantiable<T>> FeatureConfig addList(String key, ListConfigValue<T> conf) {
         addValue(key, conf);
