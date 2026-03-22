@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 public class BlockTagArgumentModel extends ArgumentModel<BlockTagArgumentModel> {
 
     private String option, tag, action, block;
+    private VariableArgumentModel variable;
 
     @Override
     public BlockTagArgumentModel self() {
@@ -22,6 +23,9 @@ public class BlockTagArgumentModel extends ArgumentModel<BlockTagArgumentModel> 
         this.tag = jsonObject.get("tag").getAsString();
         this.action = jsonObject.get("action").getAsString();
         this.block = jsonObject.get("block").getAsString();
+        if (jsonObject.has("variable")) {
+            variable = (VariableArgumentModel) ArgumentModel.deserializeDefaultArgument(jsonObject.getAsJsonObject("variable"));
+        }
     }
 
     @Override
@@ -30,6 +34,14 @@ public class BlockTagArgumentModel extends ArgumentModel<BlockTagArgumentModel> 
         jsonObject.addProperty("tag", tag);
         jsonObject.addProperty("action", action);
         jsonObject.addProperty("block", block);
+        if (variable != null) {
+            JsonObject defaultValueJson = new JsonObject();
+            defaultValueJson.addProperty("id", variable.id());
+            JsonObject dataObject = new JsonObject();
+            variable.serializeItem(dataObject);
+            defaultValueJson.add("data", dataObject);
+            jsonObject.add("variable", defaultValueJson);
+        }
     }
 
 
@@ -47,5 +59,9 @@ public class BlockTagArgumentModel extends ArgumentModel<BlockTagArgumentModel> 
 
     public String getBlock() {
         return block;
+    }
+
+    public VariableArgumentModel getVariable() {
+        return variable;
     }
 }
