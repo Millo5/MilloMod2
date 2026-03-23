@@ -23,11 +23,17 @@ jobs:
           VERSION=$(grep '^mod_version' gradle.properties | cut -d'=' -f2 | tr -d ' ')
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Delete existing tag
+      - name: Check if version changed
+        id: check_version
         run: |
-          git push origin :refs/tags/${{ steps.version.outputs.tag }} || true
+          if git tag | grep -q "v${{ steps.version.outputs.tag }}"; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up java
+        if: steps.check_version.outputs.changed == 'true'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -35,11 +41,13 @@ jobs:
           cache: gradle
 
       - name: Build mod
+        if: steps.check_version.outputs.changed == 'true'
         run: |
           chmod +x gradlew
           ./gradlew build
 
       - name: Create release
+        if: steps.check_version.outputs.changed == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
