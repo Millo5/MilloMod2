@@ -104,4 +104,8 @@ public class CodeBrowser extends FlexElement<CodeBrowser> implements Searchable 
         return codeTextArea.search(searchQuery);
     }
 
+    public Hierarchy getHierarchy() {
+        return hierarchy;
+    }
+
 }

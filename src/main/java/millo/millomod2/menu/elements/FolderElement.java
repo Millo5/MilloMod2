@@ -78,7 +78,6 @@ public class FolderElement extends ContainerElement<FolderElement> {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (!active || !visible) return false;
-        if (!isValidClickButton(click.buttonInfo())) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
 
         if (click.y() <= getY() + 12) {

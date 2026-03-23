@@ -1,14 +1,21 @@
 package millo.millomod2.client.features.impl.Editor.logic.hierarchy;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.elements.CodeBrowser;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.template.MethodType;
+import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
+import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ClickableElement;
+import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
+import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
+import millo.millomod2.menu.elements.flex.ElementDirection;
 import net.minecraft.client.font.Alignment;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class HierarchyMethod implements HierarchyEntry {
@@ -53,10 +60,32 @@ public class HierarchyMethod implements HierarchyEntry {
                 .message(Text.literal(displayName))
                 .border(new ClickableElement.Border().left(0xff000000 | borderColor))
                 .textAlignment(Alignment.LEFT)
-                .onPress((button) -> {
+                .onClick((clickInfo -> {
+                    if (clickInfo.click().button() == 1) {
+                        if (MilloMod.MC.currentScreen instanceof Menu menu) {
+                            ListElement contextMenu = ListElement.create(100, 20)
+                                    .background(0xCC222222)
+                                    .direction(ElementDirection.COLUMN)
+                                    .crossAlign(CrossAxisAlignment.STRETCH)
+                                    .gap(0);
+                            contextMenu.addChild(ButtonElement.create(100, 20)
+                                    .message(Text.literal("Give Item"))
+                                    .onPress(button -> {
+                                        ItemStack item = browser.getHierarchy().getTemplate(templateName).getItem();
+                                        PlayerUtil.giveItem(item);
+                                    })
+                            );
+                            menu.openContextMenu(contextMenu,
+                                    (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
+                                    (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())
+                            );
+                        }
+                        return;
+                    }
+
                     if (template != null) browser.openTemplate(template);
                     else browser.openTemplate(templateName);
-                });
+                }));
     }
 
     @Override

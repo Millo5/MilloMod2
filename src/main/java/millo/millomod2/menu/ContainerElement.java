@@ -98,7 +98,6 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
 
     @Override
     public boolean mouseReleased(Click click) {
-        if (!this.isValidClickButton(click.buttonInfo())) return false;
         for (ClickableWidget child : getChildren()) {
             child.mouseReleased(transformClickToLocal(click));
         }

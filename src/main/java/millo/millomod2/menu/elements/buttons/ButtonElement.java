@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 public class ButtonElement extends AbstractButton<ButtonElement> {
 
     private Consumer<ButtonElement> onPress;
+    private Consumer<ClickInfo> onClick;
 
     protected ButtonElement(int x, int y, int width, int height, Text message) {
         super(x, y, width, height, message);
@@ -23,6 +24,9 @@ public class ButtonElement extends AbstractButton<ButtonElement> {
 
     @Override
     public void onClick(Click click, boolean doubled) {
+        if (onClick != null) {
+            onClick.accept(new ClickInfo(click, doubled));
+        }
         if (onPress != null) {
             onPress.accept(this);
         }
@@ -32,4 +36,11 @@ public class ButtonElement extends AbstractButton<ButtonElement> {
         this.onPress = onPress;
         return this;
     }
+
+    public ButtonElement onClick(Consumer<ClickInfo> onClick) {
+        this.onClick = onClick;
+        return this;
+    }
+
+    public record ClickInfo(Click click, boolean doubled) { }
 }
