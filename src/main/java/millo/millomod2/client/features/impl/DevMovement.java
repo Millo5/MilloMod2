@@ -65,6 +65,9 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
         double z = player.getZ() + move.z;
 
         double halfWidth = player.getWidth() / 2;
+
+        if (x > plot.getPos().getX() - halfWidth) return null;
+
         x = Math.max(x, plot.getPos().getX() - plot.getDepth() + halfWidth);
         z = Math.clamp(z, plot.getPos().getZ() + halfWidth, plot.getPos().getZ() + 301 - halfWidth);
 
