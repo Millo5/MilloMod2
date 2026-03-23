@@ -3,6 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements.codeline.segments;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
 import millo.millomod2.client.hypercube.model.arguments.ArgumentModel;
+import millo.millomod2.client.hypercube.model.arguments.BlockTagArgumentModel;
 import millo.millomod2.client.hypercube.model.codeblocks.BlockCodeBlockModel;
 import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
 import org.jspecify.annotations.Nullable;
@@ -29,20 +30,28 @@ public class SetVarSegment extends CodeLineSegment<BlockCodeBlockModel> {
         ArrayList<ArgumentModel<?>> args = model.getArgs();
         String action = act.getAction();
         switch (action) {
-            case "+=", "-=", "=", "+", "-", "x":
+            case "+=", "-=", "=", "+", "-", "x", "/", "%":
                 buildArg(lineElement, args.getFirst());
-                if (args.size() == 1 && ("+= -=".contains(action))) {
+                if (action.length() == 2 && args.size() == 1) {
                     lineElement.addChild(text(String.valueOf(action.charAt(0)) + action.charAt(0)));
                     return;
                 }
 
-                lineElement.addChild(text(" " + action + " "));
+                if ("+-x/%".contains(action)) {
+                    lineElement.addChild(text(" = "));
+                } else {
+                    lineElement.addChild(text(" " + action + " "));
+                }
 
                 String joiner = "+";
-                if (action.equals("-") || action.equals("x")) joiner = action;
+                if ("-x/%".contains(action)) joiner = action;
                 for (int i = 1; i < args.size(); i++) {
+
+                    ArgumentModel<? extends ArgumentModel<?>> arg = args.get(i);
+                    if (arg instanceof BlockTagArgumentModel blockTag) {
+                        lineElement.addChild(text("; "));
+                    } else if (i != 1) lineElement.addChild(text(" " + joiner + " "));
                     buildArg(lineElement, args.get(i));
-                    if (i != args.size()-1) lineElement.addChild(text(" " + joiner + " "));
                 }
                 break;
             default:
