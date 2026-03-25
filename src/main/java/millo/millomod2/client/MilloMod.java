@@ -19,7 +19,9 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -41,6 +43,12 @@ public class MilloMod implements ClientModInitializer {
     }
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+    public static File getModJar() {
+        return new File(FabricLoader.getInstance()
+                .getModContainer(MOD_ID).get()
+                .getOrigin().getPaths().getFirst().toUri());
+    }
 
 
     @Override
