@@ -4,8 +4,10 @@ import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineEle
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.components.BlockPrefixComponent;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.components.IndentationComponent;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.segments.simple.SimpleArgumentBuilder;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
 import millo.millomod2.client.hypercube.model.arguments.ArgumentModel;
+import millo.millomod2.client.hypercube.model.arguments.SoundArgumentModel;
 import millo.millomod2.client.hypercube.model.codeblocks.BlockCodeBlockModel;
 import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
 import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
@@ -93,7 +95,19 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
 
         if (model.getCodeFields() instanceof ActionCodeFields act) {
             if (act.getAttribute() != null) lineElement.addChild(text(act.getAttribute() + "."));
-            lineElement.addChild(text(act.getAction()));
+            if (act.getAction().contains("Sound")) {
+                lineElement.addChild(new SimpleArgumentBuilder(act.getAction())
+                        .onClick(() -> {
+                            // Preview all sounds
+                            if (model.getArgs() == null) return false;
+                            for (ArgumentModel<?> arg : model.getArgs()) {
+                                if (arg instanceof SoundArgumentModel sound) sound.play();
+                            }
+
+                            return false;
+                        })
+                        .build());
+            } else lineElement.addChild(text(act.getAction()));
             if (act instanceof SubActionCodeFields sub) {
                 lineElement.addChild(text("."+sub.getSubAction()));
             }

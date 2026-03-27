@@ -1,6 +1,11 @@
 package millo.millomod2.client.hypercube.model.arguments;
 
 import com.google.gson.JsonObject;
+import millo.millomod2.client.hypercube.actiondump.Sound;
+import millo.millomod2.client.hypercube.actiondump.SoundVariant;
+import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
+import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.SoundUtil;
 
 public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
@@ -53,5 +58,32 @@ public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
     public String getKey() {
         return key;
+    }
+
+    public void play() {
+        ActionDump dump = ActionDump.getActionDump().orElseThrow();
+        Sound sound = dump.getSoundFromName(getSound());
+
+        float volume = (float) getVolume();
+        float pitch = (float) getPitch();
+
+        if (getKey() != null) {
+            SoundUtil.playSound(getKey(), volume, pitch);
+            return;
+        }
+
+        String variant = getVariant();
+        if (variant != null && !variant.isBlank()) {
+            for (SoundVariant v : sound.variants) {
+                if (v.id.equals(variant)) {
+                    SoundUtil.playSoundVariant(sound.soundId, volume, pitch, v.seed);
+                    return;
+                }
+            }
+            MilloLog.logInGame("Could not find variant: " + variant);
+            return;
+        }
+
+        SoundUtil.playSound(sound.soundId, volume, pitch);
     }
 }
