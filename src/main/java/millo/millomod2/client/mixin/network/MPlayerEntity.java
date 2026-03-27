@@ -1,6 +1,6 @@
 package millo.millomod2.client.mixin.network;
 
-import millo.millomod2.client.features.impl.DevMovement;
+import millo.millomod2.client.features.impl.DevMovement.DevMovement;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder;
 import millo.millomod2.client.commands.CommandHandler;
 import millo.millomod2.client.config.saving.ConfigSaving;
 import millo.millomod2.client.features.FeatureHandler;
-import millo.millomod2.client.util.ModAPI;
 import millo.millomod2.client.hypercube.modapi.ModAPIPayload;
 import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.ModAPI;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -21,7 +21,6 @@ import net.minecraft.text.Text;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -84,10 +83,10 @@ public class MilloMod implements ClientModInitializer {
     editor:
         pinning tabs
 
-    ultrakill mode
-
     action reference display
     action argument display (per slot)
+
+    positional configs
 
      */
 

@@ -1,4 +1,4 @@
-package millo.millomod2.client.features.impl;
+package millo.millomod2.client.features.impl.DevMovement;
 
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
@@ -18,6 +18,8 @@ import net.minecraft.util.shape.VoxelShapes;
 public class DevMovement extends Feature implements Toggleable, Configurable {
     private final static DevMovement INSTANCE = new DevMovement();
 
+    private final UltrakillUltrakill ultrakill = new UltrakillUltrakill();
+
     @Override
     public String getId() {
         return "dev_movement";
@@ -30,9 +32,10 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
         config.addBoolean("down_sneak", true);
         config.addIntegerRange("up_angle", 50, 10, 90);
 
-
         config.addBoolean("acceleration", true);
         config.addIntegerRange("acceleration_amount", 1, 1, 10);
+
+        config.addBoolean("ultrakill_mode", false);
     }
 
     public static DevMovement getInstance() {
@@ -50,7 +53,7 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
     }
 
     public boolean isNoClipping() {
-        return isEnabled() && config.getBoolean("no_clip");
+        return isEnabled() && (config.getBoolean("ultrakill_mode") || config.getBoolean("no_clip"));
     }
 
 
@@ -137,7 +140,7 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
     private Vec3d getServerPos() {
         ClientPlayerEntity player = player();
 
-        Vec3d middlePos = player.getEntityPos().add(0, player.getHeight() / 2, 0);
+        Vec3d middlePos = player.getEntityPos().add(0, 0.899500400000006, 0);
         Box box = Box.of(middlePos, 0.68f, 1.799000800000012, 0.68f); // magic numbers from Entity.class
         boolean insideWall = BlockPos.stream(box).anyMatch((pos) -> {
             BlockState blockState = player.getEntityWorld().getBlockState(pos);
@@ -161,9 +164,19 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
     }
 
     public Float getJumpVelocity() {
-        if (!isNoClipping()) return null;
+        if (!isEnabled() || !isNoClipping()) return null;
         boolean desire = player().getPitch() < -config.getInt("up_angle");
         if (!desire) return null;
         return 0.91f;
+    }
+
+    public Vec3d applyMovementInput(Vec3d movementInput, float slipperiness) {
+        if (!config.getBoolean("ultrakill_mode")) return null;
+        if (!isEnabled()) {
+            ultrakill.reset();
+            return null;
+        }
+
+        return ultrakill.input(player(), movementInput);
     }
 }

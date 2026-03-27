@@ -1,7 +1,7 @@
 package millo.millomod2.client.mixin.core;
 
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.features.impl.DevMovement;
+import millo.millomod2.client.features.impl.DevMovement.DevMovement;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Vec3d;

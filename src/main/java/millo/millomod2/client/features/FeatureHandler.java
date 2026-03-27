@@ -4,6 +4,7 @@ import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.*;
 import millo.millomod2.client.features.impl.CommandWheel.CommandWheel;
+import millo.millomod2.client.features.impl.DevMovement.DevMovement;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.features.impl.QuickValueItem.QuickValueItem;

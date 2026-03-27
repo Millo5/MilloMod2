@@ -36,6 +36,7 @@
   "millo.feature.config.auto_dev_mode": "Auto Dev Mode",
   "millo.feature.config.custom": "Custom",
   "millo.feature.config.folder_regex": "Folder Regex",
+  "millo.feature.config.ultrakill_mode": "Ultrakill",
 
 
   "millo.choice.none": "None",
