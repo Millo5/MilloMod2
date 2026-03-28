@@ -55,7 +55,7 @@ public class ListConfigValue<T extends ConfigValue<?> & Instantiable<T>> extends
                 .gap(5);
 
         ArrayList<ClickableWidget> itemWidgets = new ArrayList<>();
-        for (T item : value) itemWidgets.add(item.createWidget());
+        for (T item : value) if (!item.isHidden()) itemWidgets.add(item.createWidget());
         container.addChildren(itemWidgets);
         if (value.isEmpty()) {
             container.addChild(TextElement.create("Empty List"));

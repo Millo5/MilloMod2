@@ -9,6 +9,7 @@ import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.FolderElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
@@ -25,12 +26,6 @@ public class ConfigMenu extends Menu {
 
     @Override
     protected void init() {
-//        FlexElement container = FlexElement.create(width, height)
-//                .direction(ElementDirection.COLUMN)
-//                .mainAlign(MainAxisAlignment.START)
-//                .crossAlign(CrossAxisAlignment.CENTER)
-//                .padding(40)
-//                .gap(10);
         ListElement list = ListElement.create(width/4 * 3, height)
                 .position(width/8, 0)
                 .maxExpansion(height)
@@ -40,6 +35,14 @@ public class ConfigMenu extends Menu {
 
         list.addChild(
                 TextElement.create("MilloMod Settings").align(TextElement.TextAlignment.CENTER)
+        );
+
+
+        list.addChild(
+                ButtonElement.create(200, 20)
+                        .message(MilloMod.translatable("config", "change_positions"))
+                        .background(0x80_000000)
+                        .onPress((b) -> new ConfigPositionMenu(this).open())
         );
 
         FeatureHandler.forEach(feature -> {
@@ -58,6 +61,8 @@ public class ConfigMenu extends Menu {
 
                 TextElement configText = TextElement.create(MilloMod.translatable("feature", "config", configValue.getKey()));
 
+                if (configValue.getConfigValue().isHidden()) return;
+                
                 ClickableWidget widget = configValue.getConfigValue().createWidget();
                 setting.addChildren(
                         configText,

@@ -27,6 +27,10 @@ public abstract class ConfigValue<T> {
         }
     }
 
+    public boolean isHidden() {
+        return false;
+    }
+
     public T getValue() {
         return value;
     }
