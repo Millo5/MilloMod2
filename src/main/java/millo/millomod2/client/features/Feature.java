@@ -42,6 +42,7 @@ public abstract class Feature {
 
         if (this instanceof Positional positional) {
             position = positional.defaultPosition();
+            config.addPositional(positional, position);
         } else position = null;
 
     }

@@ -2,6 +2,8 @@ package millo.millomod2.client.config;
 
 import millo.millomod2.client.config.saving.SavedFeature;
 import millo.millomod2.client.config.value.*;
+import millo.millomod2.client.features.FeaturePosition;
+import millo.millomod2.client.features.addons.Positional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ public class FeatureConfig {
         forEach(pair -> save.put(pair.getKey(), pair.getConfigValue().serialize()));
         return save;
     }
+
 
 
     public interface ConfigValueConsumer {
@@ -95,6 +98,10 @@ public class FeatureConfig {
     public <T extends ConfigValue<?> & Instantiable<T>> FeatureConfig addList(String key, ListConfigValue<T> conf) {
         addValue(key, conf);
         return this;
+    }
+
+    public void addPositional(Positional feat, FeaturePosition position) {
+        addValue("pos", new PositionalConfigValue(feat, position));
     }
 
 //    public <T extends ConfigValue<?>> FeatureConfig addList(String key, List<T> def) {
