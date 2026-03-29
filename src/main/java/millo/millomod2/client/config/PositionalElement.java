@@ -7,6 +7,8 @@ import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 
+import java.awt.*;
+
 public class PositionalElement extends ClickableElement<PositionalElement> {
 
     private boolean dragging = false;
@@ -54,7 +56,7 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
             int anchorX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getScaledWidth());
             int anchorY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getScaledHeight());
 
-            if (Math.abs(newX - anchorX) < 10 && Math.abs(newY - anchorY) < 10) {
+            if (Math.abs(click.x() - anchorX) < 10 && Math.abs(click.y() - anchorY) < 10) {
                 feature.getPosition().setAnchor(anchor);
                 break;
             }
@@ -72,29 +74,50 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         context.fill(getX(), getY(), getRight(), getBottom(), 0x80000000);
+        context.drawStrokedRectangle(getX(), getY(), getWidth(), getHeight(), 0xff00ffff);
 
         if (dragging || isMouseOver(mouseX, mouseY)) {
-            context.drawTextWithShadow(getTextRenderer(), message, getX(), getY(), 0xffffffff);
             int anchorX = (int) (feature.getPosition().getAnchor().x / 2d * MilloMod.MC.getWindow().getScaledWidth());
             int anchorY = (int) (feature.getPosition().getAnchor().y / 2d * MilloMod.MC.getWindow().getScaledHeight());
 
-            int anchorLineX = anchorX;
-            int anchorLineY = anchorY;
-            for (int i = 0; i < 5; i++) {
-                context.fill(anchorLineX - 2, anchorLineY - 2, anchorLineX + 2, anchorLineY + 2, 0xffff0000);
-                anchorLineX += (getX() + getWidth() / 2 - anchorX) / 5;
-                anchorLineY += (getY() + getHeight() / 2 - anchorY) / 5;
+            double dx = anchorX - (getX() + getWidth() / 2d);
+            double dy = anchorY - (getY() + getHeight() / 2d);
+            double lineX = anchorX;
+            double lineY = anchorY;
+
+            double dist = Math.sqrt(dx*dx + dy*dy);
+            dx /= -dist;
+            dy /= -dist;
+
+            for (int i = 0; i < 20; i++) {
+                int color = new Color(1f, 1f, 1f, 1f - i/20f).hashCode();
+
+                context.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
+                lineX += dx;
+                lineY += dy;
+            }
+
+            lineX = getX() + getWidth() / 2d;
+            lineY = getY() + getHeight() / 2d;
+            for (int i = 0; i < 20; i++) {
+                int color = new Color(1f, 1f, 1f, 1f - i/20f).hashCode();
+
+                context.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
+                lineX -= dx;
+                lineY -= dy;
             }
 
             for (FeaturePosition.Anchor anchor : FeaturePosition.Anchor.values()) {
+                if (anchor == feature.getPosition().getAnchor()) continue;
                 int anchorPosX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getScaledWidth());
                 int anchorPosY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getScaledHeight());
-                context.fill(anchorPosX - 2, anchorPosY - 2, anchorPosX + 2, anchorPosY + 2, 0xffffff00);
+                context.drawStrokedRectangle(anchorPosX - 3, anchorPosY - 3, 5,5, 0xffffffff);
             }
 
-            context.fill(anchorX - 3, anchorY - 3, anchorX + 3, anchorY + 3, 0xffff00ff);
-
+            context.fill(anchorX - 4, anchorY - 4, anchorX + 3, anchorY + 3, 0xffffffff);
+            context.drawTextWithShadow(getTextRenderer(), message, getX() + 2, getY() + 2, 0xffffffff);
         }
+
 
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
     }

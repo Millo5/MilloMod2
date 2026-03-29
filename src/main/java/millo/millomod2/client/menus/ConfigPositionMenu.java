@@ -4,6 +4,7 @@ import millo.millomod2.client.config.PositionalElement;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.client.features.addons.Positional;
+import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.menu.Menu;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,6 +19,7 @@ public class ConfigPositionMenu extends Menu {
     protected void init() {
         FeatureHandler.forEach((feat) -> {
             if (feat instanceof Positional positional) {
+                if (feat instanceof Toggleable tog && !tog.isEnabled()) return;
                 FeaturePosition pos = positional.getPosition();
                 addDrawableChild(new PositionalElement(pos, feat));
             }

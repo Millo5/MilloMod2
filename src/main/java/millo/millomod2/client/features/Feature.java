@@ -42,14 +42,7 @@ public abstract class Feature {
 
         if (this instanceof Positional positional) {
             position = positional.defaultPosition();
-            config.addPositional(position);
-//            config.addInteger("posX", position.getTrueX());
-//            config.addInteger("posY", position.getTrueY());
-//            config.addInteger("anchor", position.getAnchor().ordinal());
-
-//            config.addListener("posX", (from, to) -> position.setX((Integer) to));
-//            config.addListener("posY", (from, to) -> position.setY((Integer) to));
-//            config.addListener("anchor", (from, to) -> position.setAnchor(FeaturePosition.Anchor.values()[(Integer) to]));
+            config.addPositional(positional, position);
         } else position = null;
 
     }

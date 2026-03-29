@@ -1,24 +1,29 @@
 package millo.millomod2.client.config.value;
 
 import com.google.gson.internal.LinkedTreeMap;
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.features.FeaturePosition;
+import millo.millomod2.client.features.addons.Positional;
+import millo.millomod2.menu.elements.buttons.ButtonElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class PositionalConfigValue extends ConfigValue<FeaturePosition> {
 
-    public PositionalConfigValue(FeaturePosition defaultValue) {
+    private final Positional feat;
+
+    public PositionalConfigValue(Positional feat, FeaturePosition defaultValue) {
         super(defaultValue);
+        this.feat = feat;
     }
 
     @Override
     public ClickableWidget createWidget() {
-        return null;
-    }
-
-    @Override
-    public boolean isHidden() {
-        return true;
+        return ButtonElement.create(200, 20)
+                .message(MilloMod.translatable("reset"))
+                .onPress((b) -> {
+                    setValue(feat.defaultPosition());
+                });
     }
 
     @Override
