@@ -4,9 +4,9 @@ import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorFileManager;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
-import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -16,6 +16,8 @@ import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.KeyInput;
+
+import java.util.ArrayList;
 
 public class EditorMenu extends Menu {
 
@@ -35,16 +37,20 @@ public class EditorMenu extends Menu {
      *
      */
 
+    private static ArrayList<EditorPlot.Metadata> recentPlots;
     private static EditorPlot loadedPlot;
 
     private static MainBody cachedBody;
     private static int cachedId = -1;
+
 
     private TitleBar titleBar;
     private MainBody mainBody;
 
     protected EditorMenu(Screen previousScreen) {
         super(previousScreen);
+
+        recentPlots = EditorFileManager.getRecentPlots();
     }
 
     @Override
@@ -52,7 +58,15 @@ public class EditorMenu extends Menu {
 
         if (loadedPlot == null) {
             HypercubeLocation loc = HypercubeAPI.getHypercubeLocation();
-            if (loc instanceof Plot plot) loadedPlot = new EditorPlot(plot);
+            if (loc instanceof Plot plot) {
+                loadedPlot = new EditorPlot(plot);
+
+                recentPlots.removeIf(p -> p.id() == plot.getId());
+                recentPlots.add(new EditorPlot.Metadata(plot.getId(), plot.getName(), plot.getOwner()));
+                if (recentPlots.size() > 5) recentPlots.removeFirst();
+
+                EditorFileManager.saveRecentPlots(recentPlots);
+            }
         }
 
         FlexElement<?> main = FlexElement.create(width, height)
@@ -88,7 +102,15 @@ public class EditorMenu extends Menu {
         boolean exists = EditorFileManager.plotExists(plotId);
         if (!exists) return;
 
-        loadedPlot = new EditorPlot(plotId);
+        loadPlot(new EditorPlot(plotId));
+    }
+
+    public void loadPlot(EditorPlot.Metadata plotMeta) {
+        loadPlot(new EditorPlot(plotMeta));
+    }
+
+    private void loadPlot(EditorPlot plot) {
+        loadedPlot = plot;
         titleBar.setLoadedPlot(loadedPlot);
 
         // Rebuild main body
@@ -147,6 +169,10 @@ public class EditorMenu extends Menu {
 
     public static MainBody getCachedBody() {
         return cachedBody;
+    }
+
+    public ArrayList<EditorPlot.Metadata> getRecentPlots() {
+        return recentPlots;
     }
 
 }

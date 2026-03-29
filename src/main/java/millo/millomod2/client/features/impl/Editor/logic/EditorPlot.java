@@ -25,15 +25,14 @@ public class EditorPlot {
     private final EditorFileManager fileManager = new EditorFileManager(this);
 
     public EditorPlot(Plot plot) {
-        this(plot.getId(), new Metadata(plot.getName(), plot.getOwner()));
+        this(new Metadata(plot.getId(), plot.getName(), plot.getOwner()));
     }
     public EditorPlot(int plotId) {
-        this(plotId, new Metadata("Unnamed Plot", "Unknown Owner"));
+        this(new Metadata(plotId, "Unnamed Plot", "Unknown Owner"));
     }
-
-    private EditorPlot(int plotId, Metadata metadata) {
-        this.plotId = plotId;
-        this.metadata = metadata;
+    public EditorPlot(Metadata plotMeta) {
+        this.plotId = plotMeta.id();
+        this.metadata = plotMeta;
         this.rootFolder = new HierarchyFolder(String.valueOf(plotId));
 
         load();
@@ -138,6 +137,6 @@ public class EditorPlot {
         return Optional.of(templateCache.get(name));
     }
 
-    public record Metadata(String name, String owner) {}
+    public record Metadata(int id, String name, String owner) {}
 
 }

@@ -1,13 +1,19 @@
 package millo.millomod2.client.features.impl.Editor.logic;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class EditorFileManager {
+    private final static String recentPlotsFileName = "recent_plots.json";
+
     private final EditorFileReader reader;
     private final EditorPlot plot;
 
@@ -18,6 +24,33 @@ public class EditorFileManager {
 
     public static Path getRootFolder() {
         return FileUtil.getModFolder().resolve("plots");
+    }
+
+    public static ArrayList<EditorPlot.Metadata> getRecentPlots() {
+        Path recentFile = getRootFolder().resolve(recentPlotsFileName);
+        if (!recentFile.toFile().exists()) return new ArrayList<>();
+
+        String jsonStr = FileUtil.read(recentFile);
+        if (jsonStr == null || jsonStr.isEmpty()) return new ArrayList<>();
+        JsonObject json = JsonParser.parseString(jsonStr).getAsJsonObject();
+
+        ArrayList<EditorPlot.Metadata> recentPlots = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            String name = entry.getKey();
+            int id = entry.getValue().getAsInt();
+            recentPlots.add(new EditorPlot.Metadata(id, name, "n/a"));
+        }
+        return recentPlots;
+    }
+
+    public static void saveRecentPlots(ArrayList<EditorPlot.Metadata> recentPlots) {
+        JsonObject json = new JsonObject();
+        recentPlots.forEach(metadata -> json.addProperty(metadata.name(), metadata.id()));
+
+        Path root = getRootFolder();
+        if (!root.toFile().exists()) root.toFile().mkdirs();
+        Path recentFile = root.resolve(recentPlotsFileName);
+        FileUtil.write(recentFile, json.toString());
     }
 
     public Path getPlotFolder() {

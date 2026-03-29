@@ -48,14 +48,14 @@ public class TitleBar extends FlexElement<TitleBar> {
                 .message(Text.literal("No Plot Loaded"))
                 .addOption(Text.literal("Open..."), menu::openPlotSelector);
 
-        if (false) {
+        if (!menu.getRecentPlots().isEmpty()) {
             currentPlotDropDown
-                .addSpacer()
-                .addHeader(Text.literal("Recent Plots").withColor(0x33AAAAAA));
+                    .addSpacer()
+                    .addHeader(Text.literal("Recent Plots").withColor(0x33AAAAAA));
 
-            for (int i = 0; i < 5; i++) {
+            for (EditorPlot.Metadata recentPlot : menu.getRecentPlots()) {
                 currentPlotDropDown
-                    .addOption(Text.literal("Menaces (42044)"), (button) -> menu.loadPlot(42044));
+                    .addOption(Text.literal(recentPlot.name() + " (" + recentPlot.id() + ")"), (button) -> menu.loadPlot(recentPlot));
             }
         }
 
