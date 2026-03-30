@@ -17,18 +17,18 @@ You can download the latest build from the [releases page](https://github.com/Mi
 |Editor|A text-based interface for codeblocks|Awaiting ModAPI|
 |Quick Value Item|Shift-Right Click an empty slot in a code-chest to insert a value-item directly|Complete|
 |Angels Grace|Saves you from falling while having a menu open|Complete|
-|Lagslayer HUD|HUD overlay of CPU usage|Can't adjust position|
+|Lagslayer HUD|HUD overlay of CPU usage|Complete|
 |Container Search|Quickly search through menus|Complete|
 |Socket Serve|A local socket server for tool integration, More info below|Complete|
-|Toggle Sprint Display|HUD display if sprint is enabled|Can't adjust position|
-|Notifications|Filtered chat messages appear in a temporary notification tray|Can't adjust position|
+|Toggle Sprint Display|HUD display if sprint is enabled|Complete|
+|Notifications|Filtered chat messages appear in a temporary notification tray|Complete|
 |Skin Preview|Hovering over a playerhead displays the skin adjacent to the menu|Complete|
 |Time Tracker|Tracks how much time is spent in different modes and plots|Unviewable|
 |Sound Preview|Instantly play all sounds in a menu at once|Complete|
 |Particle Color Shorthand|Type `#abcdef` or `f#abcdef` for particle colors|Complete|
 |Waypoints|Set plot specific waypoints, teleport to them with a keybind|Complete|
 |Argument Display|Preview what arguments are expected in codeblock chests|Complete|
-|Dev Movement|No Clip through blocks, accelerated aerial movement, thanks [CodeClient](https://github.com/DFOnline/CodeClient/blob/main/src/main/java/dev/dfonline/codeclient/dev/NoClip.java)|More Planned|
+|Dev Movement|No Clip through blocks, accelerated aerial movement, thanks [CodeClient](https://github.com/DFOnline/CodeClient/blob/main/src/main/java/dev/dfonline/codeclient/dev/NoClip.java)|Complete|
 
 # Keybinds
 |Keybind|Description|Status|
