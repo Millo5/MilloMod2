@@ -58,12 +58,16 @@ public class ConditionSegment extends CodeLineSegment<BlockCodeBlockModel> {
 
         if (act.isNot()) lineElement.addChild(text("not ", Styles.UNSAVED));
 
+        lineElement.addChild(text(act.getAction()));
+
         lineElement.addChild(text("("));
         for (int i = 0; i < args.size(); i++) {
             if (i != 0) lineElement.addChild(text(", "));
             create(args.get(i)).buildVisual(lineElement);
         }
         lineElement.addChild(text(")"));
+
+        if (act.getTarget() != null) lineElement.addChild(text(" -> "+act.getTarget()));
 
     }
 

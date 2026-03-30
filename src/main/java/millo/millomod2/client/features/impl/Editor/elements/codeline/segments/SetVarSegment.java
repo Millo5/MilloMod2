@@ -63,6 +63,18 @@ public class SetVarSegment extends CodeLineSegment<BlockCodeBlockModel> {
                 }
                 lineElement.addChild(text("]"));
                 break;
+            case "AppendValue":
+                // var1.action(var2, var3, var4, ...)
+                buildArg(lineElement, args.getFirst());
+                lineElement.addChild(text("."));
+                lineElement.addChild(text(action));
+                lineElement.addChild(text("("));
+                for (int i = 1; i < args.size(); i++) {
+                    buildArg(lineElement, args.get(i));
+                    if (i != args.size()-1) lineElement.addChild(text(", "));
+                }
+                lineElement.addChild(text(")"));
+                break;
             default:
                 buildArg(lineElement, args.getFirst());
                 lineElement.addChild(text(" = " + action));

@@ -91,9 +91,10 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
         }
 
         if (prefix != null) lineElement.addChild(text(prefix));
-        else lineElement.addChild(text(model.getBlock() + "."));
+        else lineElement.addChild(text(model.getBlock()));
 
         if (model.getCodeFields() instanceof ActionCodeFields act) {
+            if (prefix == null) lineElement.addChild(text("."));
             if (act.getAttribute() != null) lineElement.addChild(text(act.getAttribute() + "."));
             if (act.getAction().contains("Sound")) {
                 lineElement.addChild(new SimpleArgumentBuilder(act.getAction())
@@ -105,11 +106,10 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
                             }
 
                             return false;
-                        })
-                        .build());
+                        }).build());
             } else lineElement.addChild(text(act.getAction()));
             if (act instanceof SubActionCodeFields sub) {
-                lineElement.addChild(text("."+sub.getSubAction()));
+                lineElement.addChild(text("." + sub.getSubAction()));
             }
         }
     }
