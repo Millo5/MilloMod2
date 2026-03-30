@@ -54,6 +54,15 @@ public class SetVarSegment extends CodeLineSegment<BlockCodeBlockModel> {
                     buildArg(lineElement, args.get(i));
                 }
                 break;
+            case "CreateList":
+                buildArg(lineElement, args.getFirst());
+                lineElement.addChild(text(" = ["));
+                for (int i = 1; i < args.size(); i++) {
+                    buildArg(lineElement, args.get(i));
+                    if (i != args.size()-1) lineElement.addChild(text(", "));
+                }
+                lineElement.addChild(text("]"));
+                break;
             default:
                 buildArg(lineElement, args.getFirst());
                 lineElement.addChild(text(" = " + action));
