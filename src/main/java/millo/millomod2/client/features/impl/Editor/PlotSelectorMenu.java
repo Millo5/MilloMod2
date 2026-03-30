@@ -53,7 +53,7 @@ public class PlotSelectorMenu extends PopUpMenu {
                         .onPress((button) -> {
                             close();
                         })
-        ); // 10764
+        );
         buttonFlex.addChild(
                 ButtonElement.create(70, 20)
                         .message(Text.literal("Load"))

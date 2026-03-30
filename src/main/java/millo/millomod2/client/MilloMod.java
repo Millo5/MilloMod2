@@ -80,13 +80,7 @@ public class MilloMod implements ClientModInitializer {
 
     /*
 
-    editor:
-        pinning tabs
-
-    action reference display
-    action argument display (per slot)
-
-    positional configs
+    action reference display // modapi
 
      */
 
