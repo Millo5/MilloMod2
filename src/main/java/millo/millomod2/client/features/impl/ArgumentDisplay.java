@@ -64,7 +64,7 @@ public class ArgumentDisplay extends Feature implements Toggleable, Configurable
                 if (str.equals("Returns Value:")) break;
 
                 int colonIndex = str.indexOf(" - ");
-                if (str.charAt(0) != '⏵' && colonIndex != -1) {
+                if (!str.isEmpty() && str.charAt(0) != '⏵' && colonIndex != -1) {
                     String typeStr = str.substring(0, colonIndex);
                     ValueType type = ValueType.fromString(typeStr);
                     lastArg = new ArgumentInfo();
