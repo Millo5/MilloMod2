@@ -1,14 +1,19 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
-import millo.millomod2.client.hypercube.model.TemplateModel;
+import millo.millomod2.client.hypercube.template.MethodType;
+import millo.millomod2.client.util.style.Styles;
+import millo.millomod2.menu.elements.ListElement;
+import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
+import net.minecraft.client.font.Alignment;
 import net.minecraft.text.Text;
 
-import java.util.Optional;
+import java.util.stream.Stream;
 
 public class MainBody extends FlexElement<MainBody> {
 
@@ -16,7 +21,7 @@ public class MainBody extends FlexElement<MainBody> {
     private final CodeBrowser codeBrowser;
     private final SearchBar searchBar;
 
-    private final EditorMenu menu;
+    private EditorMenu menu;
 
     public MainBody(EditorMenu menu) {
         super(0, 0, menu.width, menu.height - 20, Text.empty());
@@ -68,16 +73,43 @@ public class MainBody extends FlexElement<MainBody> {
     }
 
     public void tryOpenTemplate(String name) {
-        menu.getMain().getCodeBrowser().openTemplate(name);
-
-        if (true) return; // TODO
-
-        Optional<TemplateModel> templateOpt = menu.getLoadedPlot().getCachedTemplate(name);
-        templateOpt.ifPresent(codeBrowser::openTemplate);
+        codeBrowser.openTemplate(name);
     }
 
-    public void openAndFocusSearch() {
-//        hierarchy.openAndFocusSearch();
+    public void openTemplateContext(MethodType methodType, String regex) {
+        Stream<String> filtered = menu.getLoadedPlot().getTemplateNames().stream()
+                .filter(methodType::matches)
+                .filter(name -> name.matches(regex));
+
+        ListElement list = ListElement.create(200, 10)
+                .crossAlign(CrossAxisAlignment.STRETCH)
+                .background(0x80000000)
+                .gap(0)
+                .maxExpansion(150)
+                .padding(4);
+
+        String suffix = methodType.suffixString("");
+
+        filtered.forEach(name -> list.addChild(ButtonElement.create(200, 10)
+                .message(Text.literal(name.replaceFirst(suffix + "$", "")))
+                .textAlignment(Alignment.LEFT)
+                .onPress(button -> {
+                    codeBrowser.openTemplate(name);
+                    menu.closeContextMenu();
+                })));
+
+        if (list.getChildren().isEmpty()) {
+            list.addChild(TextElement.create(Text.literal("No compatible templates found!").setStyle(Styles.SCARY.getStyle())));
+        }
+
+        menu.openContextMenuAtCursor(list, 0, 8);
+    }
+
+    public void focusHierarchySearch() {
+        hierarchy.focusSearch();
+    }
+
+    public void focusCodeBrowserSearch() {
         searchBar.setActive(true);
         searchBar.focus();
     }
@@ -85,4 +117,9 @@ public class MainBody extends FlexElement<MainBody> {
     public SearchBar getSearchBar() {
         return searchBar;
     }
+
+    public void updateMenu(EditorMenu menu) {
+        this.menu = menu;
+    }
+
 }

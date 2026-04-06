@@ -93,6 +93,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
         contentList.addChild(child);
     }
 
+    
     public Text getTitle() {
         return title;
     }

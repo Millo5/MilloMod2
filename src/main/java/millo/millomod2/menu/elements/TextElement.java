@@ -2,6 +2,7 @@ package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
+import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.gui.Click;
@@ -83,7 +84,7 @@ public class TextElement extends TextWidget implements FadeElement {
         if (onClick == null) return false;
 
         if (onClick.get()) {
-            ClickableElement.playClickSound(MilloMod.MC.getSoundManager()); // TODO: fix click sound to be correct sound
+            SoundUtil.playClickSound();
         }
 
         return true;

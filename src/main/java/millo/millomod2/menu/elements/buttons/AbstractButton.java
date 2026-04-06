@@ -1,13 +1,11 @@
 package millo.millomod2.menu.elements.buttons;
 
+import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.Alignment;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 public abstract class AbstractButton<T extends AbstractButton<T>> extends ClickableElement<T> {
@@ -28,7 +26,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 //        if (!this.isValidClickButton(click.buttonInfo())) return false;
 
         if (isMouseOver(click.x(), click.y())) {
-            this.playDownSound(MinecraftClient.getInstance().getSoundManager());
+            SoundUtil.playClickSound();
             onClick(click, doubled);
             return true;
         }
@@ -36,10 +34,6 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         return false;
     }
 
-    @Override
-    public void playDownSound(SoundManager soundManager) {
-        soundManager.play(PositionedSoundInstance.ui(SoundEvents.ENTITY_GLOW_ITEM_FRAME_ADD_ITEM, 1.0F));
-    }
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
@@ -50,14 +44,16 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
         this.background = background;
 
-        int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
-
         int textX = switch (textAlignment) {
             case LEFT -> getX() + 4;
             case RIGHT -> getX() + getWidth() - 4 - MinecraftClient.getInstance().textRenderer.getWidth(getMessage());
             case CENTER -> getX() + (getWidth() - MinecraftClient.getInstance().textRenderer.getWidth(getMessage())) / 2;
         };
-        context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), textX, getY() + (getHeight() - 8) / 2, textColor, true);
+        context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), textX, getY() + (getHeight() - 8) / 2, getTextColor(), true);
+    }
+
+    protected int getTextColor() {
+        return isHovered() ? 0xFFFFFFAA : 0xFFFFFFFF;
     }
 
     public T message(Text message) {

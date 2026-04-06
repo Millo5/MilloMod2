@@ -82,6 +82,9 @@ public class MilloMod implements ClientModInitializer {
 
     action reference display // modapi
 
+    Function and process usages // full searching (move shift + shift to this too)
+    Function argument preview through call function (hover) // editor
+
      */
 
 }

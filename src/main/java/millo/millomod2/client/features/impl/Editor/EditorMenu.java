@@ -82,6 +82,7 @@ public class EditorMenu extends Menu {
 
         if (loadedPlot != null && cachedBody != null && cachedId == loadedPlot.getPlotId()) {
             mainBody = cachedBody;
+            mainBody.updateMenu(this);
         } else {
             mainBody = new MainBody(this);
             cachedBody = mainBody;
@@ -124,17 +125,28 @@ public class EditorMenu extends Menu {
         this.init();
     }
 
+    private long lastShiftPressTime = 0;
+
     @Override
     public boolean keyPressed(KeyInput input) {
+        if (input.key() == 340) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastShiftPressTime < 250) {
+                mainBody.focusHierarchySearch();
+                return true;
+            }
+            lastShiftPressTime = currentTime;
+        }
+
         if (input.hasCtrl() && input.key() == 70) {
-            search();
+            if (input.hasShift()) {
+                mainBody.focusHierarchySearch();
+                return true;
+            }
+            mainBody.focusCodeBrowserSearch();
             return true;
         }
         return super.keyPressed(input);
-    }
-
-    public void search() {
-        mainBody.openAndFocusSearch();
     }
 
     public void openTemplate(TemplateModel template) {

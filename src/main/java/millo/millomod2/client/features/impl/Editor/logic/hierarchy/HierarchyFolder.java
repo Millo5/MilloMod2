@@ -18,6 +18,12 @@ public class HierarchyFolder implements HierarchyEntry {
 
     public void addEntry(HierarchyEntry entry) {
         entries.add(entry);
+
+        entries.sort((a, b) -> {
+            if (a instanceof HierarchyFolder && !(b instanceof HierarchyFolder)) return -1;
+            if (!(a instanceof HierarchyFolder) && b instanceof HierarchyFolder) return 1;
+            return a.getName().compareToIgnoreCase(b.getName());
+        });
     }
 
     @Override

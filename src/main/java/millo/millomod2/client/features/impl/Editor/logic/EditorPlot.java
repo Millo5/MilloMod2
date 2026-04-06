@@ -137,6 +137,10 @@ public class EditorPlot {
         return Optional.of(templateCache.get(name));
     }
 
+    public ArrayList<String> getTemplateNames() {
+        return templateNames;
+    }
+
     public record Metadata(int id, String name, String owner) {}
 
 }

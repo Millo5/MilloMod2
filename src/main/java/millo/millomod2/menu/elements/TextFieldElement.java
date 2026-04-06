@@ -39,7 +39,7 @@ public class TextFieldElement extends TextFieldWidget implements FadeElement {
         context.fill(getX(), getY(), getRight(), getBottom(), color);
         context.fill(getX(), getBottom() - 1, getRight(), getBottom(), underlineColor);
 
-        context.getMatrices().translate(4, 4);
+        context.getMatrices().translate(4, height / 2f - 4);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
         context.getMatrices().popMatrix();
     }

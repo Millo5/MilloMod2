@@ -1,28 +1,18 @@
 package millo.millomod2.client.features.impl.Editor.elements.codeline.segments.simple;
 
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
 import millo.millomod2.client.hypercube.model.arguments.ParameterArgumentModel;
 import millo.millomod2.client.util.style.Styles;
-import millo.millomod2.menu.elements.TextElement;
 
-public class ParameterArgumentSegment extends SimpleSegment<ParameterArgumentModel> {
+public class ParameterArgumentSegment extends CodeLineSegment<ParameterArgumentModel> {
 
     public ParameterArgumentSegment(ParameterArgumentModel model) {
         super(model);
     }
 
     @Override
-    TextElement createContent(ParameterArgumentModel model) {
-
-        StringBuilder display = new StringBuilder();
-        if (model.isOptional()) display.append("[");
-        display.append(model.getType());
-        if (model.isPlural()) display.append("...");
-        display.append(" ").append(model.getName());
-        if (model.isOptional()) {
-            if (model.getDefaultValue() != null) display.append(" = ").append(model.getDefaultValue());
-            display.append("]");
-        }
-
+    public void buildVisual(CodeLineElement lineElement) {
         Styles style;
         try {
             style = Styles.valueOf(model.getType().toUpperCase());
@@ -30,15 +20,30 @@ public class ParameterArgumentSegment extends SimpleSegment<ParameterArgumentMod
             style = Styles.PARAMETER;
         }
 
-        return new SimpleArgumentBuilder(display.toString())
+        if (model.isOptional()) lineElement.addChild(text("[", style));
+        lineElement.addChild(text(model.getType(), style));
+        if (model.isPlural()) lineElement.addChild(text("...", style));
+        lineElement.addChild(text(" "));
+
+        lineElement.addChild(new SimpleArgumentBuilder(model.getName())
                 .style(style)
                 .onClickCmd("/var " + model.getName() + " -i")
-                .build();
+                .build());
+
+        if (model.isOptional()) {
+            if (model.getDefaultValue() != null) {
+                lineElement.addChild(text(" = ", style));
+                CodeLineSegment.create(model.getDefaultValue()).buildVisual(lineElement);
+            }
+            lineElement.addChild(text("]", style));
+        }
+
     }
 
     @Override
     public Class<ParameterArgumentModel> getModelClass() {
         return ParameterArgumentModel.class;
     }
+
 
 }

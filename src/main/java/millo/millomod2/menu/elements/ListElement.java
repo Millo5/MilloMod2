@@ -104,6 +104,7 @@ public class ListElement extends ContainerElement<ListElement> {
         int cursor = padding - (int) renderedScrollOffset;
 
         for (ClickableWidget child : children) {
+            if (!child.visible) continue;
             if (children instanceof ContainerElement<?> ce) {
                 ce.layoutChildren();
             }
@@ -117,7 +118,7 @@ public class ListElement extends ContainerElement<ListElement> {
         }
 
         cursor -= gap;
-        contentExpansion = cursor + (int) renderedScrollOffset + padding;
+        contentExpansion = cursor + (int) renderedScrollOffset;
         setExpansion(contentExpansion);
         clampScroll();
     }

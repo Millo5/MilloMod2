@@ -5,6 +5,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 
@@ -36,4 +37,7 @@ public class SoundUtil {
         MilloMod.MC.getSoundManager().play(soundInstance);
     }
 
+    public static void playClickSound() {
+        MilloMod.MC.getSoundManager().play(PositionedSoundInstance.ui(SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, 1.0F));
+    }
 }

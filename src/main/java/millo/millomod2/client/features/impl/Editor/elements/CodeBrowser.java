@@ -98,6 +98,10 @@ public class CodeBrowser extends FlexElement<CodeBrowser> implements Searchable 
         }
     }
 
+    public Tab getCurrentTab() {
+        return currentTab;
+    }
+
     @Override
     public Collection<? extends SearchResult> search(String searchQuery) {
         if (currentTab == null) return List.of();

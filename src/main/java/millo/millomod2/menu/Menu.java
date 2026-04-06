@@ -34,6 +34,15 @@ public abstract class Menu extends Screen {
         return super.mouseClicked(click, doubled);
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (contextMenu != null) {
+            if (contextMenu.isMouseOver(mouseX, mouseY)) return contextMenu.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
     public void closeContextMenu() {
         if (this.contextMenu != null) {
             remove(this.contextMenu);
@@ -41,6 +50,20 @@ public abstract class Menu extends Screen {
         }
     }
 
+
+    public void openContextMenuAtCursor(ClickableWidget menu) {
+        openContextMenu(menu,
+                (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
+                (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())
+        );
+    }
+
+    public void openContextMenuAtCursor(ClickableWidget menu, int offsetX, int offsetY) {
+        openContextMenu(menu,
+                (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()) + offsetX,
+                (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow()) + offsetY
+        );
+    }
 
     public void openContextMenu(ClickableWidget menu, int x, int y) {
         menu.setX(x);
@@ -50,7 +73,7 @@ public abstract class Menu extends Screen {
 
     public void openContextMenu(ClickableWidget menu) {
         if (this.contextMenu != null) {
-            remove(this.contextMenu);
+            closeContextMenu();
         }
 
         if (menu instanceof FadeElement fade) {

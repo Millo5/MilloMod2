@@ -50,4 +50,8 @@ public enum MethodType {
         if (type == null) return methodName;
         return methodName.substring(0, methodName.length() - type.name().length() - 1);
     }
+
+    public boolean matches(String name) {
+        return name.toLowerCase().endsWith("." + this.name().toLowerCase());
+    }
 }
