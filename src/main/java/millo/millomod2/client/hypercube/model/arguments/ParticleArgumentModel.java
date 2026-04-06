@@ -3,6 +3,7 @@ package millo.millomod2.client.hypercube.model.arguments;
 import com.google.gson.JsonObject;
 import millo.millomod2.client.hypercube.model.arguments.particle.ParticleField;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
+import millo.millomod2.client.util.MilloLog;
 
 import java.util.ArrayList;
 
@@ -42,9 +43,13 @@ public class ParticleArgumentModel extends ArgumentModel<ParticleArgumentModel> 
         dataFields = new ArrayList<>();
         ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
         for (String fieldName : actionDump.getParticleFields(particle)) {
-            ParticleField<? extends ParticleField<?>> field = ParticleField.getParticleField(fieldName);
-            field.deserialize(data);
-            dataFields.add(field);
+            try {
+                ParticleField<? extends ParticleField<?>> field = ParticleField.getParticleField(fieldName);
+                field.deserialize(data);
+                dataFields.add(field);
+            } catch (Exception e) {
+                MilloLog.logWarning("Failed to deserialize particle field " + fieldName + " for particle " + particle + ": " + e.getMessage());
+            }
         }
 
     }

@@ -30,6 +30,7 @@ public abstract class ParticleField<T extends ParticleField<T>> {
         register(RollParticleField::new);
         register(SizeParticleField::new);
         register(SizeVariationParticleField::new);
+        register(PowerParticleField::new);
     }
 
     private static void register(Supplier<ParticleField<?>> supp) {
