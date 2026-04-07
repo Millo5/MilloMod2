@@ -30,7 +30,7 @@ public class ParameterArgumentModel extends ArgumentModel<ParameterArgumentModel
         plural = jsonObject.get("plural").getAsBoolean();
         optional = jsonObject.get("optional").getAsBoolean();
         if (jsonObject.has("default_value")) {
-            defaultValue = ArgumentModel.deserializeDefaultArgument(jsonObject.getAsJsonObject("default_value"));
+            defaultValue = ArgumentModel.deserializeArgument(jsonObject.getAsJsonObject("default_value"));
         }
         description = jsonObject.has("description") ? jsonObject.get("description").getAsString() : null;
         note = jsonObject.has("note") ? jsonObject.get("note").getAsString() : null;

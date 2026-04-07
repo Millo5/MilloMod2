@@ -2,6 +2,8 @@
 
   "millo.true": "True",
   "millo.false": "False",
+  "millo.reset": "Reset",
+
   "millo.feature.config.enabled": "Enabled",
   "millo.feature.config.speed": "Speed",
   "millo.feature.config.display": "Display",
@@ -37,7 +39,7 @@
   "millo.feature.config.custom": "Custom",
   "millo.feature.config.folder_regex": "Folder Regex",
   "millo.feature.config.ultrakill_mode": "Ultrakill",
-
+  "millo.feature.config.pos": "Position",
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",
@@ -61,6 +63,7 @@
   "millo.feature.dev_movement": "Dev Movement",
   "millo.feature.argument_display": "Argument Display",
   "millo.feature.editor": "Editor",
+  "millo.feature.value_item_editor": "Value Item Editor",
 
   "key.category.minecraft.category.millomod2": "MilloMod 2",
   "key.millomod2.command_wheel.key": "Command Wheel",

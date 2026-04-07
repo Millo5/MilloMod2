@@ -79,6 +79,17 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
         });
     }
 
+    @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
+    private void mouseReleased(Click click, CallbackInfoReturnable<Boolean> cir) {
+        FeatureHandler.forEach(f -> {
+            if (f instanceof ContainerMod rendered) {
+                rendered.containerMouseReleased(click, cir);
+            }
+        });
+    }
+
+
+
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void keyPressedInject(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {

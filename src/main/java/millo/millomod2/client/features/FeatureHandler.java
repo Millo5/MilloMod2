@@ -8,6 +8,7 @@ import millo.millomod2.client.features.impl.DevMovement.DevMovement;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.features.impl.QuickValueItem.QuickValueItem;
+import millo.millomod2.client.features.impl.ValueItemEditor.ValueItemEditor;
 import millo.millomod2.client.features.impl.Waypoints.Waypoints;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.rendering.world.Renderer;
@@ -73,6 +74,7 @@ public final class FeatureHandler {
                 new Waypoints(),
                 new ArgumentDisplay(),
                 DevMovement.getInstance(),
+                new ValueItemEditor(),
 
 
                 new Debug()
@@ -113,6 +115,30 @@ public final class FeatureHandler {
 
     public static void forEach(FeatureConsumer consumer) {
         INSTANCE.order.forEach(id -> consumer.accept(INSTANCE.featureMap.get(id)));
+    }
+
+    public static Iterable<Feature> getFeatures() {
+        ArrayList<Feature> features = new ArrayList<>();
+        forEach(features::add);
+        return features;
+    }
+
+    private static final Map<Class<?>, ArrayList<Feature>> featuresByClass = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public static <T> Iterable<T> getFeaturesOf(Class<T> clazz) {
+        if (featuresByClass.containsKey(clazz)) {
+            return (Iterable<T>) featuresByClass.get(clazz);
+        }
+
+        ArrayList<Feature> features = new ArrayList<>();
+        forEach(feature -> {
+            if (clazz.isInstance(feature)) {
+                features.add(feature);
+            }
+        });
+        featuresByClass.put(clazz, features);
+        return (Iterable<T>) features;
     }
 
     @SuppressWarnings("unchecked")

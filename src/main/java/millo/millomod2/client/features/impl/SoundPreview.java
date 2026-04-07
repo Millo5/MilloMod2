@@ -1,7 +1,6 @@
 package millo.millomod2.client.features.impl;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.features.addons.Toggleable;
@@ -98,12 +97,9 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
     }
 
     private int numberFromItemValue(ItemStack item) {
-        String varitem = ItemUtil.getPBVString(item, "hypercube:varitem");
-        if (varitem == null) return -1;
+        JsonObject obj = ItemUtil.getVarItem(item);
+        if (obj == null) return -1;
 
-        var json = JsonParser.parseString(varitem);
-
-        JsonObject obj = json.getAsJsonObject();
         String id = obj.get("id").getAsString();
         if (!id.equals("num")) return -1;
 
@@ -142,11 +138,9 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
         }
 
         public SoundInstance(ItemStack item) {
-            String varitem = ItemUtil.getPBVString(item, "hypercube:varitem");
-            if (varitem == null) throw new IllegalArgumentException("Item does not contain a varitem");
+            JsonObject obj = ItemUtil.getVarItem(item);
+            if (obj == null) throw new IllegalArgumentException("Item does not contain a varitem");
 
-            var json = JsonParser.parseString(varitem);
-            JsonObject obj = json.getAsJsonObject();
             String id = obj.get("id").getAsString();
             if (!id.equals("snd")) throw new IllegalArgumentException("Varitem is not a sound");
 

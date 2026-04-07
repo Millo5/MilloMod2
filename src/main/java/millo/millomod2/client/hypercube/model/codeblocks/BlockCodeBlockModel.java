@@ -31,7 +31,7 @@ public class BlockCodeBlockModel extends CodeBlockModel<BlockCodeBlockModel> {
         if (jsonObject.has("args")) {
             this.args = new ArrayList<>();
             for (var arg : jsonObject.getAsJsonObject("args").getAsJsonArray("items")) {
-                this.args.add(ArgumentModel.deserializeArgument(arg.getAsJsonObject()));
+                this.args.add(ArgumentModel.deserializeItemArgument(arg.getAsJsonObject()));
             }
         }
         this.codeFields = CodeFields.deserialize(jsonObject);

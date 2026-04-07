@@ -123,12 +123,14 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
             return;
         }
 
-        if (net() == null || player() == null || MilloMod.MC.interactionManager == null) return;
+        var intMan = MilloMod.MC.interactionManager;
+        if (net() == null || player() == null || intMan == null) return;
 
         ItemStack oldOffhandItem = player().getInventory().getStack(45);
         PlayerUtil.sendOffhandItem(selectedOption.getItem(value));
 
-        MilloMod.MC.interactionManager.clickSlot(player().currentScreenHandler.syncId,
+        int syncId = player().currentScreenHandler.syncId;
+        intMan.clickSlot(syncId,
                 getSlot(),
                 40,
                 SlotActionType.SWAP,

@@ -29,4 +29,9 @@ public class TextArgumentModel extends ArgumentModel<TextArgumentModel> {
     public String getValue() {
         return value;
     }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

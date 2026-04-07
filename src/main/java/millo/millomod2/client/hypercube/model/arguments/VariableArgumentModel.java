@@ -38,4 +38,14 @@ public class VariableArgumentModel extends ArgumentModel<VariableArgumentModel> 
     public String getName() {
         return name;
     }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setScope(VariableScope scope) {
+        this.scope = scope;
+    }
+
 }

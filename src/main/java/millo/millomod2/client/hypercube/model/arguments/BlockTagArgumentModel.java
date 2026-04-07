@@ -24,7 +24,7 @@ public class BlockTagArgumentModel extends ArgumentModel<BlockTagArgumentModel> 
         this.action = jsonObject.get("action").getAsString();
         this.block = jsonObject.get("block").getAsString();
         if (jsonObject.has("variable")) {
-            variable = (VariableArgumentModel) ArgumentModel.deserializeDefaultArgument(jsonObject.getAsJsonObject("variable"));
+            variable = (VariableArgumentModel) ArgumentModel.deserializeArgument(jsonObject.getAsJsonObject("variable"));
         }
     }
 

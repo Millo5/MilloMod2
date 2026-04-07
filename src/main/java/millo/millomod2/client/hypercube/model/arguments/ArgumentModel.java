@@ -73,14 +73,14 @@ public abstract class ArgumentModel<T extends ArgumentModel<T>> implements JsonS
         arguments.put(arg.id(), supp);
     }
 
-    public static ArgumentModel<?> deserializeArgument(JsonObject jsonObject) {
+    public static ArgumentModel<?> deserializeItemArgument(JsonObject jsonObject) {
         String id = jsonObject.getAsJsonObject("item").get("id").getAsString();
         Supplier<ArgumentModel<?>> supp = arguments.get(id);
         if (supp == null) throw MilloLog.throwError("Unknown argument id: " + id);
         return supp.get().deserialize(jsonObject);
     }
 
-    public static ArgumentModel<?> deserializeDefaultArgument(JsonObject jsonObject) {
+    public static ArgumentModel<?> deserializeArgument(JsonObject jsonObject) {
         String id = jsonObject.get("id").getAsString();
         Supplier<ArgumentModel<?>> supp = arguments.get(id);
         if (supp == null) throw MilloLog.throwError("Unknown argument id: " + id);

@@ -70,6 +70,12 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         return false;
     }
 
+    public void setFocus(ClickableWidget widget) {
+        if (focus != null) focus.setFocused(false);
+        focus = widget;
+        if (focus != null) focus.setFocused(true);
+    }
+
     @Override
     public void setFocused(boolean focused) {
         super.setFocused(focused);

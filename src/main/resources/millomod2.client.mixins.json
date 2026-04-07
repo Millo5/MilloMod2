@@ -4,6 +4,7 @@
   "package": "millo.millomod2.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "core.MClientPlayerInteractionManager",
     "core.MMouse",
     "network.MClientCommonNetworkHandler",
     "network.MClientPlayerEntity",
@@ -11,6 +12,7 @@
     "render.MClickableWidget",
     "render.MContainerScreen",
     "render.MGameRenderer",
+    "render.MParentElement",
     "render.MInGameHUD",
     "render.accessors.ClickableWidgetAccessor",
     "render.accessors.HandledScreenAccessor",

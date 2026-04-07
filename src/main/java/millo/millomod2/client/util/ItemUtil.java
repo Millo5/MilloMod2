@@ -1,5 +1,7 @@
 package millo.millomod2.client.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.DataResult;
 import millo.millomod2.client.MilloMod;
@@ -82,5 +84,27 @@ public class ItemUtil {
 
     public static String getItemTagAsString(ItemStack stack, String tag) {
         return (String) getItemTags(stack).get(tag);
+    }
+
+    public static JsonObject getVarItem(ItemStack stack) {
+        String varitem = ItemUtil.getPBVString(stack, "hypercube:varitem");
+        if (varitem == null) return null;
+
+        return JsonParser.parseString(varitem).getAsJsonObject();
+    }
+
+    public static void setVarItem(ItemStack stack, JsonObject varItem) {
+        ComponentMap components = stack.getComponents();
+        if (components == null) return;
+
+        NbtComponent custom_data = components.get(DataComponentTypes.CUSTOM_DATA);
+        if (custom_data == null) return;
+
+        NbtCompound nbt = custom_data.copyNbt();
+        NbtCompound pbv = nbt.getCompound("PublicBukkitValues").orElse(null);
+        if (pbv == null) return;
+
+        pbv.putString("hypercube:varitem", varItem.toString());
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
     }
 }

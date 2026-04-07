@@ -86,4 +86,13 @@ public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
         SoundUtil.playSound(sound.soundId, volume, pitch);
     }
+
+    public void setPitch(double pitch) {
+        this.pitch = pitch;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
+    }
+
 }

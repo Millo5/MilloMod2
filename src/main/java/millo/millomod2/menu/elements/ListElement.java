@@ -111,9 +111,11 @@ public class ListElement extends ContainerElement<ListElement> {
             if (vertical) {
                 child.setPosition(padding + crossOffset(child.getWidth()), cursor);
                 cursor += child.getHeight() + gap;
+                if (crossAlign == CrossAxisAlignment.STRETCH) child.setWidth(getWidth() - 2 * padding);
             } else {
                 child.setPosition(cursor, padding + crossOffset(child.getHeight()));
                 cursor += child.getWidth() + gap;
+                if (crossAlign == CrossAxisAlignment.STRETCH) child.setHeight(getHeight() - 2 * padding);
             }
         }
 
