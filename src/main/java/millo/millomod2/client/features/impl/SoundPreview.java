@@ -133,28 +133,12 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
         private int delay = 0;
 
-        public SoundInstance(String soundId, float volume, float pitch, String variant) {
+        public SoundInstance(String soundId, float volume, float pitch, String variant, String customKey) {
             this.soundId = soundId;
             this.volume = volume;
             this.pitch = pitch;
             this.variant = variant;
-            this.customKey = null;
-        }
-
-        public SoundInstance(float volume, float pitch, String customKey) {
-            this.soundId = null;
-            this.volume = volume;
-            this.pitch = pitch;
-            this.variant = null;
             this.customKey = customKey;
-        }
-
-        public SoundInstance(String soundId, float volume, float pitch) {
-            this.soundId = soundId;
-            this.volume = volume;
-            this.pitch = pitch;
-            this.variant = null;
-            this.customKey = null;
         }
 
         public SoundInstance(ItemStack item) {
