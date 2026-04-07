@@ -21,6 +21,11 @@ public class KeyUtil {
         }
     }
 
+    public static boolean isKeyDown(int keycode) {
+        if (keycode == -1) return false;
+        return InputUtil.isKeyPressed(MilloMod.MC.getWindow(), keycode);
+    }
+
     private static final HashMap<KeyBinding, Integer> keyDuration = new HashMap<>();
     public static boolean isKeyPressed(KeyBinding keyBind) {
         if (!keyDuration.containsKey(keyBind)) keyDuration.put(keyBind, 0);

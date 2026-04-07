@@ -1,12 +1,15 @@
 package millo.millomod2.client.features.impl.Editor.elements.codeline.segments;
 
+import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.components.BlockPrefixComponent;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.components.IndentationComponent;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.segments.simple.SimpleArgumentBuilder;
+import millo.millomod2.client.features.impl.SoundPreview;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
 import millo.millomod2.client.hypercube.model.arguments.ArgumentModel;
+import millo.millomod2.client.hypercube.model.arguments.NumberArgumentModel;
 import millo.millomod2.client.hypercube.model.arguments.SoundArgumentModel;
 import millo.millomod2.client.hypercube.model.codeblocks.BlockCodeBlockModel;
 import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
@@ -101,8 +104,26 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
                         .onClick(() -> {
                             // Preview all sounds
                             if (model.getArgs() == null) return false;
+
+                            int delay = 0;
+                            if (act.getAction().equals("PlaySoundSeq")) {
+                                for (ArgumentModel<?> arg : model.getArgs()) {
+                                    if (!(arg instanceof NumberArgumentModel num)) continue;
+                                    try {
+                                        delay = Integer.parseInt(num.getValue());
+                                        break;
+                                    } catch (NumberFormatException ignored) {}
+                                }
+                            }
+
+                            SoundPreview feat = FeatureHandler.get(SoundPreview.class);
+                            int currentDelay = 0;
                             for (ArgumentModel<?> arg : model.getArgs()) {
-                                if (arg instanceof SoundArgumentModel sound) sound.play();
+                                if (!(arg instanceof SoundArgumentModel sound)) continue;
+                                SoundPreview.SoundInstance inst = new SoundPreview.SoundInstance(sound);
+                                inst.setDelay(currentDelay);
+                                feat.queueSound(inst);
+                                currentDelay += delay;
                             }
 
                             return false;
