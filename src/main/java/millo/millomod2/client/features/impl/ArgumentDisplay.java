@@ -84,13 +84,13 @@ public class ArgumentDisplay extends Feature implements Toggleable, Configurable
     @Override
     public void containerDrawSlot(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled()) return;
+        if (slot.inventory instanceof PlayerInventory) return;
+        if (!(MilloMod.MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
 
         List<ArgumentInfo> arguments = List.copyOf(this.arguments);
 
         int idx = slot.getIndex();
         if (idx >= arguments.size()) return;
-        if (slot.inventory instanceof PlayerInventory) return;
-        if (!(MilloMod.MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
         HandledScreenAccessor container = (HandledScreenAccessor) handledScreen;
 
         if (slot.getStack().isEmpty() && config.getBoolean("show_icons")) {
