@@ -14,10 +14,12 @@ import java.util.Random;
 
 public class AngelsGrace extends Feature implements Toggleable {
 
-    private static String[] messages = new String[] {
+    private static final String[] messages = new String[] {
             "Saved by Millo...", "Helium consumed...", "Lowered density...",
             "+1 Pair of Wings", "Hoppoo Feather Consumed", "Walking on sunshine...",
-            "Ascended to greater bounds..."
+            "Ascended to greater bounds...", "You feel lightheaded", "Schlooof screams at you for food",
+            "You find yourself standing on a big pillow", "Your psychic powers activate", "I want ice cream",
+            "You are now 20% more fabulous", "A big shark shaped balloon catches you"
     };
 
     @Override
