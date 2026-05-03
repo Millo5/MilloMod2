@@ -12,6 +12,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 
     private int hoverBackgroundColor = -1;
     private Alignment textAlignment = Alignment.CENTER;
+    private boolean muted = false;
 
     public AbstractButton(int x, int y, int width, int height, Text message) {
         super(x, y, width, height, message);
@@ -26,7 +27,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 //        if (!this.isValidClickButton(click.buttonInfo())) return false;
 
         if (isMouseOver(click.x(), click.y())) {
-            SoundUtil.playClickSound();
+            if (!muted) SoundUtil.playClickSound();
             onClick(click, doubled);
             return true;
         }
@@ -81,8 +82,14 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         return self();
     }
 
+    public T muted() {
+        this.muted = true;
+        return self();
+    }
+
     public int getHoverBackgroundColor() {
         return hoverBackgroundColor;
     }
+
 
 }

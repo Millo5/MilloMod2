@@ -44,6 +44,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
         ButtonElement button = ButtonElement.create(20, 20)
                 .message(Text.of("P"))
+                .muted()
                 .position(hsAccessor.getX() + hsAccessor.getBackgroundWidth() + 5, hsAccessor.getY())
                 .background(0xffffffff)
                 .onPress((b) -> {
