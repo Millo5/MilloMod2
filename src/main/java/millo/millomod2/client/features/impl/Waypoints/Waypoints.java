@@ -36,6 +36,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     private Waypoint selected = null;
     private Waypoint devExit = null;
     private Waypoint backWaypoint = null;
+    private long lastBackTime = 0;
 
     private WaypointConfigCache configCache = null;
 
@@ -133,6 +134,13 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     public void teleport(PlayerPositionLookS2CPacket packet) {
         if (!config.getBoolean("back_waypoint")) return;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return;
+
+        double dist = packet.change().position().subtract(player().getEntityPos()).length();
+        if (dist < 5) return;
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBackTime < 200) return;
+        lastBackTime = currentTime;
 
         if (backWaypoint != null) waypoints.remove(backWaypoint);
         backWaypoint = new Waypoint(player().getEntityPos(), "Back", 0xaaffaa);
