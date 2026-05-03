@@ -122,6 +122,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
     }
 
     public static class SoundInstance {
+        private final String soundName;
         private final String soundId;
         private final float volume;
         private final float pitch;
@@ -129,14 +130,6 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
         private final String customKey;
 
         private int delay = 0;
-
-        public SoundInstance(String soundId, float volume, float pitch, String variant, String customKey) {
-            this.soundId = soundId;
-            this.volume = volume;
-            this.pitch = pitch;
-            this.variant = variant;
-            this.customKey = customKey;
-        }
 
         public SoundInstance(ItemStack item) {
             JsonObject obj = ItemUtil.getVarItem(item);
@@ -153,7 +146,8 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
             customKey = data.has("key") ? data.get("key").getAsString() : null;
 
             ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
-            Sound adSound = actionDump.getSoundFromName(data.get("sound").getAsString());
+            this.soundName = data.get("sound").getAsString();
+             Sound adSound = actionDump.getSoundFromName(soundName);
             if (adSound == null) throw new IllegalArgumentException("Sound not found in action dump");
             this.soundId = adSound.soundId;
         }
@@ -165,7 +159,8 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
             this.customKey = sound.getKey();
 
             ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
-            Sound adSound = actionDump.getSoundFromName(sound.getSound());
+            this.soundName = sound.getSound();
+            Sound adSound = actionDump.getSoundFromName(soundName);
             if (adSound == null) throw new IllegalArgumentException("Sound not found in action dump");
             this.soundId = adSound.soundId;
         }
@@ -186,7 +181,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
             if (!variant.isEmpty()) {
                 ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
-                Sound adSound = actionDump.getSoundFromName(soundId);
+                Sound adSound = actionDump.getSoundFromName(soundName);
                 if (adSound == null) return;
 
                 for (SoundVariant soundVariant : adSound.variants) {
