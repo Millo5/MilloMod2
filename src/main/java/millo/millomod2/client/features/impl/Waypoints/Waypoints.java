@@ -9,6 +9,7 @@ import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
+import millo.millomod2.client.features.addons.OnReceivePacket;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.TemporaryTracker;
 import millo.millomod2.client.hypercube.data.Plot;
@@ -17,6 +18,7 @@ import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     private final ArrayList<Waypoint> waypoints = new ArrayList<>();
     private Waypoint selected = null;
     private Waypoint devExit = null;
+    private Waypoint backWaypoint = null;
 
     private WaypointConfigCache configCache = null;
 
@@ -56,6 +59,8 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         config.addFloat("label_focus_scale", 1.0f);
         config.addFloat("label_hide_distance", 5.0f);
         config.addBoolean("auto_dev_mode", true);
+        config.addBoolean("back_waypoint", true);
+        config.addBoolean("dev_exit_waypoint", true);
     }
 
 
@@ -116,11 +121,22 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     @Override
     public void onModeChange(HypercubeAPI.Mode oldMode, HypercubeAPI.Mode newMode) {
         if (oldMode == HypercubeAPI.Mode.DEV) {
+            if (!config.getBoolean("dev_exit_waypoint")) return;
             if (devExit != null) waypoints.remove(devExit);
 
             devExit = new Waypoint(TemporaryTracker.getLastModePlayerPos(), "Dev Exit", 0xffff970e);
-            waypoints.add(devExit);
+            add(devExit, false);
         }
+    }
+
+    @OnReceivePacket
+    public void teleport(PlayerPositionLookS2CPacket packet) {
+        if (!config.getBoolean("back_waypoint")) return;
+        if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return;
+
+        if (backWaypoint != null) waypoints.remove(backWaypoint);
+        backWaypoint = new Waypoint(player().getEntityPos(), "Back", 0xaaffaa);
+        add(backWaypoint, false);
     }
 
     @Override
@@ -134,10 +150,16 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         currentPlot = -1;
     }
 
-    public void add(Waypoint waypoint) {
+    public void add(Waypoint waypoint, boolean save) {
         waypoints.add(waypoint);
-        savedWaypoints.computeIfAbsent(currentPlot, a -> new ArrayList<>()).add(waypoint);
-        save();
+        if (save) {
+            savedWaypoints.computeIfAbsent(currentPlot, a -> new ArrayList<>()).add(waypoint);
+            save();
+        }
+    }
+
+    public void add(Waypoint waypoint) {
+        add(waypoint, true);
     }
 
     private void load() {
