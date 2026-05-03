@@ -7,7 +7,7 @@
   "authors": [],
   "contact": {},
   "license": "All-Rights-Reserved",
-  "icon": "assets/millomod2/icon.png",
+  "icon": "assets/millomod/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
