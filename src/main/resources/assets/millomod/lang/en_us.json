@@ -40,6 +40,8 @@
   "millo.feature.config.folder_regex": "Folder Regex",
   "millo.feature.config.ultrakill_mode": "Ultrakill",
   "millo.feature.config.pos": "Position",
+  "millo.feature.config.back_waypoint": "Auto Back Waypoint",
+  "millo.feature.config.dev_exit_waypoint": "Auto Dev Exit Waypoint",
 
   "millo.choice.none": "None",
   "millo.choice.radial": "Radial",
@@ -72,5 +74,6 @@
   "key.millomod2.pick_chest_value.key": "Pick Chest Value",
   "key.millomod2.show_item_tags.key": "Show Item Tags",
   "key.millomod2.spectator_toggle.key": "Spectator Toggle",
-  "key.millomod2.waypoints.key": "TP to Waypoint"
+  "key.millomod2.waypoints.key": "TP to Waypoint",
+  "key.millomod2.slot_index.key": "Display Slot Index"
 }

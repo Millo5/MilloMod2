@@ -75,6 +75,7 @@ public final class FeatureHandler {
                 new ArgumentDisplay(),
                 DevMovement.getInstance(),
                 new ValueItemEditor(),
+                new SlotIndex(),
 
 
                 new Debug()
