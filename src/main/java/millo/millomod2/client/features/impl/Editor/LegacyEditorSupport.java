@@ -33,23 +33,22 @@ public class LegacyEditorSupport {
         lastRequest = System.currentTimeMillis();
 
         boolean sneaking = player.isSneaking();
-        ItemStack item = player.getMainHandStack();
 
-        PlayerUtil.sendHandItem(ItemStack.EMPTY);
         if (!sneaking) PlayerUtil.sendSneak(true);
         MilloMod.MC.interactionManager.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
                 pos.toCenterPos(), Direction.UP, pos, false
         ));
         if (!sneaking) PlayerUtil.sendSneak(false);
-        PlayerUtil.sendHandItem(item);
     }
 
     public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
-        if (System.currentTimeMillis() - lastRequest > 2000) return false;
+        var currentTime = System.currentTimeMillis();
+        if (currentTime - lastRequest > 2000) return false;
+        if (currentTime - lastRequest > 1950) return true;
 
         String codeTemplateData = ItemUtil.getPBVString(packet.getStack(), "hypercube:codetemplatedata");
         if (codeTemplateData == null) return false;
-        lastRequest = 0;
+        lastRequest = currentTime - 1950;
 
         if (callback != null) callback.onReceive(ModelUtil.parseFromItemNBT(codeTemplateData));
 
