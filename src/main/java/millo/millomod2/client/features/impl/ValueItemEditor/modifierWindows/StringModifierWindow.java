@@ -26,6 +26,7 @@ public class StringModifierWindow extends ModifierWindow {
     @Override
     protected ClickableWidget getElement() {
         field = new TextFieldElement(200, 20, Text.literal(value));
+        field.setMaxLength(10000);
         field.setChangedListener(str -> {
             value = str;
             setter.accept(str);

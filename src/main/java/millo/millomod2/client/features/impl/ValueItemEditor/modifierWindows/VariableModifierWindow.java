@@ -39,6 +39,7 @@ public class VariableModifierWindow extends ModifierWindow {
                 .gap(5);
 
         name = new TextFieldElement(100, 20, Text.literal(value.getName()));
+        name.setMaxLength(10000);
         name.setChangedListener(value::setName);
 
         FlexElement<?> scope = FlexElement.create(175, 20)
