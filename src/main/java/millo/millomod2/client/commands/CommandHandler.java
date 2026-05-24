@@ -2,10 +2,7 @@ package millo.millomod2.client.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import millo.millomod2.client.MilloMod;
-import millo.millomod2.client.commands.impl.CommandActionDump;
-import millo.millomod2.client.commands.impl.CommandColors;
-import millo.millomod2.client.commands.impl.CommandSettings;
-import millo.millomod2.client.commands.impl.CommandWaypoint;
+import millo.millomod2.client.commands.impl.*;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 
@@ -32,7 +29,8 @@ public class CommandHandler {
                 new CommandSettings(),
                 new CommandActionDump(),
                 new CommandColors(),
-                new CommandWaypoint()
+                new CommandWaypoint(),
+                new CommandBlueprint()
         );
     }
 

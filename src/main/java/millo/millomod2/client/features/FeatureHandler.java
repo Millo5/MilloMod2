@@ -3,6 +3,7 @@ package millo.millomod2.client.features;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.*;
+import millo.millomod2.client.features.impl.BlueprintLoader.BlueprintLoader;
 import millo.millomod2.client.features.impl.CommandWheel.CommandWheel;
 import millo.millomod2.client.features.impl.DevMovement.DevMovement;
 import millo.millomod2.client.features.impl.Editor.Editor;
@@ -76,6 +77,7 @@ public final class FeatureHandler {
                 DevMovement.getInstance(),
                 new ValueItemEditor(),
                 new SlotIndex(),
+                new BlueprintLoader(),
 
 
                 new Debug()

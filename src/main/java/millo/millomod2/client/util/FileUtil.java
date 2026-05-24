@@ -113,4 +113,14 @@ public class FileUtil {
             }
         }
     }
+
+    public static File getOrCreateFolder(Path modFolder, String folderName) {
+        File folder = modFolder.resolve(folderName).toFile();
+        if (!folder.exists()) {
+            if (!folder.mkdirs()) {
+                MilloLog.errorInGame("Failed to create folder: " + folder);
+            }
+        }
+        return folder;
+    }
 }
