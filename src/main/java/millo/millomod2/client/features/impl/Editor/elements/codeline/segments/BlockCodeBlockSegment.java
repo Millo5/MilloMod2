@@ -43,6 +43,12 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
             case "if_var" -> new ConditionSegment(model, CodeBlockType.IF_VARIABLE);
 
             case "set_var" -> new SetVarSegment(model);
+            case "player_action"-> {
+                if (model.getCodeFields() instanceof ActionCodeFields act) {
+                    if (act.getAction().isEmpty()) yield new CommentSegment(model);
+                }
+                yield null;
+            }
             default -> null;
         };
         baseSegment = switch (model.getBlock()) {

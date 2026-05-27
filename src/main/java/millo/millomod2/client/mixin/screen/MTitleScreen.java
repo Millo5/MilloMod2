@@ -28,14 +28,15 @@ public abstract class MTitleScreen {
 
             if (!result.outdated()) return;
             ScreenAccessor accessor = (ScreenAccessor)this;
-            accessor.iAddDrawableChild(
-                    (ButtonWidget.builder(Text.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),
-                            (button) -> UpdateService.openUpdateScreen())
-                            .dimensions(accessor.getWidth() / 2 - 100, y + spacingY * 3, 200, 20)
-                            .tooltip(null)
-                            .build()
-                    )).active = getMultiplayerDisabledText() == null;
-
+            synchronized (this) {
+                accessor.iAddDrawableChild(
+                        (ButtonWidget.builder(Text.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),
+                                        (button) -> UpdateService.openUpdateScreen())
+                                .dimensions(accessor.getWidth() / 2 - 100, y + spacingY * 3, 200, 20)
+                                .tooltip(null)
+                                .build()
+                        )).active = getMultiplayerDisabledText() == null;
+            }
         });
 
     }
