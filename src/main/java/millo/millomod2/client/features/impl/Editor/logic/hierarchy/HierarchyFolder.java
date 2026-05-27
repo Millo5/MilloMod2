@@ -1,9 +1,8 @@
 package millo.millomod2.client.features.impl.Editor.logic.hierarchy;
 
 import millo.millomod2.client.features.impl.Editor.elements.CodeBrowser;
+import millo.millomod2.client.features.impl.Editor.elements.HierarchyFolderElement;
 import millo.millomod2.menu.elements.ClickableElement;
-import millo.millomod2.menu.elements.FolderElement;
-import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 
@@ -28,20 +27,37 @@ public class HierarchyFolder implements HierarchyEntry {
 
     @Override
     public ClickableElement<?> getElement(CodeBrowser browser) {
-        FolderElement folderElement = FolderElement.create(500, 5000, Text.literal(name))
+
+        HierarchyFolderElement folder = new HierarchyFolderElement(browser, this);
+        folder
                 .border(new ClickableElement.Border().left(0x50000000))
                 .background(0);
 
         for (HierarchyEntry entry : entries) {
-            folderElement.addChild(entry.getElement(browser));
+            folder.addChild(entry.getElement(browser));
         }
 
-        folderElement.getContent()
+        folder.getContent()
                 .padding(0)
                 .gap(0)
                 .position(8, 12);
 
-        return folderElement;
+        return folder;
+
+//        FolderElement folderElement = FolderElement.create(500, 5000, Text.literal(name))
+//                .border(new ClickableElement.Border().left(0x50000000))
+//                .background(0);
+//
+//        for (HierarchyEntry entry : entries) {
+//            folderElement.addChild(entry.getElement(browser));
+//        }
+//
+//        folderElement.getContent()
+//                .padding(0)
+//                .gap(0)
+//                .position(8, 12);
+//
+//        return folderElement;
     }
 
     @Override
@@ -60,6 +76,9 @@ public class HierarchyFolder implements HierarchyEntry {
             if (entry.contains(methodName)) {
                 entry.removeEntry(methodName);
                 if (entry instanceof HierarchyFolder folder && folder.entries.isEmpty()) {
+                    entries.remove(entry);
+                }
+                if (entry instanceof HierarchyMethod method) {
                     entries.remove(entry);
                 }
                 return;

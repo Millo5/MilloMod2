@@ -57,12 +57,14 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                         .onPress(button -> {
                             ItemStack item = browser.getHierarchy().getTemplate(templateName).getItem();
                             PlayerUtil.giveItem(item);
+                            menu.closeContextMenu();
                         })
                 );
                 contextMenu.addChild(ButtonElement.create(100, 20)
                         .message(Text.literal("Delete").setStyle(Styles.SCARY.getStyle()))
                         .onPress(button -> {
                             browser.getHierarchy().removeTemplate(templateName);
+                            menu.closeContextMenu();
                         })
                 );
 

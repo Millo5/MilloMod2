@@ -80,27 +80,32 @@ public class Editor extends Feature implements Keybound, Configurable {
     @OnReceivePacket
     public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
         if (fetchingAllTemplates) {
-            ComponentMap shulkerComponents = packet.getStack().getComponents();
-            if (shulkerComponents == null) return false;
-
-            ContainerComponent containerComponent = shulkerComponents.get(DataComponentTypes.CONTAINER);
-            if (containerComponent == null) return false;
-
-            for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
-
-                String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
-                if (codeTemplateData == null) continue;
-
-                TemplateModel templateModel = ModelUtil.parseFromItemNBT(codeTemplateData);
-
-                if (screen == null) continue;
-                screen.addTemplate(templateModel);
-            }
-
-            waitForShulkers = 1;
+            extractShulkerbox(packet.getStack());
             return false;
         }
         return legacy.slotUpdate(packet);
+    }
+
+    private boolean extractShulkerbox(ItemStack item) {
+        ComponentMap shulkerComponents = item.getComponents();
+        if (shulkerComponents == null) return false;
+
+        ContainerComponent containerComponent = shulkerComponents.get(DataComponentTypes.CONTAINER);
+        if (containerComponent == null) return false;
+
+        for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
+
+            String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
+            if (codeTemplateData == null) continue;
+
+            TemplateModel templateModel = ModelUtil.parseFromItemNBT(codeTemplateData);
+
+            if (screen == null) continue;
+            screen.addTemplate(templateModel);
+        }
+
+        waitForShulkers = 1;
+        return true;
     }
 
     private void onKeyPress() {

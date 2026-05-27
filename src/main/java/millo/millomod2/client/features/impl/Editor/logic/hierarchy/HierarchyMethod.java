@@ -49,6 +49,10 @@ public class HierarchyMethod implements HierarchyEntry {
         return displayName;
     }
 
+    public String getTemplateName() {
+        return templateName;
+    }
+
     @Override
     public boolean contains(String methodName) {
         return templateName.equals(methodName);

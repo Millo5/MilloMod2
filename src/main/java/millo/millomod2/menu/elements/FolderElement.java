@@ -15,7 +15,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
 
     private int maxHeightWhenOpened = 24;
 
-    private FolderElement(int x, int y, int width, int height, Text title) {
+    public FolderElement(int x, int y, int width, int height, Text title) {
         super(x, y, width, height, Text.empty());
         this.title = title;
         contentList = ListElement.create(width, height - 12)
@@ -26,6 +26,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
         super.addChild(contentList);
         maxHeightWhenOpened = height;
     }
+
     public static FolderElement create(int width, int height, Text title) {
         return new FolderElement(0, 0, width, height, title)
                 .background(0x40000000);

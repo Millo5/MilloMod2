@@ -4,6 +4,9 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
+import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyEntry;
+import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyFolder;
+import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMethod;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.FolderElement;
@@ -16,6 +19,8 @@ import millo.millomod2.menu.elements.flex.ResizableFlexElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+
 public class Hierarchy extends ResizableFlexElement<Hierarchy> {
 
     private final EditorMenu menu;
@@ -23,7 +28,7 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
     private String searchQuery = "";
     private int searchTimeout = 0;
 
-    private FolderElement root;
+    private HierarchyFolderElement root;
     private final TextFieldElement search;
 
     public Hierarchy(EditorMenu menu, int width, int height) {
@@ -66,7 +71,7 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         if (menu == null) return;
         if (menu.getLoadedPlot() == null) return;
 
-        root = (FolderElement) menu.getLoadedPlot().getRootFolder().getElement(menu.getMain().getCodeBrowser());
+        root = (HierarchyFolderElement) menu.getLoadedPlot().getRootFolder().getElement(menu.getMain().getCodeBrowser());
         root.setOpened(true);
         list.addChild(root);
     }
@@ -173,9 +178,28 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         if (menu == null) return;
         if (menu.getLoadedPlot() == null) return;
 
-        menu.getLoadedPlot().removeTemplate(templateName);
-
-        reload();
+        removeTemplateInternal(templateName);
     }
 
+    private void removeTemplateInternal(String templateName) {
+        menu.getLoadedPlot().removeTemplate(templateName);
+        root.removeTemplate(templateName);
+    }
+
+    public void removeFolder(HierarchyFolder folder) {
+        if (menu == null) return;
+        if (menu.getLoadedPlot() == null) return;
+
+        removeFolderInternal(folder);
+    }
+
+    private void removeFolderInternal(HierarchyFolder folder) {
+        for (HierarchyEntry hierarchyEntry : new ArrayList<>(folder.getHierarchyEntries())) {
+            if (hierarchyEntry instanceof HierarchyFolder subFolder) {
+                removeFolderInternal(subFolder);
+            } else if (hierarchyEntry instanceof HierarchyMethod method) {
+                removeTemplateInternal(method.getTemplateName());
+            }
+        }
+    }
 }
