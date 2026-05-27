@@ -36,6 +36,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     private Waypoint selected = null;
     private Waypoint devExit = null;
     private Waypoint backWaypoint = null;
+    private Waypoint temporaryWaypoint = null;
     private long lastBackTime = 0;
 
     private WaypointConfigCache configCache = null;
@@ -126,6 +127,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
             if (devExit != null) waypoints.remove(devExit);
 
             devExit = new Waypoint(TemporaryTracker.getLastModePlayerPos(), "Dev Exit", 0xffff970e);
+            lastBackTime = System.currentTimeMillis(); // prevent back waypoint being at the same spot as dev exit
             add(devExit, false);
         }
     }
@@ -239,6 +241,12 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
             }
         }
         return null;
+    }
+
+    public void addTemporaryWaypoint(Vec3d pos) {
+        if (temporaryWaypoint != null) waypoints.remove(temporaryWaypoint);
+        temporaryWaypoint = new Waypoint(pos, "Temp", 0xaaffaa);
+        add(temporaryWaypoint, false);
     }
 
 

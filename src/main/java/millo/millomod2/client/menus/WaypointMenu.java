@@ -71,8 +71,13 @@ public class WaypointMenu extends Menu {
 
         main.addChild(ButtonElement.create(200, 20)
                 .message(Text.literal("Add Waypoint"))
-                .onPress((b) -> {
+                .onClick((click) -> {
                     if (MilloMod.player() == null) return;
+                    if (click.click().button() == 1) {
+                        feature.addTemporaryWaypoint(MilloMod.player().getEntityPos());
+                        close();
+                        return;
+                    }
                     new AddWaypointMenu(this, MilloMod.player().getEntityPos()).open();
                 })
                 .background(0x80000000)
