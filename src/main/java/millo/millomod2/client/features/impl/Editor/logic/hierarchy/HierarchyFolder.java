@@ -54,6 +54,19 @@ public class HierarchyFolder implements HierarchyEntry {
         return entries.stream().anyMatch(entry -> entry.contains(methodName));
     }
 
+    @Override
+    public void removeEntry(String methodName) {
+        for (HierarchyEntry entry : entries) {
+            if (entry.contains(methodName)) {
+                entry.removeEntry(methodName);
+                if (entry instanceof HierarchyFolder folder && folder.entries.isEmpty()) {
+                    entries.remove(entry);
+                }
+                return;
+            }
+        }
+    }
+
     public ArrayList<HierarchyEntry> getHierarchyEntries() {
         return entries;
     }

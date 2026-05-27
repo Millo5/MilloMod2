@@ -141,6 +141,14 @@ public class EditorPlot {
         return templateNames;
     }
 
+    public void removeTemplate(String templateName) {
+        fileManager.deleteTemplate(templateName);
+        templateCache.remove(templateName);
+        templateNames.remove(templateName);
+
+        rootFolder.removeEntry(templateName);
+    }
+
     public record Metadata(int id, String name, String owner) {}
 
 }

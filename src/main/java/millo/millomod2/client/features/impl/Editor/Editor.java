@@ -72,6 +72,7 @@ public class Editor extends Feature implements Keybound, Configurable {
                 fetchingAllTemplates = false;
                 waitForShulkers = 0;
                 player().sendMessage(Text.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()), false);
+                screen.getMain().getHierarchy().reload();
             }
         }
     }

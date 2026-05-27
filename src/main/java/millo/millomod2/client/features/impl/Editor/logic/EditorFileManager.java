@@ -119,6 +119,14 @@ public class EditorFileManager {
         return templateNames;
     }
 
+    public void deleteTemplate(String templateName) {
+        String fileName = serializeMethodName(templateName);
+        Path filePath = getPlotFolder().resolve(fileName);
+        if (filePath.toFile().exists()) {
+            filePath.toFile().delete();
+        }
+    }
+
 
 //    public ArrayList<Template> load() {
 //        ArrayList<Template> templates = new ArrayList<>();

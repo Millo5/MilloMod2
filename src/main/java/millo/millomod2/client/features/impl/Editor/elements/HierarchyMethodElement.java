@@ -2,6 +2,7 @@ package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.PlayerUtil;
+import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.buttons.AbstractButton;
@@ -58,6 +59,13 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                             PlayerUtil.giveItem(item);
                         })
                 );
+                contextMenu.addChild(ButtonElement.create(100, 20)
+                        .message(Text.literal("Delete").setStyle(Styles.SCARY.getStyle()))
+                        .onPress(button -> {
+                            browser.getHierarchy().removeTemplate(templateName);
+                        })
+                );
+
                 menu.openContextMenu(contextMenu,
                         (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
                         (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())

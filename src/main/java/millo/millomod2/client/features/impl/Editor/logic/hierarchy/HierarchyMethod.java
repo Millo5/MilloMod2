@@ -53,4 +53,9 @@ public class HierarchyMethod implements HierarchyEntry {
     public boolean contains(String methodName) {
         return templateName.equals(methodName);
     }
+
+    @Override
+    public void removeEntry(String methodName) {
+        // No-op since methods can't contain other methods
+    }
 }

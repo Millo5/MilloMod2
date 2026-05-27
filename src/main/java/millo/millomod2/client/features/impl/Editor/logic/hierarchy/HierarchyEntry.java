@@ -10,4 +10,7 @@ public interface HierarchyEntry {
     String getName();
 
     boolean contains(String methodName);
+
+    void removeEntry(String methodName);
+
 }
