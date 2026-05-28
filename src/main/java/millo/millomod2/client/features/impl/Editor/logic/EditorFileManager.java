@@ -3,6 +3,7 @@ package millo.millomod2.client.features.impl.Editor.logic;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import millo.millomod2.client.features.impl.Editor.elements.CodeTextArea;
 import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.FileUtil;
@@ -51,6 +52,31 @@ public class EditorFileManager {
         if (!root.toFile().exists()) root.toFile().mkdirs();
         Path recentFile = root.resolve(recentPlotsFileName);
         FileUtil.write(recentFile, json.toString());
+    }
+
+    public static void exportPlot(EditorPlot loadedPlot) {
+        Path plotFolder = FileUtil.getModFolder().resolve("out").resolve(String.valueOf(loadedPlot.getPlotId()));
+        if (!plotFolder.getParent().toFile().exists()) plotFolder.getParent().toFile().mkdirs();
+        if (!plotFolder.toFile().exists()) plotFolder.toFile().mkdirs();
+
+        if (plotFolder.toFile().exists() && plotFolder.toFile().isDirectory()) {
+            FileUtil.listFiles(plotFolder).forEach(path -> path.toFile().delete());
+        }
+        if (!plotFolder.toFile().exists()) plotFolder.toFile().mkdirs();
+
+        loadedPlot.getTemplateNames().forEach(templateName -> {
+            TemplateModel template = loadedPlot.getTemplate(templateName);
+            String fileName = serializeMethodName(templateName);
+            Path filePath = plotFolder.resolve(fileName);
+
+            CodeTextArea dummyArea = new CodeTextArea(0, 0, 100, 100);
+            CodeBodyBuilder builder = new CodeBodyBuilder(dummyArea, template);
+            builder.build();
+
+            FileUtil.write(filePath, dummyArea.getRawContents());
+
+        });
+
     }
 
     public Path getPlotFolder() {

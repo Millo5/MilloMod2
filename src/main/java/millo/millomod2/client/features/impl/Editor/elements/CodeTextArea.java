@@ -1,11 +1,13 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.logic.CodeBodyBuilder;
 import millo.millomod2.client.features.impl.Editor.logic.search.SearchResult;
 import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.ListElement;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +16,7 @@ public class CodeTextArea extends ListElement implements Searchable {
 
     private CodeBrowser browser;
 
-    protected CodeTextArea(int x, int y, int width, int height) {
+    public CodeTextArea(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
 
@@ -56,4 +58,19 @@ public class CodeTextArea extends ListElement implements Searchable {
         return results;
     }
 
+    public String getRawContents() {
+        StringBuilder builder = new StringBuilder();
+        for (var child : getChildren()) {
+            if (child instanceof CodeLineElement line) {
+                int segment = 0;
+                for (ClickableWidget lineChild : line.getChildren()) {
+                    if (segment++ < 2) continue; // Skip block and line number
+                    String lineContent = lineChild.getMessage().getString();
+                    builder.append(lineContent);
+                }
+                builder.append("\n");
+            }
+        }
+        return builder.toString();
+    }
 }

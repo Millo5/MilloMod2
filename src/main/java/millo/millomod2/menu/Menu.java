@@ -1,6 +1,7 @@
 package millo.millomod2.menu;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.menu.elements.ConfirmationElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -83,6 +84,10 @@ public abstract class Menu extends Screen {
         addDrawableChild(menu);
     }
 
+    public void openConfirmationMenu(Text title, Text message, Runnable onConfirm) {
+        openContextMenu(new ConfirmationElement(title, message, onConfirm),
+                (width - 400) / 2, (height - 200) / 2);
+    }
 
     public void open() {
         MilloMod.MC.send(() -> MilloMod.MC.setScreen(this));

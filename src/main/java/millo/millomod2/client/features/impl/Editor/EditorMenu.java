@@ -16,6 +16,7 @@ import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.KeyInput;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 
@@ -146,6 +147,17 @@ public class EditorMenu extends Menu {
             mainBody.focusCodeBrowserSearch();
             return true;
         }
+
+        if (input.hasCtrl() && input.key() == 80) {
+            openConfirmationMenu(
+                    Text.literal("Export Plot"),
+                    Text.literal("Are you sure you want to export this plot? This will save the plot data to a file on your computer."),
+                    () -> {
+                        EditorFileManager.exportPlot(loadedPlot);
+                    });
+            return true;
+        }
+
         return super.keyPressed(input);
     }
 
