@@ -30,7 +30,8 @@ public class CommandHandler {
                 new CommandActionDump(),
                 new CommandColors(),
                 new CommandWaypoint(),
-                new CommandBlueprint()
+                new CommandBlueprint(),
+                new CommandDfGive()
         );
     }
 
