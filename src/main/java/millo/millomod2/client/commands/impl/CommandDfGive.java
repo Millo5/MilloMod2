@@ -3,6 +3,7 @@ package millo.millomod2.client.commands.impl;
 import com.mojang.brigadier.CommandDispatcher;
 import millo.millomod2.client.commands.Arg;
 import millo.millomod2.client.commands.Command;
+import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -16,6 +17,13 @@ public class CommandDfGive extends Command {
     @Override
     public void register(MinecraftClient instance, CommandDispatcher<FabricClientCommandSource> cd, CommandRegistryAccess context) {
         cd.register(Arg.literal("dfgive")
+                .then(Arg.literal("clipboard")
+                        .executes((ctx) -> {
+                            String clipboard = MinecraftClient.getInstance().keyboard.getClipboard();
+                            ItemStack item = ItemUtil.fromNbt(clipboard);
+                            PlayerUtil.giveItem(item);
+                            return 1;
+                        }))
                 .then(Arg.argument("item", ItemStackArgumentType.itemStack(context))
                         .executes(ctx -> {
                             ItemStackArgument item = ctx.getArgument("item", ItemStackArgument.class);
