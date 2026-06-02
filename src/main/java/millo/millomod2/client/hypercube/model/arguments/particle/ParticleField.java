@@ -31,6 +31,7 @@ public abstract class ParticleField<T extends ParticleField<T>> {
         register(SizeParticleField::new);
         register(SizeVariationParticleField::new);
         register(PowerParticleField::new);
+        register(OpacityParticleField::new);
     }
 
     private static void register(Supplier<ParticleField<?>> supp) {
