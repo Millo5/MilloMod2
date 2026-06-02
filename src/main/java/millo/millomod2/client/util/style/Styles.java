@@ -55,6 +55,7 @@ public enum Styles {
     LOC(LOCATION.style),
     VEC(VECTOR.style),
     COMPONENT(new Color(0x7FD42A)),
+    BUCKET(new Color(0xD4AAFF)),
 
 
     CHANGED(new Color(0x7F7FFF)),

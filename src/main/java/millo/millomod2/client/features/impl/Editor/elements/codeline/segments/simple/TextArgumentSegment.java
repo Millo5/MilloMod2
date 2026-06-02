@@ -12,9 +12,13 @@ public class TextArgumentSegment extends SimpleSegment<TextArgumentModel> {
 
     @Override
     TextElement createContent(TextArgumentModel model) {
+        String value = model.getValue();
+        if (value.isEmpty()) value = "[]";
+        if (value.length() > 251) value = value.substring(0, 251);
+
         return new SimpleArgumentBuilder("\"" + model.getValue() + "\"")
                 .style(Styles.TEXT)
-                .onClickCmd("/str " + model.getValue())
+                .onClickCmd("/str " + value)
                 .build();
     }
 

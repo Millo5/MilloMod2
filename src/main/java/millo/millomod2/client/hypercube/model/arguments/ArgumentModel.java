@@ -66,6 +66,7 @@ public abstract class ArgumentModel<T extends ArgumentModel<T>> implements JsonS
         register(TextArgumentModel::new);
         register(VariableArgumentModel::new);
         register(VectorArgumentModel::new);
+        register(BucketVariableArgumentModel::new);
     }
 
     private static void register(Supplier<ArgumentModel<?>> supp) {
