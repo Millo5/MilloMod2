@@ -18,7 +18,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
     public FolderElement(int x, int y, int width, int height, Text title) {
         super(x, y, width, height, Text.empty());
         this.title = title;
-        contentList = ListElement.create(width, height - 12)
+        contentList = ListElement.create(width, 12)
                 .gap(4)
                 .padding(4)
                 .position(0, 12)
@@ -71,7 +71,6 @@ public class FolderElement extends ContainerElement<FolderElement> {
         visualHeight = MathHelper.clampedLerp(args.deltaTicks(), visualHeight, targetHeight);
         setHeight(Math.round(visualHeight));
 
-
         renderChildren(args);
     }
 
@@ -97,5 +96,10 @@ public class FolderElement extends ContainerElement<FolderElement> {
     
     public Text getTitle() {
         return title;
+    }
+
+    @Override
+    public String toString() {
+        return "FolderElement{" + title + ", [" + toStringChildren() + "]}";
     }
 }

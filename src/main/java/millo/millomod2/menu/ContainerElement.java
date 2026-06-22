@@ -2,6 +2,7 @@ package millo.millomod2.menu;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
+import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -160,7 +161,12 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
 
     protected void renderChildren(RenderArgs args) {
         for (ClickableWidget child : List.copyOf(getChildren())) {
-            child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
+            try {
+                child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
+            } catch (Exception e) {
+                MilloLog.error("Failed to render child element: " + child);
+                MilloLog.stackTrace(e);
+            }
         }
     }
 
@@ -185,4 +191,21 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     protected record RenderArgs(DrawContext context, int mouseX, int mouseY, float deltaTicks) {}
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName()).append(" {");
+        sb.append(toStringChildren());
+        sb.append("\n}");
+        return sb.toString();
+    }
+
+    protected String toStringChildren() {
+        StringBuilder sb = new StringBuilder();
+        for (ClickableWidget child : getChildren()) {
+            sb.append("\n  ").append(child.toString().replace("\n", "\n  "));
+        }
+        return sb.toString();
+    }
 }

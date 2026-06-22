@@ -57,6 +57,7 @@ public class PacketHandler {
                 boolean result = (boolean) method.invoke(methodReferenceReceive.get(method), packet);
                 re = re || result;
             } catch (Exception e) {
+                MilloLog.error("Error invoking packet for class " + method.getClass() + ", method " + method.getName() + " and packet " + packet.getClass());
                 MilloLog.stackTrace(e);
             }
         }

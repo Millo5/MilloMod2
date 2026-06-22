@@ -12,9 +12,10 @@
     "render.MClickableWidget",
     "render.MContainerScreen",
     "render.MGameRenderer",
-    "render.MParentElement",
     "render.MInGameHUD",
+    "render.MParentElement",
     "render.accessors.ClickableWidgetAccessor",
+    "render.accessors.DrawContextAccessor",
     "render.accessors.HandledScreenAccessor",
     "render.accessors.ScreenAccessor",
     "screen.MTitleScreen"

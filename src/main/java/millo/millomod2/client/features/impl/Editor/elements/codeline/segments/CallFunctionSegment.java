@@ -76,7 +76,7 @@ public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
                 regex.append(".*?");
                 lastInd = m.end();
             }
-
+            regex.append(Pattern.quote(model.getData().substring(lastInd)));
             regex.append(Pattern.quote(methodType.suffixString("")));
 
             EditorMenu.getCachedBody().openTemplateContext(methodType, regex.toString());

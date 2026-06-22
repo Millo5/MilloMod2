@@ -1,5 +1,6 @@
 package millo.millomod2.client.features.impl.Editor;
 
+import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorFileManager;
@@ -7,6 +8,7 @@ import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.model.TemplateModel;
+import millo.millomod2.client.mixin.render.accessors.DrawContextAccessor;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -14,9 +16,11 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 
@@ -165,6 +169,14 @@ public class EditorMenu extends Menu {
         addTemplate(template);
         mainBody.getCodeBrowser().openTemplate(template);
         refresh();
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        Matrix3x2fStack mats = new Matrix3x2fStack(32);
+
+        DrawContext newContext = DrawContextAccessor.createDrawContext(MilloMod.MC, mats, context.state, mouseX, mouseY);
+        super.render(newContext, mouseX, mouseY, deltaTicks);
     }
 
     public void addTemplate(TemplateModel template) {

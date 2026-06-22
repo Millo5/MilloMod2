@@ -62,4 +62,11 @@ public class HierarchyMethod implements HierarchyEntry {
     public void removeEntry(String methodName) {
         // No-op since methods can't contain other methods
     }
+
+    @Override
+    public String toString() {
+        return "HierarchyMethod{" +
+                "templateName='" + templateName + '\'' +
+                '}';
+    }
 }

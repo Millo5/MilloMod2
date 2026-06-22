@@ -133,20 +133,21 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
     }
 
     @OnReceivePacket
-    public void teleport(PlayerPositionLookS2CPacket packet) {
-        if (!config.getBoolean("back_waypoint")) return;
-        if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return;
+    public boolean teleport(PlayerPositionLookS2CPacket packet) {
+        if (!config.getBoolean("back_waypoint")) return false;
+        if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return false;
 
         double dist = packet.change().position().subtract(player().getEntityPos()).length();
-        if (dist < 5) return;
+        if (dist < 5) return false;
 
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackTime < 200) return;
+        if (currentTime - lastBackTime < 200) return false;
         lastBackTime = currentTime;
 
         if (backWaypoint != null) waypoints.remove(backWaypoint);
         backWaypoint = new Waypoint(player().getEntityPos(), "Back", 0xaaffaa);
         add(backWaypoint, false);
+        return false;
     }
 
     @Override
