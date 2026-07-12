@@ -3,9 +3,10 @@ package millo.millomod2.client.features.impl;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.ContainerMod;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.hypercube.data.ValueType;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ArgumentDisplay extends Feature implements Toggleable, Configurable, ContainerMod {
+public class ArgumentDisplay extends Feature implements Toggleable, Configurable, ContainerMod, PacketEventSubscriber {
 
     private final ArrayList<ArgumentInfo> arguments = new ArrayList<>();
 
@@ -41,7 +42,11 @@ public class ArgumentDisplay extends Feature implements Toggleable, Configurable
         config.addBoolean("show_text", true);
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(ScreenHandlerSlotUpdateS2CPacket.class, this::onReceivePacket);
+    }
+
     public boolean onReceivePacket(ScreenHandlerSlotUpdateS2CPacket packet) {
         if (!isEnabled()) return false;
 

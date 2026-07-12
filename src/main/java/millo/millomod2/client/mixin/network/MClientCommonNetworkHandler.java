@@ -13,7 +13,7 @@ public class MClientCommonNetworkHandler {
 
     @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
     private void sendPacket(Packet<?> packet, CallbackInfo ci) {
-        if (FeatureHandler.getPacketHandler().onSendPacket(packet)) ci.cancel();
+        if (FeatureHandler.getPacketEventBus().postSend(packet)) ci.cancel();
     }
 
 }

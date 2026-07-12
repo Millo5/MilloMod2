@@ -2,8 +2,9 @@ package millo.millomod2.client.features.impl.QuickValueItem;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.ContainerMod;
-import millo.millomod2.client.features.addons.OnSendPacket;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
 import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class QuickValueItem extends Feature implements Toggleable, ContainerMod {
+public class QuickValueItem extends Feature implements Toggleable, ContainerMod, PacketEventSubscriber {
 
     @Override
     public String getId() {
@@ -54,7 +55,11 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod 
     }
 
 
-    @OnSendPacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeSend(ClickSlotC2SPacket.class, this::onSlotClick);
+    }
+
     public boolean onSlotClick(ClickSlotC2SPacket packet) {
         if (!isEnabled()) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return false;

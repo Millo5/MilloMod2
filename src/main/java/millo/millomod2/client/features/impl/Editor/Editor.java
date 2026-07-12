@@ -3,9 +3,10 @@ package millo.millomod2.client.features.impl.Editor;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.Plot;
@@ -29,7 +30,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.regex.Pattern;
 
-public class Editor extends Feature implements Keybound, Configurable {
+public class Editor extends Feature implements Keybound, Configurable, PacketEventSubscriber {
 
     // this feature doesn't contain any logic for the Editor Menu itself
     // only the interaction logic with hypercube.
@@ -77,7 +78,11 @@ public class Editor extends Feature implements Keybound, Configurable {
         }
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(ScreenHandlerSlotUpdateS2CPacket.class, this::slotUpdate);
+    }
+
     public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
         if (fetchingAllTemplates) {
             extractShulkerbox(packet.getStack());

@@ -3,13 +3,14 @@ package millo.millomod2.client.features.impl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import millo.millomod2.client.features.Feature;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.PacketEventBus;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.text.Text;
 
-public class ActionDumpReader extends Feature {
+public class ActionDumpReader extends Feature implements PacketEventSubscriber {
 
     @Override
     public String getId() {
@@ -26,7 +27,11 @@ public class ActionDumpReader extends Feature {
         player().sendMessage(Text.of("Reading action dump..."), false);
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::onChat);
+    }
+
     public boolean onChat(GameMessageS2CPacket message) {
         if (!reading) return false;
         String content = message.content().getString();

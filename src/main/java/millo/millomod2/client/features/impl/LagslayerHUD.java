@@ -4,6 +4,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeaturePosition;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.rendering.DonutRenderState;
 import millo.millomod2.client.util.RenderInfo;
@@ -16,7 +17,7 @@ import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Positional, Configurable {
+public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Positional, Configurable, PacketEventSubscriber {
 
     private final Pattern lsRegex = Pattern.compile("^CPU Usage: \\[▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮] \\((\\d+\\.\\d+)%\\)$");
     private float cpuUsage = 0f;
@@ -46,7 +47,11 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         return new FeaturePosition(20, 20, 54, 20);
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(OverlayMessageS2CPacket.class, this::onActionBar);
+    }
+
     public boolean onActionBar(OverlayMessageS2CPacket packet) {
         if (!isEnabled()) return false;
 

@@ -2,8 +2,9 @@ package millo.millomod2.client.features.impl;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.Keybound;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.block.entity.ChestBlockEntity;
@@ -20,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Iterator;
 
 
-public class PickChestValue extends Feature implements Keybound {
+public class PickChestValue extends Feature implements Keybound, PacketEventSubscriber {
 
     private boolean requested = false;
 
@@ -29,7 +30,11 @@ public class PickChestValue extends Feature implements Keybound {
         return "pick_chest_value";
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(ScreenHandlerSlotUpdateS2CPacket.class, this::receive);
+    }
+
     public boolean receive(ScreenHandlerSlotUpdateS2CPacket packet) {
         if (MilloMod.net() == null) return false;
         if (!requested) return false;

@@ -7,9 +7,10 @@ import com.google.gson.JsonParser;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.TemporaryTracker;
 import millo.millomod2.client.hypercube.data.Plot;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Waypoints extends Feature implements WorldRendered, Keybound, Configurable {
+public class Waypoints extends Feature implements WorldRendered, Keybound, Configurable, PacketEventSubscriber {
     private final static String FILENAME = "waypoints.json";
 
     private final HashMap<Integer, ArrayList<Waypoint>> savedWaypoints = new HashMap<>();
@@ -132,7 +133,11 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         }
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::teleport);
+    }
+
     public boolean teleport(PlayerPositionLookS2CPacket packet) {
         if (!config.getBoolean("back_waypoint")) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return false;

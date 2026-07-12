@@ -14,7 +14,7 @@ public class MClientConnection {
 
     @Inject(method = "handlePacket", at = @At("HEAD"), cancellable = true)
     private static <T extends PacketListener> void handlePacket(Packet<T> packet, PacketListener listener, CallbackInfo ci) {
-        if (FeatureHandler.getPacketHandler().onReceivePacket(packet)) ci.cancel();
+        if (FeatureHandler.getPacketEventBus().postReceive(packet)) ci.cancel();
     }
 
 

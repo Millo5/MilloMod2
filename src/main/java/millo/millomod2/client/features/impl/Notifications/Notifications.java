@@ -5,6 +5,7 @@ import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.FeaturePosition;
+import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.util.ChatMatchRule;
 import millo.millomod2.client.util.RenderInfo;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Notifications extends Feature implements Toggleable, Positional, HUDRendered, Configurable {
+public class Notifications extends Feature implements Toggleable, Positional, HUDRendered, Configurable, PacketEventSubscriber {
 
     private final ArrayList<Notification> notifications = new ArrayList<>();
     private HashMap<String, ChatMatchRule> rules;
@@ -55,7 +56,11 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
         }
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::onMessage);
+    }
+
     public boolean onMessage(GameMessageS2CPacket packet) {
         if (!isEnabled()) return false;
 

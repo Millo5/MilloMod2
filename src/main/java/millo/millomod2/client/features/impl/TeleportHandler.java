@@ -1,7 +1,8 @@
 package millo.millomod2.client.features.impl;
 
 import millo.millomod2.client.features.Feature;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.PacketEventBus;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
@@ -10,7 +11,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.function.Consumer;
 
-public class TeleportHandler extends Feature {
+public class TeleportHandler extends Feature implements PacketEventSubscriber {
 
     private static TeleportHandler instance;
 
@@ -30,7 +31,11 @@ public class TeleportHandler extends Feature {
         instance = this;
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::positionLook);
+    }
+
     public boolean positionLook(PlayerPositionLookS2CPacket packet) {
         if (!active) return false;
         if (net() == null || player() == null) return false;

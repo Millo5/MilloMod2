@@ -2,7 +2,8 @@ package millo.millomod2.client.features.impl;
 
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeatureHandler;
-import millo.millomod2.client.features.addons.OnReceivePacket;
+import millo.millomod2.client.features.PacketEventBus;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
@@ -20,7 +21,7 @@ import net.minecraft.util.math.Vec3d;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemporaryTracker extends Feature {
+public class TemporaryTracker extends Feature implements PacketEventSubscriber {
 
     private static double x, z;
     private static Sequence step = Sequence.WAIT_FOR_CLEAR;
@@ -59,7 +60,14 @@ public class TemporaryTracker extends Feature {
         }
     }
 
-    @OnReceivePacket
+    @Override
+    public void subscribePackets(PacketEventBus eventBus) {
+        eventBus.subscribeReceive(ClearTitleS2CPacket.class, this::clearTitle);
+        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::positionLook);
+        eventBus.subscribeReceive(OverlayMessageS2CPacket.class, this::overlay);
+        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::gameMessage);
+    }
+
     public boolean clearTitle(ClearTitleS2CPacket clear) {
         if (clear.shouldReset()) {
             step = Sequence.WAIT_FOR_POS;
@@ -67,7 +75,6 @@ public class TemporaryTracker extends Feature {
         return false;
     }
 
-    @OnReceivePacket
     public boolean positionLook(PlayerPositionLookS2CPacket packet) {
         if (step == Sequence.WAIT_FOR_POS) {
             if (player() != null) lastModePlayerPos = player().getEntityPos();
@@ -78,7 +85,6 @@ public class TemporaryTracker extends Feature {
         return false;
     }
 
-    @OnReceivePacket
     public boolean overlay(OverlayMessageS2CPacket overlay) {
         if (step == Sequence.WAIT_FOR_MESSAGE && overlay.text().getString().matches("(⏵+ - )?⧈ -?\\d+ Tokens {2}ᛥ -?\\d+ Tickets {2}⚡ -?\\d+ Sparks")) {
             setMode(HypercubeAPI.Mode.IDLE);
@@ -120,7 +126,6 @@ public class TemporaryTracker extends Feature {
 
     }
 
-    @OnReceivePacket
     public boolean gameMessage(GameMessageS2CPacket message) {
         String content = message.content().getString();
         if (step == Sequence.WAIT_FOR_MESSAGE) {

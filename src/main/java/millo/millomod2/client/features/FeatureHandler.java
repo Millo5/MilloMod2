@@ -1,6 +1,7 @@
 package millo.millomod2.client.features;
 
 import millo.millomod2.client.features.addons.Keybound;
+import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.features.addons.WorldRendered;
 import millo.millomod2.client.features.impl.*;
 import millo.millomod2.client.features.impl.BlueprintLoader.BlueprintLoader;
@@ -36,7 +37,7 @@ public final class FeatureHandler {
 
     public static FeatureHandler INSTANCE;
 
-    private final PacketHandler packetHandler = new PacketHandler();
+    private final PacketEventBus packetEventBus = new PacketEventBus();
     private final KeyBinding.Category KEYBIND_CATEGORY = KeyBinding.Category.create(Identifier.of("category.millomod2"));
 
     private final ArrayList<String> order = new ArrayList<>();
@@ -162,8 +163,8 @@ public final class FeatureHandler {
         throw new IllegalArgumentException("No feature found for class: " + clazz.getName());
     }
 
-    public static PacketHandler getPacketHandler() {
-        return INSTANCE.packetHandler;
+    public static PacketEventBus getPacketEventBus() {
+        return INSTANCE.packetEventBus;
     }
 
 
@@ -177,8 +178,11 @@ public final class FeatureHandler {
         MilloLog.log("Loading feature: " + feature.getId());
 
         order.add(feature.getId());
-        packetHandler.register(feature);
         initialFeatureMap.put(feature.getId(), feature);
+
+        if (feature instanceof PacketEventSubscriber subscriber) {
+            subscriber.subscribePackets(packetEventBus);
+        }
 
         if (feature instanceof Keybound keybound) {
             for (String keybindId : keybound.getKeybindIds()) {
