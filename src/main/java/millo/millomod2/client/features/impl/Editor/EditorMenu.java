@@ -1,6 +1,5 @@
 package millo.millomod2.client.features.impl.Editor;
 
-import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Editor.elements.MainBody;
 import millo.millomod2.client.features.impl.Editor.elements.TitleBar;
 import millo.millomod2.client.features.impl.Editor.logic.EditorFileManager;
@@ -173,10 +172,17 @@ public class EditorMenu extends Menu {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        Matrix3x2fStack mats = new Matrix3x2fStack(32);
+        Matrix3x2fStack originalMatrices = context.getMatrices();
+        Matrix3x2fStack matrices = new Matrix3x2fStack(32);
+        matrices.set(originalMatrices);
 
-        DrawContext newContext = DrawContextAccessor.createDrawContext(MilloMod.MC, mats, context.state, mouseX, mouseY);
-        super.render(newContext, mouseX, mouseY, deltaTicks);
+        DrawContextAccessor accessor = (DrawContextAccessor) context;
+        accessor.setMatrices(matrices);
+        try {
+            super.render(context, mouseX, mouseY, deltaTicks);
+        } finally {
+            accessor.setMatrices(originalMatrices);
+        }
     }
 
     public void addTemplate(TemplateModel template) {
