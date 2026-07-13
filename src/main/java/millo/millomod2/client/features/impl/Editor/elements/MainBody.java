@@ -1,8 +1,10 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
+import millo.millomod2.client.features.impl.Editor.logic.MethodIndex;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
+import millo.millomod2.menu.elements.ClickableElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -103,6 +105,60 @@ public class MainBody extends FlexElement<MainBody> {
         }
 
         menu.openContextMenuAtCursor(list, 0, 8);
+    }
+
+    public void openUsages(String templateName) {
+        ListElement usageMenu = ListElement.create(240, 10)
+                .background(0xEE222222)
+                .border(new ClickableElement.Border().full(0x6633AAAA))
+                .direction(ElementDirection.COLUMN)
+                .crossAlign(CrossAxisAlignment.STRETCH)
+                .maxExpansion(170)
+                .padding(5)
+                .gap(2);
+
+        MethodIndex methodIndex = menu.getLoadedPlot().getMethodIndex();
+        var usages = methodIndex.getUsages(templateName);
+
+        TextElement title = TextElement.create(Text.literal("Usages of ").setStyle(Styles.HEADER.getStyle())
+                .append(Text.literal(MethodType.trimSuffix(templateName)).setStyle(Styles.NAME.getStyle())));
+        title.setHeight(12);
+        usageMenu.addChild(title);
+        ButtonElement separator = ButtonElement.create(240, 1).background(0xAA666666).muted();
+        separator.active = false;
+        usageMenu.addChild(separator);
+
+        if (usages.isEmpty()) {
+            String message = methodIndex.isIndexing() ? "Indexing usages..." : "No usages found";
+            ButtonElement empty = ButtonElement.create(240, 18)
+                    .message(Text.literal(message).setStyle(Styles.COMMENT.getStyle()))
+                    .textAlignment(Alignment.LEFT)
+                    .removeHoverBackground();
+            empty.active = false;
+            usageMenu.addChild(empty);
+        } else {
+            for (MethodIndex.MethodUsage usage : usages) {
+                Text message = Text.literal(MethodType.trimSuffix(usage.sourceTemplateName())).setStyle(Styles.NAME.getStyle())
+                        .append(Text.literal("  line ").setStyle(Styles.COMMENT.getStyle()))
+                        .append(Text.literal(String.valueOf(usage.line())).setStyle(Styles.LINE.getStyle()));
+                usageMenu.addChild(ButtonElement.create(240, 18)
+                        .message(message)
+                        .background(0x18000000)
+                        .hoverBackground(0x4033AAAA)
+                        .textAlignment(Alignment.LEFT)
+                        .onPress(button -> {
+                            codeBrowser.openTemplateAtLine(usage.sourceTemplateName(), usage.line());
+                            menu.closeContextMenu();
+                        }));
+            }
+
+            if (methodIndex.isIndexing()) {
+                TextElement indexing = TextElement.create(Text.literal("Still indexing...").setStyle(Styles.COMMENT.getStyle()));
+                indexing.setHeight(10);
+                usageMenu.addChild(indexing);
+            }
+        }
+        menu.openContextMenuAtCursor(usageMenu);
     }
 
     public void focusHierarchySearch() {

@@ -7,9 +7,11 @@ import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
 import org.joml.Vector2f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -17,6 +19,7 @@ public class TextElement extends TextWidget implements FadeElement {
 
     private TextAlignment alignment = TextAlignment.LEFT;
     private Supplier<Boolean> onClick = null;
+    private Supplier<@Nullable Text> tooltipSupplier = null;
 
     private int xOffset = 0;
     private int yOffset = 0;
@@ -41,6 +44,10 @@ public class TextElement extends TextWidget implements FadeElement {
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
+        if (hovered && tooltipSupplier != null) {
+            Text tooltip = tooltipSupplier.get();
+            setTooltip(tooltip == null ? null : Tooltip.of(tooltip));
+        }
         context.getMatrices().pushMatrix();
         getFade().applyTranslation(context.getMatrices());
 
@@ -103,6 +110,11 @@ public class TextElement extends TextWidget implements FadeElement {
     public TextElement onClickListener(Supplier<Boolean> runnable) {
         this.onClick = runnable;
         this.active = true;
+        return this;
+    }
+
+    public TextElement tooltip(Supplier<@Nullable Text> supplier) {
+        tooltipSupplier = supplier;
         return this;
     }
 

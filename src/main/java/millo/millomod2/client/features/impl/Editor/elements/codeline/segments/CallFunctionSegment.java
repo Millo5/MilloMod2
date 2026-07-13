@@ -4,6 +4,8 @@ import millo.millomod2.client.features.impl.Editor.EditorMenu;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.segments.simple.SimpleArgumentBuilder;
+import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
+import millo.millomod2.client.features.impl.Editor.logic.MethodIndex;
 import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
@@ -17,9 +19,6 @@ import java.util.regex.Pattern;
 public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
     private static final Text FUNC_PREFIX = Text.literal("call ").setStyle(Styles.FUNCTION.getStyle());
     private static final Text PROC_PREFIX = Text.literal("start ").setStyle(Styles.PROCESS.getStyle());
-
-    private static final String expressionRegex = "%.+?\\(.+?\\)";
-    private static final String containsExpressionRegex = "^.*" + expressionRegex + ".*$";
 
     private final MethodType methodType;
 
@@ -47,16 +46,22 @@ public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
             default -> Styles.SCARY;
         };
 
-        TextElement text = new SimpleArgumentBuilder(model.getData())
+        SimpleArgumentBuilder builder = new SimpleArgumentBuilder(model.getData())
                 .style(style)
-                .onClick(getOnclick())
-                .build();
+                .onClick(getOnclick());
+
+        EditorPlot plot = EditorMenu.getActivePlot();
+        if (plot != null && !isExpression()) {
+            builder.tooltip(() -> plot.getMethodIndex().getCallTooltip(methodType, model.getData()));
+        }
+
+        TextElement text = builder.build();
 
         lineElement.addChild(text);
     }
 
     private Supplier<Boolean> getOnclick() {
-        boolean expression = model.getData().matches(containsExpressionRegex);
+        boolean expression = isExpression();
 
         if (!expression) return () -> {
             EditorMenu.getCachedBody().tryOpenTemplate(methodType.suffixString(model.getData()));
@@ -64,8 +69,7 @@ public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
         };
 
         return () -> {
-//            String regex = model.getData().replaceAll(expressionRegex, ".+?");
-            Pattern p = Pattern.compile(expressionRegex);
+            Pattern p = Pattern.compile(MethodIndex.DYNAMIC_CALL_REGEX);
             Matcher m = p.matcher(model.getData());
 
             StringBuilder regex = new StringBuilder();
@@ -82,5 +86,9 @@ public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
             EditorMenu.getCachedBody().openTemplateContext(methodType, regex.toString());
             return true;
         };
+    }
+
+    private boolean isExpression() {
+        return MethodIndex.isDynamicCall(model.getData());
     }
 }

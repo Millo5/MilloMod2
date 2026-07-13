@@ -46,6 +46,17 @@ public class CodeTextArea extends ListElement implements Searchable {
         builder.build();
     }
 
+    public void focusLine(int line) {
+        MilloMod.MC.send(() -> {
+            int index = line - 1;
+            if (index < 0 || index >= getChildren().size()) return;
+            if (!(getChildren().get(index) instanceof CodeLineElement codeLine)) return;
+
+            scrollToChild(codeLine);
+            codeLine.highlight();
+        });
+    }
+
 
     @Override
     public Collection<? extends SearchResult> search(String searchQuery) {

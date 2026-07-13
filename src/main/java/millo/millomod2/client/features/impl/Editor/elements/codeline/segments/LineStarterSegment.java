@@ -1,7 +1,10 @@
 package millo.millomod2.client.features.impl.Editor.elements.codeline.segments;
 
+import millo.millomod2.client.features.impl.Editor.EditorMenu;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineElement;
 import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSegment;
+import millo.millomod2.client.features.impl.Editor.elements.codeline.segments.simple.SimpleArgumentBuilder;
+import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.client.hypercube.model.codeblocks.BlockCodeBlockModel;
 import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
 import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
@@ -47,7 +50,17 @@ public class LineStarterSegment extends CodeLineSegment<BlockCodeBlockModel> {
         }
 
         if (model.getCodeFields() instanceof DynamicCodeFields dyn) {
-            lineElement.addChild(text(dyn.getData()));
+            SimpleArgumentBuilder builder = new SimpleArgumentBuilder(dyn.getData());
+            EditorPlot plot = EditorMenu.getActivePlot();
+            if (plot != null && (type == MethodType.FUNC || type == MethodType.PROCESS)) {
+                String templateName = type.suffixString(dyn.getData());
+                builder.tooltip(() -> plot.getMethodIndex().getUsageTooltip(templateName));
+                builder.onClick(() -> {
+                    EditorMenu.getCachedBody().openUsages(templateName);
+                    return true;
+                });
+            }
+            lineElement.addChild(builder.build());
         }
     }
 }

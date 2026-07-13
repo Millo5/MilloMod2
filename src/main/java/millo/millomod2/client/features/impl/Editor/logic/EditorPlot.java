@@ -7,10 +7,12 @@ import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyFold
 import millo.millomod2.client.features.impl.Editor.logic.hierarchy.HierarchyMethod;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.hypercube.data.Plot;
+import millo.millomod2.client.hypercube.template.MethodType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 // Like a Project
 public class EditorPlot {
@@ -23,6 +25,8 @@ public class EditorPlot {
     private final int plotId;
 
     private final EditorFileManager fileManager = new EditorFileManager(this);
+    private final MethodIndex methodIndex = new MethodIndex();
+    private CompletableFuture<Void> indexQueue = CompletableFuture.completedFuture(null);
 
     public EditorPlot(Plot plot) {
         this(new Metadata(plot.getId(), plot.getName(), plot.getOwner()));
@@ -47,6 +51,7 @@ public class EditorPlot {
         for (String templateName : templateNames) {
             addTemplate(templateName);
         }
+        indexTemplates(new ArrayList<>(templateNames));
 
 //        for (Template template : templates) {
 //            addTemplate(template);
@@ -92,7 +97,9 @@ public class EditorPlot {
     public void addTemplate(TemplateModel template) {
         fileManager.saveTemplate(template);
         templateCache.put(template.getFileName(), template);
+        if (!templateNames.contains(template.getFileName())) templateNames.add(template.getFileName());
         addTemplate(template.getFileName());
+        indexTemplate(template.getFileName());
     }
 
     private void addTemplate(String templateName) {
@@ -141,12 +148,45 @@ public class EditorPlot {
         return templateNames;
     }
 
+    public MethodIndex getMethodIndex() {
+        return methodIndex;
+    }
+
     public void removeTemplate(String templateName) {
         fileManager.deleteTemplate(templateName);
         templateCache.remove(templateName);
         templateNames.remove(templateName);
 
         rootFolder.removeEntry(templateName);
+        queueIndexUpdate(() -> methodIndex.removeTemplate(templateName));
+    }
+
+    private void indexTemplates(ArrayList<String> templates) {
+        queueIndexUpdate(() -> {
+            for (String templateName : templates) {
+                if (!MethodType.FUNC.matches(templateName) && !MethodType.PROCESS.matches(templateName)) continue;
+                methodIndex.indexTemplate(templateName, fileManager.readIndexData(templateName));
+            }
+            for (String templateName : templates) {
+                if (MethodType.FUNC.matches(templateName) || MethodType.PROCESS.matches(templateName)) continue;
+                methodIndex.indexTemplate(templateName, fileManager.readIndexData(templateName));
+            }
+        });
+    }
+
+    private void indexTemplate(String templateName) {
+        queueIndexUpdate(() -> methodIndex.indexTemplate(templateName, fileManager.readIndexData(templateName)));
+    }
+
+    private synchronized void queueIndexUpdate(Runnable update) {
+        methodIndex.beginUpdate();
+        indexQueue = indexQueue.handle((ignored, error) -> null).thenRunAsync(() -> {
+            try {
+                update.run();
+            } finally {
+                methodIndex.finishUpdate();
+            }
+        });
     }
 
     public record Metadata(int id, String name, String owner) {}

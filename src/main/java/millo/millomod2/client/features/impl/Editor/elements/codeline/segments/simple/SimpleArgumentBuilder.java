@@ -6,6 +6,7 @@ import millo.millomod2.menu.elements.TextElement;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -14,6 +15,7 @@ public class SimpleArgumentBuilder {
     private final MutableText name;
     private Styles style;
     private MutableText tooltip;
+    private Supplier<@Nullable Text> tooltipSupplier;
     private Supplier<Boolean> onClick;
 
     public SimpleArgumentBuilder(MutableText name) {
@@ -28,6 +30,11 @@ public class SimpleArgumentBuilder {
 
     public SimpleArgumentBuilder tooltip(MutableText tooltip) {
         this.tooltip = tooltip;
+        return this;
+    }
+
+    public SimpleArgumentBuilder tooltip(Supplier<@Nullable Text> tooltipSupplier) {
+        this.tooltipSupplier = tooltipSupplier;
         return this;
     }
 
@@ -52,7 +59,8 @@ public class SimpleArgumentBuilder {
     public TextElement build() {
         if (style != null) name.setStyle(style.getStyle());
         TextElement element = TextElement.create(name);
-        if (tooltip != null) element.setTooltip(Tooltip.of(tooltip));
+        if (tooltipSupplier != null) element.tooltip(tooltipSupplier);
+        else if (tooltip != null) element.setTooltip(Tooltip.of(tooltip));
         if (onClick != null) element.onClickListener(onClick);
         return element;
     }

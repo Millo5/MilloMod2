@@ -197,6 +197,10 @@ public class EditorMenu extends Menu {
         return loadedPlot;
     }
 
+    public static EditorPlot getActivePlot() {
+        return loadedPlot;
+    }
+
     public static void unloadPlot() {
         loadedPlot = null;
     }

@@ -42,7 +42,7 @@ public class ModelUtil {
         }
     }
 
-    private static String decompress(String compressed) throws IOException {
+    public static String decompress(String compressed) throws IOException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(compressed));
              GZIPInputStream gis = new GZIPInputStream(bis);
              ByteArrayOutputStream bos = new ByteArrayOutputStream())

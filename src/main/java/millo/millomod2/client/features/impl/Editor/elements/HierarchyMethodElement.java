@@ -1,6 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements;
 
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.features.impl.Editor.EditorMenu;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.Menu;
@@ -52,6 +53,11 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                         .direction(ElementDirection.COLUMN)
                         .crossAlign(CrossAxisAlignment.STRETCH)
                         .gap(0);
+                int usageCount = EditorMenu.getActivePlot().getMethodIndex().getUsages(templateName).size();
+                contextMenu.addChild(ButtonElement.create(100, 20)
+                        .message(Text.literal("Usages (" + usageCount + ")"))
+                        .onPress(button -> EditorMenu.getCachedBody().openUsages(templateName))
+                );
                 contextMenu.addChild(ButtonElement.create(100, 20)
                         .message(Text.literal("Give Item"))
                         .onPress(button -> {

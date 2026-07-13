@@ -134,6 +134,10 @@ public class EditorFileManager {
         return reader.readTemplate(methodName);
     }
 
+    public String readIndexData(String methodName) {
+        return reader.readIndexData(methodName);
+    }
+
     public ArrayList<String> getAllTemplateNames() {
         ArrayList<String> templateNames = new ArrayList<>();
         if (!getPlotFolder().toFile().exists()) return templateNames;

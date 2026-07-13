@@ -148,6 +148,20 @@ public class ListElement extends ContainerElement<ListElement> {
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
     }
 
+    public void scrollToChild(ClickableWidget child) {
+        if (!getChildren().contains(child)) return;
+
+        boolean vertical = direction == ElementDirection.COLUMN;
+        int childPosition = (vertical ? child.getY() : child.getX()) + (int) renderedScrollOffset;
+        int childSize = vertical ? child.getHeight() : child.getWidth();
+        int viewportSize = (vertical ? getHeight() : getWidth()) - padding * 2;
+
+        scrollOffset = childPosition - padding - (viewportSize - childSize) / 2d;
+        clampScroll();
+        renderedScrollOffset = scrollOffset;
+        layoutChildren();
+    }
+
     @Override
     protected void renderElement(RenderArgs args) {
         renderedScrollOffset = MathHelper.lerp(args.deltaTicks(), renderedScrollOffset, scrollOffset);

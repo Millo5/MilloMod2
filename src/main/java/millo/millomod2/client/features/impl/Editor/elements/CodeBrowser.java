@@ -68,9 +68,12 @@ public class CodeBrowser extends FlexElement<CodeBrowser> implements Searchable 
             tabListElement.addChild(tab);
         }
 
-        Tab tab = tabNameMap.get(templateName);
         openTab(templateName);
-        codeTextArea.loadTemplate(tab.getTemplate());
+    }
+
+    public void openTemplateAtLine(String templateName, int line) {
+        openTemplate(templateName);
+        codeTextArea.focusLine(line);
     }
 
     public void openTab(String name) {
