@@ -23,12 +23,12 @@ public abstract class MTitleScreen {
 
     @Inject(method = "addNormalWidgets", at = @At("RETURN"))
     void addUpdateButton(int y, int spacingY, CallbackInfoReturnable<Integer> cir) {
+        TitleScreen titleScreen = (TitleScreen) (Object) this;
 
         UpdateService.checkForUpdates().thenAccept(result -> {
-
-            if (!result.outdated()) return;
-            ScreenAccessor accessor = (ScreenAccessor)this;
-            synchronized (this) {
+            MilloMod.MC.execute(() -> {
+                if (!result.outdated() || MilloMod.MC.currentScreen != titleScreen) return;
+                ScreenAccessor accessor = (ScreenAccessor) titleScreen;
                 accessor.iAddDrawableChild(
                         (ButtonWidget.builder(Text.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),
                                         (button) -> UpdateService.openUpdateScreen())
@@ -36,7 +36,7 @@ public abstract class MTitleScreen {
                                 .tooltip(null)
                                 .build()
                         )).active = getMultiplayerDisabledText() == null;
-            }
+            });
         });
 
     }

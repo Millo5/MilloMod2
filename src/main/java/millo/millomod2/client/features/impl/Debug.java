@@ -3,6 +3,7 @@ package millo.millomod2.client.features.impl;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.HUDRendered;
@@ -76,6 +77,22 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
             lines.add("  Mega: " + plot.isMega());
         }
         lines.add("  " + location.toString());
+
+        SocketServe.DebugInfo socketInfo = FeatureHandler.get(SocketServe.class).getDebugInfo();
+        lines.add("Socket Serve: " + (socketInfo.enabled()
+                ? socketInfo.state() + " (" + socketInfo.connections() + " connections)"
+                : "Disabled"));
+
+        boolean invalidState = socketInfo.enabled() && !socketInfo.state().equals("RUNNING")
+                || !socketInfo.enabled() && !socketInfo.state().equals("STOPPED");
+        if (!socketInfo.initialized() || socketInfo.shouldRun() != socketInfo.enabled()
+                || socketInfo.executorShutdown() || invalidState || !socketInfo.lastError().equals("None")) {
+            lines.add("  Initialized: " + socketInfo.initialized());
+            lines.add("  Should Run: " + socketInfo.shouldRun());
+            lines.add("  Server Present: " + socketInfo.serverPresent());
+            lines.add("  Executor Shutdown: " + socketInfo.executorShutdown());
+            lines.add("  Last Error: " + socketInfo.lastError());
+        }
 
         int yOffset = 0;
         for (String line : lines) {
