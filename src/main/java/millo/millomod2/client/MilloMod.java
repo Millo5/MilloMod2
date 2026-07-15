@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import millo.millomod2.client.commands.CommandHandler;
 import millo.millomod2.client.config.saving.ConfigSaving;
 import millo.millomod2.client.features.FeatureHandler;
+import millo.millomod2.client.features.guides.GuideData;
 import millo.millomod2.client.hypercube.modapi.ModAPIPayload;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.ModAPI;
@@ -53,6 +54,7 @@ public class MilloMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         FeatureHandler.register(); // Initialize features
+        GuideData.register();
 
         try {
             ConfigSaving.getInstance().load();

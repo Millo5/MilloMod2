@@ -31,7 +31,8 @@ public class CommandHandler {
                 new CommandColors(),
                 new CommandWaypoint(),
                 new CommandBlueprint(),
-                new CommandDfGive()
+                new CommandDfGive(),
+                new CommandGuide()
         );
     }
 
