@@ -35,6 +35,12 @@ public class WaypointMenu extends Menu {
                 .gap(10);
         addDrawableChild(main);
 
+        main.addChild(ButtonElement.create(200, 20)
+                .message(Text.literal("Help"))
+                .onPress(button -> new GuideMenu(this, "Waypoints").open())
+                .background(0x80000000)
+        );
+
         for (Waypoint waypoint : feature.getWaypoints()) {
             FlexElement<?> box = FlexElement.create(width / 2, 20)
                     .background(0x80000000)

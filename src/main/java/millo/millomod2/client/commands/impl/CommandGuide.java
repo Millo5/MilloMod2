@@ -22,7 +22,7 @@ public class CommandGuide extends Command {
                     new GuideMenu(null).open();
                     return 1;
                 }));
-        cd.register(Arg.literal("millohelpmeplease")
+        cd.register(Arg.literal("millohelpme")
                 .executes(ctx -> {
                     new GuideMenu(null).open();
                     return 1;

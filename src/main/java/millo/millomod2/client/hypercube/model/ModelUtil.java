@@ -38,6 +38,7 @@ public class ModelUtil {
 
             return model;
         } catch (Exception e) {
+            MilloLog.stackTrace(e);
             return null;
         }
     }

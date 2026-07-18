@@ -53,11 +53,11 @@ public class ActionDump {
         }
 
         for (Sound sound : raw.sounds) {
-            soundMap.put(sound.icon.name, sound);
+            soundMap.put(sound.icon.name.toLowerCase(), sound);
         }
 
         for (Particle particle : raw.particles) {
-            particleFieldsMap.put(particle.icon.name, particle.fields);
+            particleFieldsMap.put(particle.icon.name.toLowerCase(), particle.fields);
         }
     }
 
@@ -72,11 +72,11 @@ public class ActionDump {
     }
 
     public Sound getSoundFromName(String name) {
-        return soundMap.get(name);
+        return soundMap.get(name.toLowerCase());
     }
 
     public String[] getParticleFields(String particle) {
-        return particleFieldsMap.get(particle);
+        return particleFieldsMap.get(particle.toLowerCase());
     }
 
 }

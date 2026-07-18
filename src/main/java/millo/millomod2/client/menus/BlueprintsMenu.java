@@ -37,6 +37,11 @@ public class BlueprintsMenu extends Menu {
                 .gap(10);
         addDrawableChild(main);
 
+        main.addChild(ButtonElement.create(200, 20)
+                .message(Text.literal("Help"))
+                .onPress(button -> new GuideMenu(this, "Blueprint Loader").open())
+        );
+
         for (String blueprint : found) {
             ButtonElement button = ButtonElement.create(200, 20)
                     .message(Text.literal(blueprint))

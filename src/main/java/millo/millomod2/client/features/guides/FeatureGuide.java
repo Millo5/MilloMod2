@@ -3,14 +3,27 @@ package millo.millomod2.client.features.guides;
 import millo.millomod2.menu.elements.ListElement;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class FeatureGuide {
 
-    public static ArrayList<FeatureGuide> guides = new ArrayList<>();
+    public static final ArrayList<FeatureGuide> guides = new ArrayList<>();
     
     public static void registerGuide(FeatureGuide guide) {
         guides.add(guide);
+    }
+
+    public static void clearGuides() {
+        guides.clear();
+    }
+
+    public static ArrayList<FeatureGuide> getGuides() {
+        ArrayList<FeatureGuide> sortedGuides = new ArrayList<>(guides);
+        sortedGuides.sort(Comparator
+                .comparing(FeatureGuide::getCategory)
+                .thenComparing(FeatureGuide::getName));
+        return sortedGuides;
     }
 
     private String name = "Unnamed Guide";
@@ -21,9 +34,13 @@ public class FeatureGuide {
         return name;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     public void populateGuide(ListElement guideContent) {
         for (GuideSection section : sections) {
-            guideContent.addChild(section.toElement());
+            section.populate(guideContent);
         }
     }
 

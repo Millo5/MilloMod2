@@ -1,29 +1,31 @@
 package millo.millomod2.client.features.guides;
 
-import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuideSectionText {
 
-    private final MutableText text = Text.empty().copy();
+    private final ArrayList<Segment> segments = new ArrayList<>();
 
-    public Text getText() {
-        return text;
+    public List<Segment> getSegments() {
+        return List.copyOf(segments);
     }
 
-    public GuideSectionText addSnippet(String s) {
-        text.append(Text.literal(s).setStyle(Styles.HIGHLIGHT.getStyle()));
+    public GuideSectionText addSnippet(String text) {
+        segments.add(new Segment(text, true));
         return this;
     }
 
-    public GuideSectionText addText(String s) {
-        text.append(Text.literal(s));
+    public GuideSectionText addText(String text) {
+        segments.add(new Segment(text, false));
         return this;
     }
 
-    public GuideSectionText addText(Text t) {
-        text.append(t);
-        return this;
+    public GuideSectionText addText(Text text) {
+        return addText(text.getString());
     }
+
+    public record Segment(String text, boolean snippet) {}
 }

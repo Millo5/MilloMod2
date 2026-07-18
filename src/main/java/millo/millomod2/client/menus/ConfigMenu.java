@@ -17,6 +17,7 @@ import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 
 public class ConfigMenu extends Menu {
 
@@ -37,6 +38,13 @@ public class ConfigMenu extends Menu {
                 TextElement.create("MilloMod Settings").align(TextElement.TextAlignment.CENTER)
         );
 
+
+        list.addChild(
+                ButtonElement.create(200, 20)
+                        .message(Text.literal("Feature Guide"))
+                        .background(0x80_000000)
+                        .onPress((b) -> new GuideMenu(this).open())
+        );
 
         list.addChild(
                 ButtonElement.create(200, 20)

@@ -5,6 +5,7 @@ import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Editor.Editor;
 import millo.millomod2.client.features.impl.Editor.EditorMenu;
 import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
+import millo.millomod2.client.menus.GuideMenu;
 import millo.millomod2.menu.elements.ClickableElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -81,6 +82,9 @@ public class TitleBar extends FlexElement<TitleBar> {
                 ButtonElement.create(60, 15)
                         .message(Text.literal("Search"))
                         .onPress(button -> menu.getMain().focusCodeBrowserSearch()),
+                ButtonElement.create(15, 15)
+                        .message(Text.literal("?"))
+                        .onPress(button -> new GuideMenu(menu, "Editor").open()),
                 ButtonElement.create(15, 15)
                         .message(Text.literal("X"))
                         .background(0xAAFF0000)
