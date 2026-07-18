@@ -4,6 +4,7 @@ import millo.millomod2.menu.elements.ListElement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class FeatureGuide {
@@ -42,6 +43,21 @@ public class FeatureGuide {
         for (GuideSection section : sections) {
             section.populate(guideContent);
         }
+    }
+
+    public boolean matchesSearch(String query) {
+        if (query.isBlank()) return true;
+
+        StringBuilder searchableText = new StringBuilder(name).append(' ').append(category);
+        for (GuideSection section : sections) {
+            searchableText.append(' ').append(section.getSearchText());
+        }
+
+        String normalizedText = searchableText.toString().toLowerCase(Locale.ROOT);
+        for (String term : query.toLowerCase(Locale.ROOT).trim().split("\\s+")) {
+            if (!normalizedText.contains(term)) return false;
+        }
+        return true;
     }
 
     public FeatureGuide setName(String name) {

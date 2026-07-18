@@ -20,6 +20,7 @@ public class GuideSection {
      * Keep element factories here and create widgets only after GuideMenu has opened.
      */
     private final ArrayList<Consumer<GuideSectionElement>> content = new ArrayList<>();
+    private final ArrayList<String> searchTerms = new ArrayList<>();
 
     protected GuideSection() {
         super();
@@ -31,7 +32,12 @@ public class GuideSection {
         guideContent.addChild(section);
     }
 
+    public String getSearchText() {
+        return String.join(" ", searchTerms);
+    }
+
     public GuideSection addHeader(String s) {
+        searchTerms.add(s);
         content.add(target -> target.addChild(
                 TextElement.create(Text.literal(s).setStyle(Styles.HEADER.getStyle()))
         ));
@@ -42,11 +48,13 @@ public class GuideSection {
         GuideSectionText text = new GuideSectionText();
         consumer.accept(text);
         var segments = text.getSegments();
+        segments.forEach(segment -> searchTerms.add(segment.text()));
         content.add(target -> target.addChild(GuideRichTextElement.create(segments)));
         return this;
     }
 
     public GuideSection addParagraph(String text) {
+        searchTerms.add(text);
         content.add(target -> target.addChild(WrappedTextElement.create(Text.literal(text))));
         return this;
     }
@@ -73,6 +81,7 @@ public class GuideSection {
     }
 
     public GuideSection addKeybind(String featureId, String keybindId, String label) {
+        searchTerms.add(label);
         content.add(target -> {
             String binding = "Unbound";
             Feature feature = FeatureHandler.get(featureId);
@@ -91,6 +100,7 @@ public class GuideSection {
     }
 
     public GuideSection addWarning(String s) {
+        searchTerms.add(s);
         content.add(target -> target.addChild(
                 WrappedTextElement.create(Text.literal(s).setStyle(Styles.SCARY.getStyle()))
         ));

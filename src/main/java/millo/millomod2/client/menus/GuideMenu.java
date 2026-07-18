@@ -5,6 +5,7 @@ import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ClickableElement;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
+import millo.millomod2.menu.elements.TextFieldElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
@@ -24,6 +25,7 @@ public class GuideMenu extends Menu {
     private final String initialGuideName;
     private FeatureGuide selectedGuide;
     private final Map<FeatureGuide, ButtonElement> guideButtons = new HashMap<>();
+    private String searchQuery = "";
 
     public GuideMenu(Screen parent) {
         this(parent, null);
@@ -67,11 +69,25 @@ public class GuideMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.STRETCH)
                 .gap(contentGap);
 
-        featureList = createScrollList(featureListWidth, contentHeight, 0, 0)
+        int searchHeight = 16;
+        int searchGap = 4;
+        FlexElement<?> featurePanel = FlexElement.create(featureListWidth, contentHeight)
+                .direction(ElementDirection.COLUMN)
+                .crossAlign(CrossAxisAlignment.STRETCH)
+                .gap(searchGap);
+
+        TextFieldElement searchField = new TextFieldElement(featureListWidth, searchHeight, Text.empty());
+        searchField.setPlaceholder(Text.literal("Search guides..."));
+        searchField.setMaxLength(100);
+        searchField.setChangedListener(value -> {
+            searchQuery = value;
+            refreshFeatureList();
+        });
+
+        featureList = createScrollList(featureListWidth, contentHeight - searchHeight - searchGap, 0, 0)
                 .border(new ClickableElement.Border().right(0xAA666666));
         guideContent = createScrollList(guideContentWidth, contentHeight, 6, 5);
 
-        String lastCategory = null;
         ArrayList<FeatureGuide> guides = FeatureGuide.getGuides();
         if (selectedGuide == null) {
             selectedGuide = guides.stream()
@@ -80,12 +96,47 @@ public class GuideMenu extends Menu {
                     .orElse(guides.isEmpty() ? null : guides.getFirst());
         }
 
+        featurePanel.addChildren(searchField, featureList);
+        refreshFeatureList();
+
+        content.addChildren(featurePanel, guideContent);
+
+        main.addChildren(
+                header,
+                ButtonElement.create(contentWidth, 1).background(0xAA666666),
+                content);
+        screen.addChild(main);
+        addDrawableChild(screen);
+    }
+
+    private void refreshFeatureList() {
+        featureList.clearChildren();
+        guideButtons.clear();
+
+        ArrayList<FeatureGuide> guides = FeatureGuide.getGuides();
+        guides.removeIf(guide -> !guide.matchesSearch(searchQuery));
+
+        if (selectedGuide != null && !guides.contains(selectedGuide)) {
+            selectedGuide = guides.isEmpty() ? null : guides.getFirst();
+        }
+
+        if (guides.isEmpty()) {
+            featureList.addChild(TextElement.create("No matching guides."));
+            guideContent.clearChildren();
+            guideContent.addChild(
+                    TextElement.create("No matching guides")
+                            .align(TextElement.TextAlignment.CENTER)
+            );
+            return;
+        }
+
+        String lastCategory = null;
         for (FeatureGuide guide : guides) {
             if (!guide.getCategory().equals(lastCategory)) {
                 featureList.addChild(TextElement.create(Text.literal(guide.getCategory())));
                 lastCategory = guide.getCategory();
             }
-            ButtonElement button = ButtonElement.create(featureListWidth, 20)
+            ButtonElement button = ButtonElement.create(featureList.getWidth(), 20)
                     .message(Text.literal(guide.getName()))
                     .onPress((b) -> {
                         selectedGuide = guide;
@@ -98,16 +149,6 @@ public class GuideMenu extends Menu {
 
         updateGuideButtonStates();
         if (selectedGuide != null) showGuide(selectedGuide);
-
-
-        content.addChildren(featureList, guideContent);
-
-        main.addChildren(
-                header,
-                ButtonElement.create(contentWidth, 1).background(0xAA666666),
-                content);
-        screen.addChild(main);
-        addDrawableChild(screen);
     }
 
     private ListElement createScrollList(int listWidth, int listHeight, int padding, int gap) {
