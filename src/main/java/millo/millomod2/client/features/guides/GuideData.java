@@ -47,6 +47,22 @@ public final class GuideData {
                                 .addSnippet("Ctrl+P")
                                 .addText(" exports the active plot to a file.")))
                 .addSection(s -> s
+                        .addHeader("Teleporting to a line")
+                        .addParagraph("Click the line number to teleport to that code-block."))
+                .addSection(s -> s
+                        .addHeader("Obtaining value items")
+                        .addParagraph("Clicking (most) value items will give you a copy in your inventory."))
+                .addSection(s -> s
+                        .addHeader("Fetch All")
+                        .addText(t -> t
+                                .addText("The ")
+                                .addSnippet("Fetch All")
+                                .addText(" button in the top-right corner fetches all templates in the plot."))
+                        .addWarning("This currently only works for admins. When ModAPI releases this will be available to everyone."))
+                .addSection(s -> s
+                        .addHeader("Previewing sounds")
+                        .addParagraph("Click sound arguments, or a sound action, to preview the sound(s)."))
+                .addSection(s -> s
                         .addHeader("Method grouping")
                         .addParagraph("The folder-regex setting decides how method names are grouped in the hierarchy."))
                 .addSection(s -> s
@@ -72,7 +88,8 @@ public final class GuideData {
                 .addSection(s -> s
                         .addHeader("Read expected arguments")
                         .addParagraph("Open a code block's reference chest. Empty argument slots show their expected type; hover a slot for its full description.")
-                        .addParagraph("Settings can independently show the type icons and descriptions."));
+                        .addParagraph("Settings can independently show the type icons and descriptions.")
+                        .addWarning("Requires the Reference Book to be in your inventory."));
 
         guide("Pick Chest Value", DEVELOPMENT)
                 .addSection(s -> s
@@ -248,8 +265,9 @@ public final class GuideData {
     private static void registerHudGuides() {
         guide("Lagslayer HUD", HUD)
                 .addSection(s -> s
-                        .addHeader("Show server CPU usage")
-                        .addParagraph("Enable the feature to display DiamondFire CPU usage as a radial meter, bar, or text."))
+                        .addHeader("Show plot CPU usage")
+                        .addParagraph("Enable the feature to display your plot's CPU usage as a radial meter, bar, or text.")
+                        .addWarning("Requires plot CPU usage to be shown."))
                 .addSection(s -> s
                         .addHeader("Appearance")
                         .addParagraph("Settings control the display mode, percentage text, smoothing, and HUD position."));

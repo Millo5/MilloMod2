@@ -37,7 +37,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
 
     @Override
     public void setupConfig(FeatureConfig config) {
-        config.addBoolean("always_show", true);
+        config.addBoolean("always_show", false);
         config.addBoolean("enter_click", true);
     }
 
