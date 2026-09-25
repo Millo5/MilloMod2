@@ -3,14 +3,14 @@ package millo.millomod2.client.mixin.render;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,25 +20,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(HandledScreen.class)
-public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
+@Mixin(AbstractContainerScreen.class)
+public abstract class MContainerScreen<T extends AbstractContainerMenu> extends Screen {
 
-    protected MContainerScreen(Text title) {
+    protected MContainerScreen(Component title) {
         super(title);
     }
 
     @Unique private long lastFrameTime = System.currentTimeMillis();
-    @Shadow public abstract T getScreenHandler();
+    @Shadow public abstract T getMenu();
 
-    @Shadow @Final protected T handler;
-    @Shadow protected int y;
-    @Shadow protected int x;
+    @Shadow @Final protected T menu;
+    @Shadow protected int topPos;
+    @Shadow protected int leftPos;
 
     @Inject(method = "init()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerInit((HandledScreen<? extends ScreenHandler>) (Object) this, ci);
+                rendered.containerInit((AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this, ci);
             }
         });
     }
@@ -53,25 +53,25 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void render(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+    private void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         long currentTime = System.currentTimeMillis();
         long deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
         RenderInfo info = new RenderInfo(context, deltaTime / 1000f, mouseX, mouseY);
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(x, y);
+        context.pose().pushMatrix();
+        context.pose().translate(leftPos, topPos);
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerRender(this.handler, info);
+                rendered.containerRender(this.menu, info);
             }
         });
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void mouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+    private void mouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
                 rendered.containerMouseClicked(click, doubled, cir);
@@ -80,7 +80,7 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
     }
 
     @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
-    private void mouseReleased(Click click, CallbackInfoReturnable<Boolean> cir) {
+    private void mouseReleased(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
                 rendered.containerMouseReleased(click, cir);
@@ -91,15 +91,15 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
 
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void keyPressedInject(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    private void keyPressedInject(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerKeyPressed(this.handler, input, cir);
+                rendered.containerKeyPressed(this.menu, input, cir);
             }
         });
     }
 
-    @Inject(method = "close", at = @At("HEAD"))
+    @Inject(method = "onClose", at = @At("HEAD"))
     private void close(CallbackInfo ci) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
@@ -108,8 +108,8 @@ public abstract class MContainerScreen<T extends ScreenHandler> extends Screen {
         });
     }
 
-    @Inject(method="drawSlot", at = @At("TAIL"))
-    private void drawSlotInject(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method="renderSlot", at = @At("TAIL"))
+    private void drawSlotInject(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
                 rendered.containerDrawSlot(context, slot, mouseX, mouseY, ci);

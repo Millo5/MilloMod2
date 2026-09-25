@@ -6,11 +6,11 @@ import millo.millomod2.client.features.impl.Editor.elements.codeline.components.
 import millo.millomod2.client.features.impl.Editor.elements.codeline.components.IndentationComponent;
 import millo.millomod2.client.hypercube.model.codeblocks.BracketCodeBlockModel;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class BracketCodeBlockSegment extends CodeLineSegment<BracketCodeBlockModel> {
 
-    private static final Identifier BLOCK_ID = Identifier.of("minecraft", "piston");
+    private static final Identifier BLOCK_ID = Identifier.fromNamespaceAndPath("minecraft", "piston");
 
     private final TextElement text;
 

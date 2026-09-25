@@ -10,10 +10,9 @@ import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.MouseScrollable;
 import millo.millomod2.client.util.KeyUtil;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
 import java.awt.*;
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
     @Override
     public boolean onScroll(double amount) {
         if (!open) return false;
-        rotateBump = (float) (1.2f * MathHelper.clamp(amount, -1f, 1f));
+        rotateBump = (float) (1.2f * Mth.clamp(amount, -1f, 1f));
         setPage(currentPage - (int) amount);
         return true;
     }
@@ -92,9 +91,9 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
 
     @Override
     public void onTick() {
-        if (!KeyUtil.isKeyDown(getKeybind()) || MilloMod.MC.currentScreen != null) {
+        if (!KeyUtil.isKeyDown(getKeybind()) || MilloMod.MC.screen != null) {
             if ( open) {
-                MilloMod.MC.mouse.lockCursor();
+                MilloMod.MC.mouseHandler.grabMouse();
 
                 currentEntries.stream().filter(CommandWheelEntry::isSelected).forEach(CommandWheelEntry::execute);
             }
@@ -108,13 +107,13 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         }
 
         open = true;
-        MilloMod.MC.mouse.unlockCursor();
+        MilloMod.MC.mouseHandler.releaseMouse();
 
-        double mouseX = MilloMod.MC.mouse.getX();
-        double mouseY = MilloMod.MC.mouse.getY();
+        double mouseX = MilloMod.MC.mouseHandler.xpos();
+        double mouseY = MilloMod.MC.mouseHandler.ypos();
 
-        int cx = MilloMod.MC.getWindow().getWidth() / 2;
-        int cy = MilloMod.MC.getWindow().getHeight() / 2;
+        int cx = MilloMod.MC.getWindow().getScreenWidth() / 2;
+        int cy = MilloMod.MC.getWindow().getScreenHeight() / 2;
 
         int dx = (int) (mouseX - cx);
         int dy = (int) (mouseY - cy);
@@ -132,7 +131,7 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         if (angle >= Math.PI * 2) angle -= Math.PI * 2;
 
         int index = (int) (angle / segment);
-        index = MathHelper.clamp(index, 0, currentEntries.size() - 1);
+        index = Mth.clamp(index, 0, currentEntries.size() - 1);
         for (int i = 0; i < currentEntries.size(); i++) {
             currentEntries.get(i).setSelected(i == index);
         }
@@ -146,10 +145,10 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         if (shown < 0.01f) return;
         rotateBump = renderInfo.lerp(rotateBump, 0f, 0.8f);
 
-        DrawContext context = renderInfo.context();
-        TextRenderer textRenderer = MilloMod.MC.textRenderer;
-        int cx = MilloMod.MC.getWindow().getScaledWidth() / 2;
-        int cy = MilloMod.MC.getWindow().getScaledHeight() / 2;
+        GuiGraphics context = renderInfo.context();
+        Font textRenderer = MilloMod.MC.font;
+        int cx = MilloMod.MC.getWindow().getGuiScaledWidth() / 2;
+        int cy = MilloMod.MC.getWindow().getGuiScaledHeight() / 2;
 
         // Render wheel
         for (int i = 0; i < currentEntries.size(); i++) {
@@ -162,9 +161,9 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         }
 
         // Render page indicator
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(cx, cy + 10);
-        context.getMatrices().scale(shown, shown);
+        context.pose().pushMatrix();
+        context.pose().translate(cx, cy + 10);
+        context.pose().scale(shown, shown);
 
         int totalPages = getPages().size();
         int w = totalPages * 5 / 2 - 1;
@@ -177,7 +176,7 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
             }
         }
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
     private List<ListConfigValue<CommandWheelEntryConfigValue>> getPages() {

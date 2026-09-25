@@ -4,37 +4,36 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public abstract class ContainerElement<T extends ContainerElement<?>> extends ClickableElement<T> {
 
-    private ClickableWidget focus;
-    private final ArrayList<ClickableWidget> children = new ArrayList<>();
+    private AbstractWidget focus;
+    private final ArrayList<AbstractWidget> children = new ArrayList<>();
 
-    public ContainerElement(int x, int y, int width, int height, Text message) {
+    public ContainerElement(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
-    public List<ClickableWidget> getChildren() {
+    public List<AbstractWidget> getChildren() {
         return List.copyOf(children);
     }
 
-    public void addChild(ClickableWidget child) {
+    public void addChild(AbstractWidget child) {
         if (child instanceof FadeElement fadeChild) fadeChild.getFade().lock(getFade());
         if (children.add(child)) childrenUpdated();
     }
 
-    public void removeChild(ClickableWidget child) {
+    public void removeChild(AbstractWidget child) {
         if (children.remove(child)) {
             if (child instanceof FadeElement fadeChild) fadeChild.getFade().unlock();
             childrenUpdated();
@@ -53,7 +52,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     //
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!active || !visible) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
 
@@ -61,7 +60,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         focus = null;
 
         click = transformClickToLocal(click);
-        for (ClickableWidget child : getChildren()) {
+        for (AbstractWidget child : getChildren()) {
             if (child.mouseClicked(click, doubled)) {
                 focus = child;
                 focus.setFocused(true);
@@ -71,7 +70,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         return false;
     }
 
-    public void setFocus(ClickableWidget widget) {
+    public void setFocus(AbstractWidget widget) {
         if (focus != null) focus.setFocused(false);
         focus = widget;
         if (focus != null) focus.setFocused(true);
@@ -84,19 +83,19 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (focus != null) return focus.keyPressed(input);
         return false;
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
+    public boolean keyReleased(KeyEvent input) {
         if (focus != null) return focus.keyReleased(input);
         return false;
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         if (focus != null) {
             return focus.charTyped(input);
         }
@@ -104,19 +103,19 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
-        for (ClickableWidget child : getChildren()) {
+    public boolean mouseReleased(MouseButtonEvent click) {
+        for (AbstractWidget child : getChildren()) {
             child.mouseReleased(transformClickToLocal(click));
         }
         return false;
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
-        Click local = transformClickToLocal(click);
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
+        MouseButtonEvent local = transformClickToLocal(click);
         if (focus != null) return focus.mouseDragged(local, offsetX, offsetY);
 
-        for (ClickableWidget child : getChildren()) {
+        for (AbstractWidget child : getChildren()) {
             child.mouseDragged(local, offsetX, offsetY);
         }
         return false;
@@ -124,7 +123,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        for (ClickableWidget child : getChildren()) {
+        for (AbstractWidget child : getChildren()) {
             if (child.mouseScrolled(mouseX - getX(), mouseY - getY(), horizontalAmount, verticalAmount)) {
                 return true;
             }
@@ -133,26 +132,26 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
-        context.getMatrices().pushMatrix();
-        getFade().applyTranslation(context.getMatrices());
+        context.pose().pushMatrix();
+        getFade().applyTranslation(context.pose());
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
-        context.getMatrices().translate(getX(), getY());
+        context.pose().translate(getX(), getY());
         context.enableScissor(0, 0, getWidth(), getHeight());
 
         if (Debug.showHudInfo()) {
             int nameColor = getClass().getSimpleName().hashCode() | 0x33000000;
             context.fill(0, 0, getWidth(), getHeight(), nameColor);
-            context.drawText(MilloMod.MC.textRenderer, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
-            context.drawText(MilloMod.MC.textRenderer, "x:" + getX() + " y:" + getY() + " w:" + getWidth() + " h:" + getHeight(), 0, 10, 0xFFFFFFFF, false);
+            context.drawString(MilloMod.MC.font, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
+            context.drawString(MilloMod.MC.font, "x:" + getX() + " y:" + getY() + " w:" + getWidth() + " h:" + getHeight(), 0, 10, 0xFFFFFFFF, false);
         }
 
         RenderArgs args = new RenderArgs(context, mouseX - getX(), mouseY - getY(), deltaTicks);
         renderElement(args);
 
         context.disableScissor();
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
     protected void renderElement(RenderArgs args) {
@@ -160,7 +159,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     protected void renderChildren(RenderArgs args) {
-        for (ClickableWidget child : List.copyOf(getChildren())) {
+        for (AbstractWidget child : List.copyOf(getChildren())) {
             try {
                 child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
             } catch (Exception e) {
@@ -170,27 +169,27 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         }
     }
 
-    protected Click transformClickToLocal(Click click) {
-        return new Click(click.x() - getX(), click.y() - getY(), click.buttonInfo());
+    protected MouseButtonEvent transformClickToLocal(MouseButtonEvent click) {
+        return new MouseButtonEvent(click.x() - getX(), click.y() - getY(), click.buttonInfo());
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
     }
 
-    public <K extends ClickableWidget> void addChildren(Collection<K> children) {
+    public <K extends AbstractWidget> void addChildren(Collection<K> children) {
         for (K child : children) {
             addChild(child);
         }
     }
 
-    public void addChildren(ClickableWidget... children) {
-        for (ClickableWidget child : children) {
+    public void addChildren(AbstractWidget... children) {
+        for (AbstractWidget child : children) {
             addChild(child);
         }
     }
 
-    protected record RenderArgs(DrawContext context, int mouseX, int mouseY, float deltaTicks) {}
+    protected record RenderArgs(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {}
 
     @Override
     public String toString() {
@@ -203,7 +202,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
 
     protected String toStringChildren() {
         StringBuilder sb = new StringBuilder();
-        for (ClickableWidget child : getChildren()) {
+        for (AbstractWidget child : getChildren()) {
             sb.append("\n  ").append(child.toString().replace("\n", "\n  "));
         }
         return sb.toString();

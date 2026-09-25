@@ -7,14 +7,14 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
 
 public class ConfirmationElement extends ListElement {
 
     private final Runnable onConfirm;
 
-    public ConfirmationElement(Text title, Text message, Runnable onConfirm) {
+    public ConfirmationElement(Component title, Component message, Runnable onConfirm) {
         super(0, 0, 400, 200);
 
         this.onConfirm = onConfirm;
@@ -32,20 +32,20 @@ public class ConfirmationElement extends ListElement {
                 .hoverBackground(0xFF000000)
                 .onPress(button -> {
                     onConfirm.run();
-                    if (MilloMod.MC.currentScreen instanceof Menu menu) {
+                    if (MilloMod.MC.screen instanceof Menu menu) {
                         menu.closeContextMenu();
                     }
                 })
-                .message(Text.literal("Confirm"));
+                .message(Component.literal("Confirm"));
 
         ButtonElement cancelButton = ButtonElement.create(80, 20)
                 .hoverBackground(0xFF000000)
                 .onPress(button -> {
-                    if (MilloMod.MC.currentScreen instanceof Menu menu) {
+                    if (MilloMod.MC.screen instanceof Menu menu) {
                         menu.closeContextMenu();
                     }
                 })
-                .message(Text.literal("Cancel"));
+                .message(Component.literal("Cancel"));
 
         buttonContainer.addChildren(cancelButton, confirmButton);
 
@@ -55,7 +55,7 @@ public class ConfirmationElement extends ListElement {
                         .align(TextElement.TextAlignment.CENTER),
                 TextElement.create(message)
                         .offset(10, 5)
-                        .setMaxWidth(width - 20, TextWidget.TextOverflow.SCROLLING),
+                        .setMaxWidth(width - 20, StringWidget.TextOverflow.SCROLLING),
                 buttonContainer
         );
     }

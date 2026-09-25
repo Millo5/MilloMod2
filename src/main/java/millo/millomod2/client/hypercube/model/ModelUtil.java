@@ -5,13 +5,12 @@ import com.google.gson.JsonParser;
 import millo.millomod2.client.util.JsonUtil;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
-
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,9 +68,9 @@ public class ModelUtil {
     public static ItemStack createTemplateItem(String b64Code) {
         ItemStack item = new ItemStack(Items.ENDER_CHEST);
 
-        NbtCompound nbt = new NbtCompound();
+        CompoundTag nbt = new CompoundTag();
 
-        NbtCompound pbv = new NbtCompound();
+        CompoundTag pbv = new CompoundTag();
         String data = "{\"author\":\"MILLOMOD\",\"name\":\"§6» §e#NAME\",\"version\":1,\"code\":\"#CODE\"}"
                 .replace("#NAME", "Template")
                 .replace("#CODE", b64Code);
@@ -79,10 +78,10 @@ public class ModelUtil {
 
         nbt.put("PublicBukkitValues", pbv);
 
-        NbtComponent custom_data = NbtComponent.of(nbt);
+        CustomData custom_data = CustomData.of(nbt);
 
-        item.set(DataComponentTypes.ITEM_NAME, Text.literal("Template").setStyle(Styles.BLOCK_TAG.getStyle()));
-        item.set(DataComponentTypes.CUSTOM_DATA, custom_data);
+        item.set(DataComponents.ITEM_NAME, Component.literal("Template").setStyle(Styles.BLOCK_TAG.getStyle()));
+        item.set(DataComponents.CUSTOM_DATA, custom_data);
 
         return item;
     }

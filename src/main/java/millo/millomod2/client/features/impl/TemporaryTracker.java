@@ -9,15 +9,14 @@ import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +30,9 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
 
     private static boolean requestPlotId = false;
     private static int requestPlotIdDelay = 0;
-    private static Vec3d localPlayerPos;
+    private static Vec3 localPlayerPos;
 
-    private static Vec3d lastModePlayerPos;
+    private static Vec3 lastModePlayerPos;
 
 
     @Override
@@ -48,7 +47,7 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
         requestPlotIdDelay = 5;
 
         if (mode == HypercubeAPI.Mode.DEV) {
-            hypercubeLocation.setPos(new Vec3d(x + 9.5 + 2, 0, z - 10.5));
+            hypercubeLocation.setPos(new Vec3(x + 9.5 + 2, 0, z - 10.5));
         }
     }
 
@@ -62,30 +61,30 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(ClearTitleS2CPacket.class, this::clearTitle);
-        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::positionLook);
-        eventBus.subscribeReceive(OverlayMessageS2CPacket.class, this::overlay);
-        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::gameMessage);
+        eventBus.subscribeReceive(ClientboundClearTitlesPacket.class, this::clearTitle);
+        eventBus.subscribeReceive(ClientboundPlayerPositionPacket.class, this::positionLook);
+        eventBus.subscribeReceive(ClientboundSetActionBarTextPacket.class, this::overlay);
+        eventBus.subscribeReceive(ClientboundSystemChatPacket.class, this::gameMessage);
     }
 
-    public boolean clearTitle(ClearTitleS2CPacket clear) {
-        if (clear.shouldReset()) {
+    public boolean clearTitle(ClientboundClearTitlesPacket clear) {
+        if (clear.shouldResetTimes()) {
             step = Sequence.WAIT_FOR_POS;
         }
         return false;
     }
 
-    public boolean positionLook(PlayerPositionLookS2CPacket packet) {
+    public boolean positionLook(ClientboundPlayerPositionPacket packet) {
         if (step == Sequence.WAIT_FOR_POS) {
-            if (player() != null) lastModePlayerPos = player().getEntityPos();
-            x = packet.change().position().getX();
-            z = packet.change().position().getZ();
+            if (player() != null) lastModePlayerPos = player().position();
+            x = packet.change().position().x();
+            z = packet.change().position().z();
             step = Sequence.WAIT_FOR_MESSAGE;
         }
         return false;
     }
 
-    public boolean overlay(OverlayMessageS2CPacket overlay) {
+    public boolean overlay(ClientboundSetActionBarTextPacket overlay) {
         if (step == Sequence.WAIT_FOR_MESSAGE && overlay.text().getString().matches("(⏵+ - )?⧈ -?\\d+ Tokens {2}ᛥ -?\\d+ Tickets {2}⚡ -?\\d+ Sparks")) {
             setMode(HypercubeAPI.Mode.IDLE);
         }
@@ -103,30 +102,30 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
         }
 
         if (player() != null && hypercubeLocation.getPos() != null) {
-            localPlayerPos = hypercubeLocation.getPos().relativize(player().getEntityPos()).add(-1, 0, 0);
+            localPlayerPos = hypercubeLocation.getPos().vectorTo(player().position()).add(-1, 0, 0);
         }
 
         if (hypercubeLocation instanceof Plot plot && mode == HypercubeAPI.Mode.DEV) {
-            if (MC.world != null) {
-                BlockState undergroundCheckBlock = MC.world.getBlockState(new BlockPos(
+            if (MC.level != null) {
+                BlockState undergroundCheckBlock = MC.level.getBlockState(new BlockPos(
                         (int) plot.getPos().x-1,
                         49,
                         (int) plot.getPos().z
                 ));
-                if (!undergroundCheckBlock.isOf(Blocks.VOID_AIR)) plot.setHasUnderground(undergroundCheckBlock.isOf(Blocks.AIR));
+                if (!undergroundCheckBlock.is(Blocks.VOID_AIR)) plot.setHasUnderground(undergroundCheckBlock.is(Blocks.AIR));
 
-                BlockState megaCheckBlock = MC.world.getBlockState(new BlockPos(
+                BlockState megaCheckBlock = MC.level.getBlockState(new BlockPos(
                         (int) plot.getPos().x-21,
                         49,
                         (int) plot.getPos().z
                 ));
-                if (!megaCheckBlock.isOf(Blocks.VOID_AIR)) plot.setMega(megaCheckBlock.isOf(Blocks.STONE) || megaCheckBlock.isOf(Blocks.AIR));
+                if (!megaCheckBlock.is(Blocks.VOID_AIR)) plot.setMega(megaCheckBlock.is(Blocks.STONE) || megaCheckBlock.is(Blocks.AIR));
             }
         }
 
     }
 
-    public boolean gameMessage(GameMessageS2CPacket message) {
+    public boolean gameMessage(ClientboundSystemChatPacket message) {
         String content = message.content().getString();
         if (step == Sequence.WAIT_FOR_MESSAGE) {
             if (content.equals("» You are now in dev mode.")) setMode(HypercubeAPI.Mode.DEV);
@@ -157,7 +156,7 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
                     int id = Integer.parseInt(plotIdString);
                     setHypercubeLocation(hypercubeLocation.update(plotName, id, plotOwner));
                     if (mode == HypercubeAPI.Mode.DEV) {
-                        hypercubeLocation.setPos(new Vec3d(x + 11.5, 0, z - 10.5));
+                        hypercubeLocation.setPos(new Vec3(x + 11.5, 0, z - 10.5));
                     }
                     requestPlotId = false;
                     return true;
@@ -185,7 +184,7 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
     //
 
 
-    public static Vec3d getLastModePlayerPos() {
+    public static Vec3 getLastModePlayerPos() {
         return lastModePlayerPos;
     }
 
@@ -197,7 +196,7 @@ public class TemporaryTracker extends Feature implements PacketEventSubscriber {
         return hypercubeLocation;
     }
 
-    public static Vec3d getLocalPlayerPos() {
+    public static Vec3 getLocalPlayerPos() {
         return localPlayerPos;
     }
 

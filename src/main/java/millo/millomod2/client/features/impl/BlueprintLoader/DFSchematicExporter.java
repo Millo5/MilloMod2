@@ -4,8 +4,7 @@ import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.math.ByteArray;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.world.item.ItemStack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

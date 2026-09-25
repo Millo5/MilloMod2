@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.BlueprintLoader;
 
 import millo.millomod2.client.util.ItemUtil;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class BlueprintTemplates {
 

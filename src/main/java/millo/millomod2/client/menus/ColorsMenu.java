@@ -20,11 +20,10 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,8 +163,8 @@ public class ColorsMenu extends Menu {
                     .direction(ElementDirection.COLUMN);
             column.addChildren(topColumn);
 
-            TextFieldElement hexInput = new TextFieldElement(50, 15, Text.literal("#abcdef"));
-            hexInput.setChangedListener((v) -> {
+            TextFieldElement hexInput = new TextFieldElement(50, 15, Component.literal("#abcdef"));
+            hexInput.setResponder((v) -> {
                 if (v.matches("^#[0-9a-fA-F]{6}$")) {
                     var col = Color.decode(v);
                     rgb[0] = col.getRed();
@@ -178,16 +177,16 @@ public class ColorsMenu extends Menu {
             topColumn.addChild(hexInput);
             topColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
-                    .message(Text.literal("Copy"))
+                    .message(Component.literal("Copy"))
                     .onPress((button) -> {
-                        client.keyboard.setClipboard(hexInput.getText());
+                        minecraft.keyboardHandler.setClipboard(hexInput.getValue());
                         saveAsRecent();
                     }));
             topColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
-                    .message(Text.literal("<Copy>"))
+                    .message(Component.literal("<Copy>"))
                     .onPress((button) -> {
-                        client.keyboard.setClipboard("<"+hexInput.getText()+">");
+                        minecraft.keyboardHandler.setClipboard("<"+hexInput.getValue()+">");
                         saveAsRecent();
                     }));
 
@@ -201,7 +200,7 @@ public class ColorsMenu extends Menu {
             column.addChildren(bottomColumn);
             bottomColumn.addChild(ButtonElement.create(50, 14)
                     .background(0x80000000)
-                    .message(Text.literal("Save"))
+                    .message(Component.literal("Save"))
                     .onPress((button) -> {
                         int c = new Color(rgb[0], rgb[1], rgb[2]).hashCode();
                         if (savedColors.contains(c)) return;
@@ -211,7 +210,7 @@ public class ColorsMenu extends Menu {
                     }));
             if (cachedRecent != null) {
                 recentColors = cachedRecent;
-                for (ClickableWidget child : recentColors.getChildren()) {
+                for (AbstractWidget child : recentColors.getChildren()) {
                     if (child instanceof ColorSquare cs) cs.setMenu(this);
                 }
             }
@@ -245,7 +244,7 @@ public class ColorsMenu extends Menu {
         colorPicker.addChildren(slider, area);
 
         screen.addChild(main);
-        addDrawableChild(screen);
+        addRenderableWidget(screen);
         refreshSavedGrid();
     }
 
@@ -262,7 +261,7 @@ public class ColorsMenu extends Menu {
     }
 
     private void saveAsRecent() {
-        ArrayList<ClickableWidget> copy = new ArrayList<>(recentColors.getChildren());
+        ArrayList<AbstractWidget> copy = new ArrayList<>(recentColors.getChildren());
         if (copy.size() > 2) copy.remove(0);
         copy.add(new ColorSquare(15, 15, new Color(rgb[0], rgb[1], rgb[2]).hashCode(), this, false));
 
@@ -276,14 +275,14 @@ public class ColorsMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .direction(ElementDirection.ROW);
 
-        var text = new TextFieldElement(35, 15, Text.literal("-"));
-        text.setChangedListener((v) -> {
+        var text = new TextFieldElement(35, 15, Component.literal("-"));
+        text.setResponder((v) -> {
             try {
                 change.accept(Integer.parseInt(v));
             } catch (NumberFormatException ignored) {}
         });
         field.addChildren(
-                TextElement.create(Text.literal(String.valueOf(label.charAt(0))).setStyle(Styles.COMMENT.getStyle()))
+                TextElement.create(Component.literal(String.valueOf(label.charAt(0))).setStyle(Styles.COMMENT.getStyle()))
                         .offset(1, 0),
                 text
         );
@@ -304,16 +303,16 @@ public class ColorsMenu extends Menu {
 
 
         String hex = String.format("#%02x%02x%02x", rgb[0], rgb[1], rgb[2]);
-        inputFields.get("hex").setText(hex);
+        inputFields.get("hex").setValue(hex);
 
-        inputFields.get("Re").setText(String.valueOf(rgb[0]));
-        inputFields.get("Gr").setText(String.valueOf(rgb[1]));
-        inputFields.get("Bl").setText(String.valueOf(rgb[2]));
+        inputFields.get("Re").setValue(String.valueOf(rgb[0]));
+        inputFields.get("Gr").setValue(String.valueOf(rgb[1]));
+        inputFields.get("Bl").setValue(String.valueOf(rgb[2]));
 
         if (updateText) {
-            inputFields.get("Hu").setText(String.valueOf((int) (hsb[0] * 360)));
-            inputFields.get("Sa").setText(String.valueOf((int) (hsb[1] * 100)));
-            inputFields.get("Br").setText(String.valueOf((int) (hsb[2] * 100)));
+            inputFields.get("Hu").setValue(String.valueOf((int) (hsb[0] * 360)));
+            inputFields.get("Sa").setValue(String.valueOf((int) (hsb[1] * 100)));
+            inputFields.get("Br").setValue(String.valueOf((int) (hsb[2] * 100)));
         }
 
         lock = false;
@@ -325,25 +324,25 @@ public class ColorsMenu extends Menu {
         Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], hsb);
 
         String hex = String.format("#%02x%02x%02x", rgb[0], rgb[1], rgb[2]);
-        inputFields.get("hex").setText(hex);
+        inputFields.get("hex").setValue(hex);
 
-        inputFields.get("Hu").setText(String.valueOf((int) (hsb[0] * 360)));
-        inputFields.get("Sa").setText(String.valueOf((int) (hsb[1] * 100)));
-        inputFields.get("Br").setText(String.valueOf((int) (hsb[2] * 100)));
+        inputFields.get("Hu").setValue(String.valueOf((int) (hsb[0] * 360)));
+        inputFields.get("Sa").setValue(String.valueOf((int) (hsb[1] * 100)));
+        inputFields.get("Br").setValue(String.valueOf((int) (hsb[2] * 100)));
 
         if (updateText) {
-            inputFields.get("Re").setText(String.valueOf(rgb[0]));
-            inputFields.get("Gr").setText(String.valueOf(rgb[1]));
-            inputFields.get("Bl").setText(String.valueOf(rgb[2]));
+            inputFields.get("Re").setValue(String.valueOf(rgb[0]));
+            inputFields.get("Gr").setValue(String.valueOf(rgb[1]));
+            inputFields.get("Bl").setValue(String.valueOf(rgb[2]));
         }
         lock = false;
     }
 
 
-    protected void applyBlur(DrawContext context) {}
+    protected void renderBlurredBackground(GuiGraphics context) {}
 
     @Override
-    public void close() {
+    public void onClose() {
 
         /*
 
@@ -372,7 +371,7 @@ public class ColorsMenu extends Menu {
             FileUtil.writeJson(FILENAME, savedData);
         }
 
-        super.close();
+        super.onClose();
     }
 
     public void setColor(int color) {

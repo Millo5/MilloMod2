@@ -3,11 +3,10 @@ package millo.millomod2.client.features.impl.ValueItemEditor.modifierWindows;
 import millo.millomod2.client.features.impl.ValueItemEditor.ModifierWindow;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextFieldElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 public class StringModifierWindow extends ModifierWindow {
@@ -24,20 +23,20 @@ public class StringModifierWindow extends ModifierWindow {
     }
 
     @Override
-    protected ClickableWidget getElement() {
-        field = new TextFieldElement(200, 20, Text.literal(value));
+    protected AbstractWidget getElement() {
+        field = new TextFieldElement(200, 20, Component.literal(value));
         field.setMaxLength(10000);
-        field.setText(value);
-        field.setChangedListener(str -> {
+        field.setValue(value);
+        field.setResponder(str -> {
             value = str;
             setter.accept(str);
         });
-        field.setCursor(value.length(), false);
+        field.moveCursorTo(value.length(), false);
         return field;
     }
 
     @Override
-    protected ClickableWidget getDefaultFocus() {
+    protected AbstractWidget getDefaultFocus() {
         return field;
     }
 
@@ -48,7 +47,7 @@ public class StringModifierWindow extends ModifierWindow {
 
     @Override
     public void applyToItem(ItemStack stack) {
-        stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(style.getStyle().withItalic(false)));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(value).setStyle(style.getStyle().withItalic(false)));
     }
 
 }

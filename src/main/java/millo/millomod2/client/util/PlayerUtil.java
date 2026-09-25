@@ -4,15 +4,14 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
-import net.minecraft.text.Text;
-import net.minecraft.util.PlayerInput;
-import net.minecraft.util.collection.DefaultedList;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import java.util.function.Consumer;
 
 public class PlayerUtil {
@@ -26,10 +25,10 @@ public class PlayerUtil {
         if (command.startsWith("/")) command = command.substring(1);
 
         if (Debug.logCommands()) {
-            Notifications.notify(Text.literal(command));
+            Notifications.notify(Component.literal(command));
         }
 
-        MilloMod.net().sendChatCommand(command);
+        MilloMod.net().sendCommand(command);
     }
 
     /***
@@ -39,69 +38,69 @@ public class PlayerUtil {
     public static void sendMessage(String message) {
         if (MilloMod.net() == null) return;
 
-        MilloMod.net().sendChatMessage(message);
+        MilloMod.net().sendChat(message);
     }
 
 
     public static void setInventorySlot(int slot, ItemStack item) {
-        MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(slot, ItemStack.EMPTY));
-        MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(slot, item));
-        MilloMod.player().getInventory().setStack(slot - 36, item);
+        MilloMod.net().send(new ServerboundSetCreativeModeSlotPacket(slot, ItemStack.EMPTY));
+        MilloMod.net().send(new ServerboundSetCreativeModeSlotPacket(slot, item));
+        MilloMod.player().getInventory().setItem(slot - 36, item);
     }
 
     public static void sendOffhandItem(ItemStack itemStack) {
-        MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(45, itemStack));
-        MilloMod.player().getInventory().setStack(45, itemStack);
+        MilloMod.net().send(new ServerboundSetCreativeModeSlotPacket(45, itemStack));
+        MilloMod.player().getInventory().setItem(45, itemStack);
     }
 
     public static void sendHandItem(ItemStack item) {
-        MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(MilloMod.player().getInventory().getSelectedSlot() + 36, item));
-        MilloMod.player().getInventory().setStack(MilloMod.player().getInventory().getSelectedSlot(), ItemStack.EMPTY);
+        MilloMod.net().send(new ServerboundSetCreativeModeSlotPacket(MilloMod.player().getInventory().getSelectedSlot() + 36, item));
+        MilloMod.player().getInventory().setItem(MilloMod.player().getInventory().getSelectedSlot(), ItemStack.EMPTY);
     }
 
 
     public static void giveItem(ItemStack item) {
-        MinecraftClient mc = MilloMod.MC;
+        Minecraft mc = MilloMod.MC;
         if (MilloMod.player() == null || MilloMod.player().getInventory() == null) return;
-        DefaultedList<ItemStack> inv = MilloMod.player().getInventory().getMainStacks();
+        NonNullList<ItemStack> inv = MilloMod.player().getInventory().getNonEquipmentItems();
 
         if (!mc.player.isCreative()) return;
-        if (mc.interactionManager == null) return;
+        if (mc.gameMode == null) return;
 
         for (int index = 0; index < inv.size(); index++) {
             ItemStack i = inv.get(index);
             ItemStack compareItem = i.copy();
             compareItem.setCount(item.getCount());
             if (item == compareItem) {
-                while (i.getCount() < i.getMaxCount() && item.getCount() > 0) {
+                while (i.getCount() < i.getMaxStackSize() && item.getCount() > 0) {
                     i.setCount(i.getCount() + 1);
                     item.setCount(item.getCount() - 1);
                 }
             } else {
                 if (i.getItem() == Items.AIR) {
                     if (index < 9)
-                        mc.interactionManager.clickCreativeStack(item, index + 36);
+                        mc.gameMode.handleCreativeModeItemAdd(item, index + 36);
                     inv.set(index, item);
                     return;
                 }
             }
         }
 
-        int slot = mc.player.getInventory().getEmptySlot();
+        int slot = mc.player.getInventory().getFreeSlot();
 
         if (slot == -1) {
-            mc.player.sendMessage(Text.literal("No inventory room!").setStyle(Styles.SCARY.getStyle()), false);
+            mc.player.displayClientMessage(Component.literal("No inventory room!").setStyle(Styles.SCARY.getStyle()), false);
             return;
         }
 
-        mc.player.getInventory().setStack(slot, item);
-        mc.interactionManager.clickCreativeStack(item, slot);
+        mc.player.getInventory().setItem(slot, item);
+        mc.gameMode.handleCreativeModeItemAdd(item, slot);
     }
 
     public static void sendSneak(boolean sneaking) {
-        PlayerInput playerInput = MilloMod.player().input.playerInput;
-        MilloMod.net().sendPacket(new PlayerInputC2SPacket(
-                new PlayerInput(
+        Input playerInput = MilloMod.player().input.keyPresses;
+        MilloMod.net().send(new ServerboundPlayerInputPacket(
+                new Input(
                         playerInput.forward(),
                         playerInput.backward(),
                         playerInput.left(),

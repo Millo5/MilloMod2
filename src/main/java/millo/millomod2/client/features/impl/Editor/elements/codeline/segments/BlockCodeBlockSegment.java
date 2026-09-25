@@ -18,14 +18,14 @@ import millo.millomod2.client.hypercube.model.codefields.SubActionCodeFields;
 import millo.millomod2.client.hypercube.template.CodeBlockType;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> {
-    private static final Text SO_PREFIX = Text.literal("select ").setStyle(Styles.SELECT.getStyle());
-    private static final Text CONTROL_PREFIX = Text.literal("control ").setStyle(Styles.CONTROL.getStyle());
+    private static final Component SO_PREFIX = Component.literal("select ").setStyle(Styles.SELECT.getStyle());
+    private static final Component CONTROL_PREFIX = Component.literal("control ").setStyle(Styles.CONTROL.getStyle());
 
-    private final Text prefix;
+    private final Component prefix;
     private final CodeLineSegment<?> baseSegment;
     private final CodeLineSegment<?> lineSegment;
 
@@ -69,7 +69,7 @@ public class BlockCodeBlockSegment extends CodeLineSegment<BlockCodeBlockModel> 
         String material = ActionDump.getActionDump().orElseThrow()
                 .getCodeBlock(model.getBlock()).orElseThrow()
                 .getItem().material.toLowerCase();
-        addComponent(new BlockPrefixComponent(Identifier.of("minecraft", material)));
+        addComponent(new BlockPrefixComponent(Identifier.fromNamespaceAndPath("minecraft", material)));
     }
 
     @Override

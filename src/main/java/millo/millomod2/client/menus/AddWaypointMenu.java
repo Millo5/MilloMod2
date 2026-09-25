@@ -14,15 +14,15 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
 public class AddWaypointMenu extends Menu {
 
     private final Waypoints feature;
-    private Vec3d defaultPos;
+    private Vec3 defaultPos;
 
     private TextFieldElement inputX;
     private TextFieldElement inputY;
@@ -33,12 +33,12 @@ public class AddWaypointMenu extends Menu {
 
     private String preInputTitle = "New Waypoint";
 
-    public AddWaypointMenu(Screen parent, Vec3d pos, String name) {
+    public AddWaypointMenu(Screen parent, Vec3 pos, String name) {
         this(parent, pos);
         preInputTitle = name;
     }
 
-    public AddWaypointMenu(Screen parent, Vec3d pos) {
+    public AddWaypointMenu(Screen parent, Vec3 pos) {
         super(parent == null ? new WaypointMenu(null) : parent);
         defaultPos = pos;
         feature = FeatureHandler.get(Waypoints.class);
@@ -52,7 +52,7 @@ public class AddWaypointMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(40)
                 .gap(10);
-        addDrawableChild(main);
+        addRenderableWidget(main);
 
 
         FlexElement<?> posInput = FlexElement.create(width / 2, 20)
@@ -68,12 +68,12 @@ public class AddWaypointMenu extends Menu {
                 .mainAlign(MainAxisAlignment.SPACE_BETWEEN)
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .gap(5);
-        inputX = new TextFieldElement(60, 14, Text.literal(String.valueOf(defaultPos.x)));
-        inputY = new TextFieldElement(60, 14, Text.literal(String.valueOf(defaultPos.y)));
-        inputZ = new TextFieldElement(60, 14, Text.literal(String.valueOf(defaultPos.z)));
-        inputX.setText(String.format("%.2f", defaultPos.x).replace(",", "."));
-        inputY.setText(String.format("%.2f", defaultPos.y).replace(",", "."));
-        inputZ.setText(String.format("%.2f", defaultPos.z).replace(",", "."));
+        inputX = new TextFieldElement(60, 14, Component.literal(String.valueOf(defaultPos.x)));
+        inputY = new TextFieldElement(60, 14, Component.literal(String.valueOf(defaultPos.y)));
+        inputZ = new TextFieldElement(60, 14, Component.literal(String.valueOf(defaultPos.z)));
+        inputX.setValue(String.format("%.2f", defaultPos.x).replace(",", "."));
+        inputY.setValue(String.format("%.2f", defaultPos.y).replace(",", "."));
+        inputZ.setValue(String.format("%.2f", defaultPos.z).replace(",", "."));
 
         posInputFields.addChildren(inputX, inputY, inputZ);
 
@@ -90,10 +90,10 @@ public class AddWaypointMenu extends Menu {
                 .padding(20)
                 .gap(5);
         main.addChild(titleInput);
-        inputTitle = new TextFieldElement(200, 14, Text.literal(preInputTitle));
-        inputTitle.setText(preInputTitle);
-        inputColor = new TextFieldElement(40, 14, Text.literal("#ffffff"));
-        inputColor.setText("#ffffff");
+        inputTitle = new TextFieldElement(200, 14, Component.literal(preInputTitle));
+        inputTitle.setValue(preInputTitle);
+        inputColor = new TextFieldElement(40, 14, Component.literal("#ffffff"));
+        inputColor.setValue("#ffffff");
 
         var titleInputLabel = TextElement.create("Label");
         titleInput.addChildren(titleInputLabel, inputTitle, inputColor);
@@ -102,34 +102,34 @@ public class AddWaypointMenu extends Menu {
                 .background(0x80000000)
                 .hoverBackground(0x80333333)
                 .onPress((button) -> save())
-                .message(Text.literal("Save"));
+                .message(Component.literal("Save"));
         var cancelButton = ButtonElement.create(200, 20)
                 .background(0x80000000)
                 .hoverBackground(0x80333333)
-                .onPress((button) -> close())
-                .message(Text.literal("Cancel"));
+                .onPress((button) -> onClose())
+                .message(Component.literal("Cancel"));
 
         main.addChildren(saveButton, cancelButton);
     }
 
     private void save() {
         try {
-            double x = Double.parseDouble(inputX.getText());
-            double y = Double.parseDouble(inputY.getText());
-            double z = Double.parseDouble(inputZ.getText());
+            double x = Double.parseDouble(inputX.getValue());
+            double y = Double.parseDouble(inputY.getValue());
+            double z = Double.parseDouble(inputZ.getValue());
 
-            Waypoint waypoint = new Waypoint(new Vec3d(x, y, z), inputTitle.getText(), Styles.ofHex(inputColor.getText()).getColor().getRgb());
+            Waypoint waypoint = new Waypoint(new Vec3(x, y, z), inputTitle.getValue(), Styles.ofHex(inputColor.getValue()).getColor().getValue());
             feature.add(waypoint);
 
-            close();
+            onClose();
         } catch (Exception e) {
             MilloLog.errorInGame(e.getMessage());
         }
     }
 
-    protected void applyBlur(DrawContext context) {}
+    protected void renderBlurredBackground(GuiGraphics context) {}
 
     public void setName(String name) {
-        inputTitle.setText(name);
+        inputTitle.setValue(name);
     }
 }

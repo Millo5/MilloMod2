@@ -6,25 +6,25 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.entity.player.PlayerSkinType;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
 
 public class SkinPreview extends Feature implements Toggleable, ContainerMod {
 
-    private SkinTextures skin;
-    private PlayerEntityModel model;
+    private PlayerSkin skin;
+    private PlayerModel model;
     private UUID uuid;
 
     @Override
@@ -33,9 +33,9 @@ public class SkinPreview extends Feature implements Toggleable, ContainerMod {
     }
 
     @Override
-    public void containerDrawSlot(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    public void containerDrawSlot(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled()) return;
-        Screen screen = MilloMod.MC.currentScreen;
+        Screen screen = MilloMod.MC.screen;
         if (screen == null) return;
 
         var handledScreen = (HandledScreenAccessor) screen;
@@ -46,23 +46,23 @@ public class SkinPreview extends Feature implements Toggleable, ContainerMod {
             return;
         }
 
-        ItemStack item = slot.getStack();
+        ItemStack item = slot.getItem();
 
         if (!item.getItem().equals(Items.PLAYER_HEAD)) return;
-        ProfileComponent profile = item.get(DataComponentTypes.PROFILE);
+        ResolvableProfile profile = item.get(DataComponents.PROFILE);
 
         if (profile == null) return;
-        GameProfile gameProfile = profile.getGameProfile();
+        GameProfile gameProfile = profile.partialProfile();
         UUID uuid = gameProfile.id();
 
         if (!uuid.equals(this.uuid)) {
             this.uuid = uuid;
-            MilloMod.MC.getSkinProvider().fetchSkinTextures(gameProfile).thenAccept(textures -> {
+            MilloMod.MC.getSkinManager().get(gameProfile).thenAccept(textures -> {
                 if (textures.isEmpty()) return;
                 this.skin = textures.get();
-                boolean slim = skin.model() == PlayerSkinType.SLIM;
-                var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, slim);
-                model = new PlayerEntityModel(modelData.getRoot().createPart(64, 64), slim);
+                boolean slim = skin.model() == PlayerModelType.SLIM;
+                var modelData = PlayerModel.createMesh(CubeDeformation.NONE, slim);
+                model = new PlayerModel(modelData.getRoot().bake(64, 64), slim);
             });
         }
 
@@ -70,7 +70,7 @@ public class SkinPreview extends Feature implements Toggleable, ContainerMod {
         int y = handledScreen.getY();
 
         if (model != null && skin != null) {
-            context.addPlayerSkin(
+            context.submitSkinRenderState(
                     model, skin.body().texturePath(), 38f, -15f, -15f, 0f, x, y, x + 100, y + 100
             );
         }

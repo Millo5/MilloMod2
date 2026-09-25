@@ -6,8 +6,7 @@ import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
-import net.minecraft.client.gui.widget.ClickableWidget;
-
+import net.minecraft.client.gui.components.AbstractWidget;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,7 @@ public class ListConfigValue<T extends ConfigValue<?> & Instantiable<T>> extends
     }
 
     @Override
-    public ClickableWidget createWidget() {
+    public AbstractWidget createWidget() {
 //        ListWidget a = ListWidget.create()
 //                .withDimensions(400, 100, true)
 //                .withPadding(10, 10, 5);
@@ -54,7 +53,7 @@ public class ListConfigValue<T extends ConfigValue<?> & Instantiable<T>> extends
                 .padding(10)
                 .gap(5);
 
-        ArrayList<ClickableWidget> itemWidgets = new ArrayList<>();
+        ArrayList<AbstractWidget> itemWidgets = new ArrayList<>();
         for (T item : value) if (!item.isHidden()) itemWidgets.add(item.createWidget());
         container.addChildren(itemWidgets);
         if (value.isEmpty()) {

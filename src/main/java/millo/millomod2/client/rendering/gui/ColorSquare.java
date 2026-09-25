@@ -2,9 +2,9 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public class ColorSquare extends ClickableElement<ColorSquare> {
 
@@ -13,7 +13,7 @@ public class ColorSquare extends ClickableElement<ColorSquare> {
     private final boolean isPartOfSaved;
 
     public ColorSquare(int width, int height, int color, ColorsMenu colorsMenu, boolean isPartOfSaved) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.color = color;
         this.colorsMenu = colorsMenu;
         this.isPartOfSaved = isPartOfSaved;
@@ -22,7 +22,7 @@ public class ColorSquare extends ClickableElement<ColorSquare> {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!isMouseOver(click.x(), click.y())) return false;
         if (click.button() == 0) {
             colorsMenu.setColor(color);
@@ -33,11 +33,11 @@ public class ColorSquare extends ClickableElement<ColorSquare> {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
         if (isMouseOver(mouseX, mouseY)) {
-            context.drawStrokedRectangle(getX(), getY(), getWidth(), getHeight(), 0xffffffff);
+            context.renderOutline(getX(), getY(), getWidth(), getHeight(), 0xffffffff);
         }
     }
 

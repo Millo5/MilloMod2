@@ -5,11 +5,10 @@ import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
 import java.util.Random;
 
 public class AngelsGrace extends Feature implements Toggleable {
@@ -32,14 +31,14 @@ public class AngelsGrace extends Feature implements Toggleable {
         if (!isEnabled() || player() == null) return;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
 
-        Screen screen = MC.currentScreen;
-        if (screen instanceof HandledScreen<?> || screen instanceof ChatScreen) {
-            if (!player().getAbilities().flying && player().getAbilities().allowFlying) {
-                if (player().getVelocity().y < -0.3 && !player().isOnGround()) {
+        Screen screen = MC.screen;
+        if (screen instanceof AbstractContainerScreen<?> || screen instanceof ChatScreen) {
+            if (!player().getAbilities().flying && player().getAbilities().mayfly) {
+                if (player().getDeltaMovement().y < -0.3 && !player().onGround()) {
                     player().getAbilities().flying = true;
-                    player().sendAbilitiesUpdate();
+                    player().onUpdateAbilities();
                     String message = messages[new Random().nextInt(messages.length)];
-                    Notifications.notify(Text.literal(message).setStyle(Styles.VARIABLE.getStyle()));
+                    Notifications.notify(Component.literal(message).setStyle(Styles.VARIABLE.getStyle()));
                 }
             }
         }

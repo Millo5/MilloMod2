@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements.codeline.segments.s
 import millo.millomod2.client.hypercube.model.arguments.PotionArgumentModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class PotionArgumentSegment extends SimpleSegment<PotionArgumentModel> {
 
@@ -15,7 +15,7 @@ public class PotionArgumentSegment extends SimpleSegment<PotionArgumentModel> {
     TextElement createContent(PotionArgumentModel model) {
         return new SimpleArgumentBuilder(model.getPotion())
                 .style(Styles.POTION)
-                .tooltip(Text.literal("Amplifier: " + model.getAmplifier() + "\nDuration: " + model.getDuration() + " ticks").setStyle(Styles.COMMENT.getStyle()))
+                .tooltip(Component.literal("Amplifier: " + model.getAmplifier() + "\nDuration: " + model.getDuration() + " ticks").setStyle(Styles.COMMENT.getStyle()))
                 .onClickCmd("/pot get " + model.getPotion().replaceAll(" ", "_").toLowerCase() + " " + model.getAmplifier() + " " + model.getDuration())
                 .build();
     }

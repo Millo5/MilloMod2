@@ -1,18 +1,18 @@
 package millo.millomod2.client.features.impl.Notifications;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public final class Notification {
-    private final Text message;
+    private final Component message;
     private float age = 0f;
     private final float lifetime = 5f;
     private float visible = 0.1f;
 
-    public Notification(Text message) {
+    public Notification(Component message) {
         this.message = message;
     }
 
-    public Text getMessage() {
+    public Component getMessage() {
         return message;
     }
 

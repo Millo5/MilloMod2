@@ -5,8 +5,8 @@ import millo.millomod2.client.features.impl.Editor.elements.codeline.CodeLineSeg
 import millo.millomod2.client.hypercube.model.arguments.ItemArgumentModel;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.menu.elements.ItemStackElement;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemArgumentSegment extends CodeLineSegment<ItemArgumentModel> {
 
@@ -25,7 +25,7 @@ public class ItemArgumentSegment extends CodeLineSegment<ItemArgumentModel> {
 
         lineElement.addChild(new ItemStackElement(
                 -2, -4, 12, 8,
-                Text.empty(), item, true, true
+                Component.empty(), item, true, true
         ));
 
     }

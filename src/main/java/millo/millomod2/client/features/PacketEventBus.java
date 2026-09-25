@@ -1,9 +1,8 @@
 package millo.millomod2.client.features;
 
 import millo.millomod2.client.util.MilloLog;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BundleS2CPacket;
-
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +30,8 @@ public final class PacketEventBus {
     }
 
     public boolean postReceive(Packet<?> packet) {
-        if (packet instanceof BundleS2CPacket bundle) {
-            bundle.getPackets().forEach(this::postReceive);
+        if (packet instanceof ClientboundBundlePacket bundle) {
+            bundle.subPackets().forEach(this::postReceive);
             return false;
         }
         return post(receiveSubscribers, packet);

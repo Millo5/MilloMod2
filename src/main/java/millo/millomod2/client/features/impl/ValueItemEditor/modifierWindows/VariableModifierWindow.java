@@ -13,13 +13,12 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 import java.util.ArrayList;
 
 public class VariableModifierWindow extends ModifierWindow {
@@ -32,29 +31,29 @@ public class VariableModifierWindow extends ModifierWindow {
     }
 
     @Override
-    protected ClickableWidget getElement() {
+    protected AbstractWidget getElement() {
         ListElement list = ListElement.create(100, 20)
                 .direction(ElementDirection.COLUMN)
                 .crossAlign(CrossAxisAlignment.STRETCH)
                 .gap(5);
 
-        name = new TextFieldElement(100, 20, Text.literal(value.getName()));
+        name = new TextFieldElement(100, 20, Component.literal(value.getName()));
         name.setMaxLength(10000);
-        name.setChangedListener(value::setName);
+        name.setResponder(value::setName);
 
         FlexElement<?> scope = FlexElement.create(175, 20)
                 .mainAlign(MainAxisAlignment.SPACE_BETWEEN)
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .gap(1);
 
-        TextRenderer textRenderer = MilloMod.MC.textRenderer;
+        Font textRenderer = MilloMod.MC.font;
         for (VariableScope variableScope : VariableScope.values()) {
-            ButtonElement button = ButtonElement.create(textRenderer.getWidth(variableScope.name()) + 10, 20)
-                    .message(Text.literal(variableScope.name()).setStyle(variableScope.getStyle().withItalic(false)))
+            ButtonElement button = ButtonElement.create(textRenderer.width(variableScope.name()) + 10, 20)
+                    .message(Component.literal(variableScope.name()).setStyle(variableScope.getStyle().withItalic(false)))
                     .hoverBackground(0xA0FFFFFF)
                     .onPress((b) -> {
                         value.setScope(variableScope);
-                        for (ClickableWidget child : scope.getChildren()) {
+                        for (AbstractWidget child : scope.getChildren()) {
                             if (child instanceof ButtonElement btn) {
                                 btn.border(new ClickableElement.Border());
                             }
@@ -79,19 +78,19 @@ public class VariableModifierWindow extends ModifierWindow {
 
     @Override
     public void applyToItem(ItemStack stack) {
-        stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value.getName()).setStyle(Styles.DEFAULT.getStyle().withItalic(false)));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(value.getName()).setStyle(Styles.DEFAULT.getStyle().withItalic(false)));
 
-        LoreComponent lore = stack.get(DataComponentTypes.LORE);
+        ItemLore lore = stack.get(DataComponents.LORE);
         if (lore == null) return;
 
         var lines = new ArrayList<>(lore.styledLines());
-        lines.set(0, Text.literal(value.getScope().name()).setStyle(value.getScope().getStyle().withItalic(false)));
+        lines.set(0, Component.literal(value.getScope().name()).setStyle(value.getScope().getStyle().withItalic(false)));
 
-        stack.set(DataComponentTypes.LORE, new LoreComponent(lines));
+        stack.set(DataComponents.LORE, new ItemLore(lines));
     }
 
     @Override
-    protected ClickableWidget getDefaultFocus() {
+    protected AbstractWidget getDefaultFocus() {
         return name;
     }
 }

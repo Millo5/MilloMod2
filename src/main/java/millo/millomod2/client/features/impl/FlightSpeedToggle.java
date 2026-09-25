@@ -16,9 +16,9 @@ public class FlightSpeedToggle extends Feature implements Keybound, Configurable
 
     @Override
     public void onTick() {
-        while (getKeybind().wasPressed()) {
-            if (MC.player != null && MC.player.getAbilities().allowFlying) {
-                if (MC.player.getAbilities().getFlySpeed() > 0.05f) {
+        while (getKeybind().consumeClick()) {
+            if (MC.player != null && MC.player.getAbilities().mayfly) {
+                if (MC.player.getAbilities().getFlyingSpeed() > 0.05f) {
                     PlayerUtil.sendCommand("fs 100");
                 } else {
                     PlayerUtil.sendCommand("fs " + config.getInt("speed"));

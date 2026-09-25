@@ -6,7 +6,7 @@ import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.components.AbstractWidget;
 
 public class PositionalConfigValue extends ConfigValue<FeaturePosition> {
 
@@ -18,7 +18,7 @@ public class PositionalConfigValue extends ConfigValue<FeaturePosition> {
     }
 
     @Override
-    public ClickableWidget createWidget() {
+    public AbstractWidget createWidget() {
         return ButtonElement.create(200, 20)
                 .message(MilloMod.translatable("reset"))
                 .onPress((b) -> {

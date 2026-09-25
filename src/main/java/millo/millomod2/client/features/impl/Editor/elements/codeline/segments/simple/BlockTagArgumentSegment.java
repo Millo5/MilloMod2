@@ -4,8 +4,8 @@ import millo.millomod2.client.hypercube.data.VariableScope;
 import millo.millomod2.client.hypercube.model.arguments.BlockTagArgumentModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class BlockTagArgumentSegment extends SimpleSegment<BlockTagArgumentModel> {
 
@@ -23,22 +23,22 @@ public class BlockTagArgumentSegment extends SimpleSegment<BlockTagArgumentModel
                 case LINE -> " -i";
                 default -> "";
             };
-            MutableText name = Text.literal(model.getVariable().getName()).setStyle(Styles.VAR.getStyle())
-                    .append(Text.literal("°").setStyle(scope.getStyle()));
+            MutableComponent name = Component.literal(model.getVariable().getName()).setStyle(Styles.VAR.getStyle())
+                    .append(Component.literal("°").setStyle(scope.getStyle()));
 
-            MutableText text = Text.literal("{")
+            MutableComponent text = Component.literal("{")
                     .append(name)
                     .append("}");
             return new SimpleArgumentBuilder(text)
                     .style(Styles.BLOCK_TAG)
                     .onClickCmd(cmd)
-                    .tooltip(Text.empty().append(Text.literal(model.getTag() + "\n\n").setStyle(Styles.COMMENT.getStyle()))
-                            .append(Text.literal("Default Value: " + model.getOption()).setStyle(Styles.UNSAVED.getStyle())))
+                    .tooltip(Component.empty().append(Component.literal(model.getTag() + "\n\n").setStyle(Styles.COMMENT.getStyle()))
+                            .append(Component.literal("Default Value: " + model.getOption()).setStyle(Styles.UNSAVED.getStyle())))
                     .build();
         }
         return new SimpleArgumentBuilder(model.getOption())
                 .style(Styles.BLOCK_TAG)
-                .tooltip(Text.literal(model.getTag()).setStyle(Styles.COMMENT.getStyle()))
+                .tooltip(Component.literal(model.getTag()).setStyle(Styles.COMMENT.getStyle()))
                 .build();
     }
 

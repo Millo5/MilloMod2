@@ -5,10 +5,9 @@ import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,7 +16,7 @@ public class CodeLineElement extends FlexElement<CodeLineElement> implements Sea
     private float highlight = 0f;
 
     public CodeLineElement(int x, int y, int width, int height) {
-        super(x, y, width, height, Text.empty());
+        super(x, y, width, height, Component.empty());
     }
 
 
@@ -25,7 +24,7 @@ public class CodeLineElement extends FlexElement<CodeLineElement> implements Sea
     public Collection<? extends SearchResult> search(String searchQuery) {
         ArrayList<SearchResult> results = new ArrayList<>();
 
-        for (ClickableWidget child : getChildren()) {
+        for (AbstractWidget child : getChildren()) {
             if (child instanceof TextElement textElement) {
                 int index = textElement.getMessage().getString().indexOf(searchQuery);
                 if (index != -1) {
@@ -37,7 +36,7 @@ public class CodeLineElement extends FlexElement<CodeLineElement> implements Sea
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         if (highlight > 0f) {
             int alpha = (int) (highlight * 0x60) << 24;
             context.fill(getX(), getY(), getRight(), getBottom(), alpha | (Styles.HIGHLIGHT.getColor() & 0x00FFFFFF));

@@ -1,9 +1,8 @@
 package millo.millomod2.client.features.guides;
 
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.network.chat.Component;
 
 public class GuideSectionText {
 
@@ -23,7 +22,7 @@ public class GuideSectionText {
         return this;
     }
 
-    public GuideSectionText addText(Text text) {
+    public GuideSectionText addText(Component text) {
         return addText(text.getString());
     }
 

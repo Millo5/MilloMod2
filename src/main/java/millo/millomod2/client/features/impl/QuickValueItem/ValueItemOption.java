@@ -1,19 +1,18 @@
 package millo.millomod2.client.features.impl.QuickValueItem;
 
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import java.awt.*;
 import java.util.List;
 
@@ -33,16 +32,16 @@ public abstract class ValueItemOption {
     public ItemStack getItem(String value) {
         ItemStack item = new ItemStack(icon.getItem());
 
-        NbtCompound pbv = new NbtCompound();
+        CompoundTag pbv = new CompoundTag();
         pbv.putString("hypercube:varitem", getVarItemString(item, value));
 
-        NbtCompound custom_nbt = new NbtCompound();
+        CompoundTag custom_nbt = new CompoundTag();
         custom_nbt.putInt("CustomModelData", 5000);
         custom_nbt.put("PublicBukkitValues", pbv);
 
-        NbtComponent custom_data = NbtComponent.of(custom_nbt);
+        CustomData custom_data = CustomData.of(custom_nbt);
 
-        item.set(DataComponentTypes.CUSTOM_DATA, custom_data);
+        item.set(DataComponents.CUSTOM_DATA, custom_data);
 
         return item;
     }
@@ -58,37 +57,37 @@ public abstract class ValueItemOption {
     }
 
     private float x, y;
-    public void draw(DrawContext context, int x, int y, float delta, float shown) {
-        hover = MathHelper.clampedLerp(delta, hover, isSelected() ? 1f : 0f);
+    public void draw(GuiGraphics context, int x, int y, float delta, float shown) {
+        hover = Mth.clampedLerp(delta, hover, isSelected() ? 1f : 0f);
 
         this.x = x;
         this.y = y;
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(x, y);
-        context.getMatrices().scale(shown, shown);
-        context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f);
+        context.pose().pushMatrix();
+        context.pose().translate(x, y);
+        context.pose().scale(shown, shown);
+        context.pose().scale(hover*0.2f+1f, hover*0.2f+1f);
 
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
         context.fill(-8, -8, 8, 8, color);
-        context.drawStrokedRectangle(-8, -8, 16, 16, borderCol);
+        context.renderOutline(-8, -8, 16, 16, borderCol);
 
-        context.drawItem(icon, -8, -8);
+        context.renderItem(icon, -8, -8);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
-    public void draw(DrawContext context, int x, int y, float delta) {
-        this.x = MathHelper.clampedLerp(delta, this.x, x);
-        this.y = MathHelper.clampedLerp(delta, this.y, y);
+    public void draw(GuiGraphics context, int x, int y, float delta) {
+        this.x = Mth.clampedLerp(delta, this.x, x);
+        this.y = Mth.clampedLerp(delta, this.y, y);
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(this.x, this.y);
+        context.pose().pushMatrix();
+        context.pose().translate(this.x, this.y);
 
-        context.drawItem(icon, -8, -8);
+        context.renderItem(icon, -8, -8);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
 
@@ -100,7 +99,7 @@ public abstract class ValueItemOption {
         @Override
         protected String getVarItemString(ItemStack item, String value) {
             if (value.equalsIgnoreCase("z")) value = "0"; // Quick hand for 0. as I can only reach up to 9 without moving my hand. (I know, I am lazy)
-            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withColor(0xff5555).withItalic(false)));
+            item.set(DataComponents.CUSTOM_NAME, Component.literal(value).setStyle(Style.EMPTY.withColor(0xff5555).withItalic(false)));
             return "{\"id\":\"num\",\"data\":{\"name\":\"" + value + "\"}}";
         }
     }
@@ -112,7 +111,7 @@ public abstract class ValueItemOption {
 
         @Override
         protected String getVarItemString(ItemStack item, String value) {
-            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withItalic(false)));
+            item.set(DataComponents.CUSTOM_NAME, Component.literal(value).setStyle(Style.EMPTY.withItalic(false)));
             return "{\"id\":\"txt\",\"data\":{\"name\":\"" + value + "\"}}";
         }
     }
@@ -124,15 +123,15 @@ public abstract class ValueItemOption {
 
 
         private enum Scope {
-            LINE("line", "-i", Text.literal("LINE").setStyle(Styles.LINE.getStyle().withItalic(false))),
-            LOCAL("local", "-l", Text.literal("LOCAL").setStyle(Styles.LOCAL.getStyle().withItalic(false))),
-            SAVED("saved", "-s", Text.literal("SAVE").setStyle(Styles.SAVED.getStyle().withItalic(false))),
-            UNSAVED("unsaved", "\n", Text.literal("GAME").setStyle(Styles.UNSAVED.getStyle().withItalic(false)));
+            LINE("line", "-i", Component.literal("LINE").setStyle(Styles.LINE.getStyle().withItalic(false))),
+            LOCAL("local", "-l", Component.literal("LOCAL").setStyle(Styles.LOCAL.getStyle().withItalic(false))),
+            SAVED("saved", "-s", Component.literal("SAVE").setStyle(Styles.SAVED.getStyle().withItalic(false))),
+            UNSAVED("unsaved", "\n", Component.literal("GAME").setStyle(Styles.UNSAVED.getStyle().withItalic(false)));
 
             private final String scope, key;
-            private final Text lore;
+            private final Component lore;
 
-            Scope(String scope, String key, Text lore) {
+            Scope(String scope, String key, Component lore) {
                 this.scope = scope;
                 this.key = key;
                 this.lore = lore;
@@ -150,10 +149,10 @@ public abstract class ValueItemOption {
                 }
             }
 
-            LoreComponent lore = new LoreComponent(List.of(scope.lore));
+            ItemLore lore = new ItemLore(List.of(scope.lore));
 
-            item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(value).setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
-            item.set(DataComponentTypes.LORE, lore);
+            item.set(DataComponents.CUSTOM_NAME, Component.literal(value).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false)));
+            item.set(DataComponents.LORE, lore);
 
             return "{\"id\":\"var\",\"data\":{\"name\":\"" + value + "\",\"scope\":\"" + scope.scope + "\"}}";
         }

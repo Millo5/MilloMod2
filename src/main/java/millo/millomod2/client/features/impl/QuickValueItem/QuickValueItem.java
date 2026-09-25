@@ -12,17 +12,17 @@ import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
 import millo.millomod2.menu.elements.TextFieldElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -41,7 +41,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
     private boolean textInputShown = false;
     private String value = "meow";
 
-    private static TextFieldWidget argumentTextField;
+    private static EditBox argumentTextField;
 
     private float animationProgress = 0f;
 
@@ -57,19 +57,19 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeSend(ClickSlotC2SPacket.class, this::onSlotClick);
+        eventBus.subscribeSend(ServerboundContainerClickPacket.class, this::onSlotClick);
     }
 
-    public boolean onSlotClick(ClickSlotC2SPacket packet) {
+    public boolean onSlotClick(ServerboundContainerClickPacket packet) {
         if (!isEnabled()) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return false;
         if (selectorShown || textInputShown) return true;
 
 
-        if (!packet.modifiedStacks().isEmpty()) return false;
-        if (packet.button() != 1 || packet.actionType() != SlotActionType.QUICK_MOVE) return false;
+        if (!packet.changedSlots().isEmpty()) return false;
+        if (packet.buttonNum() != 1 || packet.clickType() != ClickType.QUICK_MOVE) return false;
 
-        openSelector(packet.slot());
+        openSelector(packet.slotNum());
 
         return true;
     }
@@ -91,23 +91,23 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         this.textInputShown = true;
         this.selectedOption = option;
 
-        ScreenHandler handler = ((HandledScreen<?>) MilloMod.MC.currentScreen).getScreenHandler();
+        AbstractContainerMenu handler = ((AbstractContainerScreen<?>) MilloMod.MC.screen).getMenu();
 
-        argumentTextField = new TextFieldElement(MilloMod.MC.textRenderer,
+        argumentTextField = new TextFieldElement(MilloMod.MC.font,
                 handler.slots.get(this.slot).x + 24,
                 handler.slots.get(this.slot).y,
                 200,
                 16,
-                Text.literal(""));
-        argumentTextField.setPlaceholder(Text.literal("Enter Value.."));
-        argumentTextField.setChangedListener((s) -> this.value = s);
+                Component.literal(""));
+        argumentTextField.setHint(Component.literal("Enter Value.."));
+        argumentTextField.setResponder((s) -> this.value = s);
         argumentTextField.setMaxLength(10000);
 
-        ((ScreenAccessor) MilloMod.MC.currentScreen).iAddSelectableChild(argumentTextField);
+        ((ScreenAccessor) MilloMod.MC.screen).iAddSelectableChild(argumentTextField);
 
-        MilloMod.MC.currentScreen.setFocused(null);
+        MilloMod.MC.screen.setFocused(null);
         argumentTextField.setFocused(false);
-        MilloMod.MC.currentScreen.setFocused(argumentTextField);
+        MilloMod.MC.screen.setFocused(argumentTextField);
         argumentTextField.setFocused(true);
     }
 
@@ -117,8 +117,8 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
     private void closeTextInput(boolean success) {
         textInputShown = false;
 
-        if (MilloMod.MC.currentScreen != null) {
-            ((ScreenAccessor) MilloMod.MC.currentScreen).iRemove(argumentTextField);
+        if (MilloMod.MC.screen != null) {
+            ((ScreenAccessor) MilloMod.MC.screen).iRemove(argumentTextField);
         }
         argumentTextField = null;
 
@@ -128,17 +128,17 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
             return;
         }
 
-        var intMan = MilloMod.MC.interactionManager;
+        var intMan = MilloMod.MC.gameMode;
         if (net() == null || player() == null || intMan == null) return;
 
-        ItemStack oldOffhandItem = player().getInventory().getStack(45);
+        ItemStack oldOffhandItem = player().getInventory().getItem(45);
         PlayerUtil.sendOffhandItem(selectedOption.getItem(value));
 
-        int syncId = player().currentScreenHandler.syncId;
-        intMan.clickSlot(syncId,
+        int syncId = player().containerMenu.containerId;
+        intMan.handleInventoryMouseClick(syncId,
                 getSlot(),
                 40,
-                SlotActionType.SWAP,
+                ClickType.SWAP,
                 player()
         );
 
@@ -156,7 +156,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         if (MilloMod.player() == null) return;
 
         if (selectorShown) {
-            if (MilloMod.MC.currentScreen instanceof HandledScreen<?> screen) {
+            if (MilloMod.MC.screen instanceof AbstractContainerScreen<?> screen) {
                 selectOption(screen);
             } else {
                 closeSelector();
@@ -164,18 +164,18 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         }
     }
 
-    private void selectOption(HandledScreen<?> screen) {
-        double mouseX = MilloMod.MC.mouse.getX();
-        double mouseY = MilloMod.MC.mouse.getY();
+    private void selectOption(AbstractContainerScreen<?> screen) {
+        double mouseX = MilloMod.MC.mouseHandler.xpos();
+        double mouseY = MilloMod.MC.mouseHandler.ypos();
 
         HandledScreenAccessor screenAcc = (HandledScreenAccessor) screen;
 
-        Slot slot = screen.getScreenHandler().slots.get(this.slot);
+        Slot slot = screen.getMenu().slots.get(this.slot);
         int x = slot.x + screenAcc.getX();
         int y = slot.y + screenAcc.getY();
 
-        x = (x + 8) * MilloMod.MC.getWindow().getScaleFactor();
-        y = (y + 8) * MilloMod.MC.getWindow().getScaleFactor();
+        x = (x + 8) * MilloMod.MC.getWindow().getGuiScale();
+        y = (y + 8) * MilloMod.MC.getWindow().getGuiScale();
 
         int dx = (int) (mouseX - x);
         int dy = (int) (mouseY - y);
@@ -211,7 +211,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
     private int slotX, slotY;
 
     @Override
-    public <T extends ScreenHandler> void containerRender(T handler, RenderInfo info) {
+    public <T extends AbstractContainerMenu> void containerRender(T handler, RenderInfo info) {
         if (!isEnabled()) return;
 
         if (textInputShown && argumentTextField != null) {
@@ -226,13 +226,13 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
             slotY = slot.y;
         }
 
-        DrawContext context = info.context();
+        GuiGraphics context = info.context();
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(slotX, slotY);
+        context.pose().pushMatrix();
+        context.pose().translate(slotX, slotY);
         context.fill(0, 0, 16, 16, new Color(255, 175, 175, (int)(animationProgress * 255)).hashCode());
 
-        context.getMatrices().translate(8, 8);
+        context.pose().translate(8, 8);
 
         if (textInputShown) {
             selectedOption.setSelected(false);
@@ -246,13 +246,13 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
 
             options.get(i).draw(context, xx, yy, info.deltaTime() * 10f, animationProgress);
         }
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
 
     }
 
 
     @Override
-    public void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+    public void containerMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (isSelectorShown()) {
             for (ValueItemOption option : options) {
@@ -274,7 +274,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
     }
 
     @Override
-    public <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    public <T extends AbstractContainerMenu> void containerKeyPressed(T handler, KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (isTextInputShown() && argumentTextField != null) {
             argumentTextField.keyPressed(input);

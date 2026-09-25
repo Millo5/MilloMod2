@@ -1,9 +1,9 @@
 package millo.millomod2.client.features.addons;
 
-import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.CharacterEvent;
 
 public interface UICharTyped {
 
-    boolean charTyped(CharInput input);
+    boolean charTyped(CharacterEvent input);
 
 }

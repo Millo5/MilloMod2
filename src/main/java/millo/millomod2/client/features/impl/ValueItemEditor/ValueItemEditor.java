@@ -17,17 +17,17 @@ import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.RenderInfo;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.ListElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -49,15 +49,15 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     private ItemStack oldOffhandItem = null;
 
     @Override
-    public boolean containerSlotClick(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
+    public boolean containerSlotClick(int slotId, int button, ClickType actionType, Player player) {
         if (!isEnabled()) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return false;
 
         if (open) return true;
-        if (button != 1 || actionType != SlotActionType.QUICK_MOVE) return false;
+        if (button != 1 || actionType != ClickType.QUICK_MOVE) return false;
 
-        ScreenHandler screenHandler = player.currentScreenHandler;
-        ItemStack stack = screenHandler.getSlot(slotId).getStack();
+        AbstractContainerMenu screenHandler = player.containerMenu;
+        ItemStack stack = screenHandler.getSlot(slotId).getItem();
         if (stack.isEmpty()) return false;
 
         JsonObject json = ItemUtil.getVarItem(stack);
@@ -88,7 +88,7 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     private void open(ArgumentModel<?> model, int slot, ItemStack originalStack, ModifierWindow modifier) {
-        if (!(MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
+        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
 
         this.currentModel = model;
         this.slot = slot;
@@ -97,12 +97,12 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
         this.window = this.modifier.getWindow();
         this.open = true;
 
-        Slot s = player().currentScreenHandler.getSlot(slot);
+        Slot s = player().containerMenu.getSlot(slot);
         window.setPosition(s.x + 24, s.y);
     }
 
     private void close(boolean confirm) {
-        if (MC.currentScreen != null) ((ScreenAccessor) MC.currentScreen).iRemove(window);
+        if (MC.screen != null) ((ScreenAccessor) MC.screen).iRemove(window);
 
         if (confirm) {
             JsonObject serialized = currentModel.serialize();
@@ -110,19 +110,19 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
             ItemUtil.setVarItem(copy, serialized.getAsJsonObject("item"));
             modifier.applyToItem(copy);
 
-            oldOffhandItem = player().getInventory().getStack(45);
-            int syncId = player().currentScreenHandler.syncId;
+            oldOffhandItem = player().getInventory().getItem(45);
+            int syncId = player().containerMenu.containerId;
             int slot = this.slot;
             MilloMod.schedule(() -> {
-                if (player().currentScreenHandler == null) return;
-                if (player().currentScreenHandler.syncId != syncId) return;
-                ClientPlayerInteractionManager intMan = MilloMod.MC.interactionManager;
+                if (player().containerMenu == null) return;
+                if (player().containerMenu.containerId != syncId) return;
+                MultiPlayerGameMode intMan = MilloMod.MC.gameMode;
                 if (intMan == null) return;
 
-                intMan.clickSlot(syncId, slot, 0, SlotActionType.SWAP, player());
-                net().sendPacket(new CreativeInventoryActionC2SPacket(36, copy));
-                intMan.clickSlot(syncId, slot, 0, SlotActionType.SWAP, player());
-                intMan.clickSlot(syncId, 54, 0, SlotActionType.QUICK_CRAFT, player());
+                intMan.handleInventoryMouseClick(syncId, slot, 0, ClickType.SWAP, player());
+                net().send(new ServerboundSetCreativeModeSlotPacket(36, copy));
+                intMan.handleInventoryMouseClick(syncId, slot, 0, ClickType.SWAP, player());
+                intMan.handleInventoryMouseClick(syncId, 54, 0, ClickType.QUICK_CRAFT, player());
 
             }, 1);
 
@@ -137,10 +137,10 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     @Override
-    public <T extends ScreenHandler> void containerRender(T handler, RenderInfo info) {
+    public <T extends AbstractContainerMenu> void containerRender(T handler, RenderInfo info) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
+        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen
                 ;
 //        window.render(info.context(), info.mouseX(), info.mouseY(), info.deltaTime() * 20f);
@@ -148,29 +148,29 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     @Override
-    public void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+    public void containerMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
+        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen;
 
-        Click local = new Click(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
+        MouseButtonEvent local = new MouseButtonEvent(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
         if (!window.mouseClicked(local, doubled)) close(true);
     }
 
     @Override
-    public void containerMouseReleased(Click click, CallbackInfoReturnable<Boolean> cir) {
+    public void containerMouseReleased(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.currentScreen instanceof HandledScreen<?> handledScreen)) return;
+        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen;
 
-        Click local = new Click(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
+        MouseButtonEvent local = new MouseButtonEvent(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
         window.mouseReleased(local);
     }
 
     @Override
-    public <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    public <T extends AbstractContainerMenu> void containerKeyPressed(T handler, KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (!open || !isEnabled()) return;
         cir.setReturnValue(true);
         window.keyPressed(input);
@@ -186,7 +186,7 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         if (!open || !isEnabled()) return false;
 
         window.charTyped(input);

@@ -3,19 +3,19 @@ package millo.millomod2.menu.elements;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
 import millo.millomod2.menu.FadeElement;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.network.chat.Component;
 import org.joml.Vector2f;
 
-public abstract class ClickableElement<T extends ClickableElement<?>> extends ClickableWidget implements FadeElement {
+public abstract class ClickableElement<T extends ClickableElement<?>> extends AbstractWidget implements FadeElement {
 
     protected int background = 0;
     private Border border = new Border();
 
-    public ClickableElement(int x, int y, int width, int height, Text message) {
+    public ClickableElement(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
@@ -34,14 +34,14 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         context.fill(getX(), getY(), getRight(), getBottom(), getFade().getColor(background));
         border.render(context, this);
 
         ClickableWidgetAccessor accessor = (ClickableWidgetAccessor) this;
-        if (accessor.getTooltipState().getTooltip() != null) {
-            var pos = context.getMatrices().transformPosition(mouseX, mouseY, new Vector2f());
-            accessor.getTooltipState().render(context, (int)pos.x, (int)pos.y, hovered, isFocused(), getNavigationFocus());
+        if (accessor.getTooltipState().get() != null) {
+            var pos = context.pose().transformPosition(mouseX, mouseY, new Vector2f());
+            accessor.getTooltipState().refreshTooltipForNextRenderPass(context, (int)pos.x, (int)pos.y, isHovered, isFocused(), getRectangle());
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    protected void updateWidgetNarration(NarrationElementOutput builder) {}
 
     public static class Border {
         private int color = 0;
@@ -92,10 +92,10 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
             return this;
         }
 
-        public void render(DrawContext context, ClickableElement<?> element) {
+        public void render(GuiGraphics context, ClickableElement<?> element) {
             int color = element.getFade().getColor(this.color);
             if (full) {
-                context.drawStrokedRectangle(element.getX(), element.getY(), element.getWidth(), element.getHeight(), color);
+                context.renderOutline(element.getX(), element.getY(), element.getWidth(), element.getHeight(), color);
                 return;
             }
 
@@ -106,8 +106,8 @@ public abstract class ClickableElement<T extends ClickableElement<?>> extends Cl
         }
     }
 
-    protected TextRenderer getTextRenderer() {
-        return MilloMod.MC.textRenderer;
+    protected Font getTextRenderer() {
+        return MilloMod.MC.font;
     }
 
     public Border getBorder() {

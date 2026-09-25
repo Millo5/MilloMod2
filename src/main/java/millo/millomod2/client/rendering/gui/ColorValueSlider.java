@@ -2,10 +2,9 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import java.awt.*;
 
 public class ColorValueSlider extends ClickableElement<ColorValueSlider> implements ColorElement {
@@ -16,7 +15,7 @@ public class ColorValueSlider extends ClickableElement<ColorValueSlider> impleme
     private boolean dragging = false;
 
     public ColorValueSlider(ColorsMenu colorsMenu, int width, int height, float[] hsb) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.colorsMenu = colorsMenu;
         this.hsb = hsb;
     }
@@ -26,7 +25,7 @@ public class ColorValueSlider extends ClickableElement<ColorValueSlider> impleme
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         context.fillGradient(getX(), getY(), getRight(), getBottom(),
                 Color.getHSBColor(hsb[0], hsb[1], 1).hashCode(),
                 Color.getHSBColor(hsb[0], hsb[1], 0).hashCode()
@@ -38,7 +37,7 @@ public class ColorValueSlider extends ClickableElement<ColorValueSlider> impleme
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!isMouseOver(click.x(), click.y())) return false;
         dragging = true;
         updateFromMouse(click.y());
@@ -46,14 +45,14 @@ public class ColorValueSlider extends ClickableElement<ColorValueSlider> impleme
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
         if (!dragging) return false;
         updateFromMouse(click.y());
         return true;
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (!dragging) return false;
         updateFromMouse(click.y());
         dragging = false;

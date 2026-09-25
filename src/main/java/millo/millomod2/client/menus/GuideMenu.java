@@ -11,9 +11,8 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,10 +75,10 @@ public class GuideMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.STRETCH)
                 .gap(searchGap);
 
-        TextFieldElement searchField = new TextFieldElement(featureListWidth, searchHeight, Text.empty());
-        searchField.setPlaceholder(Text.literal("Search guides..."));
+        TextFieldElement searchField = new TextFieldElement(featureListWidth, searchHeight, Component.empty());
+        searchField.setHint(Component.literal("Search guides..."));
         searchField.setMaxLength(100);
-        searchField.setChangedListener(value -> {
+        searchField.setResponder(value -> {
             searchQuery = value;
             refreshFeatureList();
         });
@@ -106,7 +105,7 @@ public class GuideMenu extends Menu {
                 ButtonElement.create(contentWidth, 1).background(0xAA666666),
                 content);
         screen.addChild(main);
-        addDrawableChild(screen);
+        addRenderableWidget(screen);
     }
 
     private void refreshFeatureList() {
@@ -133,11 +132,11 @@ public class GuideMenu extends Menu {
         String lastCategory = null;
         for (FeatureGuide guide : guides) {
             if (!guide.getCategory().equals(lastCategory)) {
-                featureList.addChild(TextElement.create(Text.literal(guide.getCategory())));
+                featureList.addChild(TextElement.create(Component.literal(guide.getCategory())));
                 lastCategory = guide.getCategory();
             }
             ButtonElement button = ButtonElement.create(featureList.getWidth(), 20)
-                    .message(Text.literal(guide.getName()))
+                    .message(Component.literal(guide.getName()))
                     .onPress((b) -> {
                         selectedGuide = guide;
                         showGuide(guide);

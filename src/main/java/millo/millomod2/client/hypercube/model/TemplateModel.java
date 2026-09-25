@@ -9,8 +9,7 @@ import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
 import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.MilloLog;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.world.item.ItemStack;
 import java.io.IOException;
 import java.util.ArrayList;
 

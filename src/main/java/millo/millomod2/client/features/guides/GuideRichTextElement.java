@@ -2,11 +2,10 @@ package millo.millomod2.client.features.guides;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
     private List<Line> lines = List.of();
 
     private GuideRichTextElement(List<GuideSectionText.Segment> segments) {
-        super(0, 0, 0, LINE_HEIGHT, Text.empty());
+        super(0, 0, 0, LINE_HEIGHT, Component.empty());
         this.segments = segments;
         active = false;
     }
@@ -32,11 +31,11 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
     @Override
     public void setWidth(int width) {
         super.setWidth(width);
-        lines = wrap(MilloMod.MC.textRenderer, Math.max(1, width));
+        lines = wrap(MilloMod.MC.font, Math.max(1, width));
         setHeight(Math.max(LINE_HEIGHT, lines.size() * LINE_HEIGHT));
     }
 
-    private List<Line> wrap(TextRenderer renderer, int width) {
+    private List<Line> wrap(Font renderer, int width) {
         ArrayList<Line> wrapped = new ArrayList<>();
         Line line = new Line();
         for (GuideSectionText.Segment segment : segments) {
@@ -52,8 +51,8 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
         return wrapped;
     }
 
-    private Line append(TextRenderer renderer, int maxWidth, List<Line> wrapped, Line line, Part part) {
-        int partWidth = renderer.getWidth(part.text) + (part.snippet ? SNIPPET_PADDING * 2 : 0);
+    private Line append(Font renderer, int maxWidth, List<Line> wrapped, Line line, Part part) {
+        int partWidth = renderer.width(part.text) + (part.snippet ? SNIPPET_PADDING * 2 : 0);
         if (!line.parts.isEmpty() && line.width + partWidth > maxWidth) {
             wrapped.add(line);
             line = new Line();
@@ -64,18 +63,18 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         int y = getY();
         for (Line line : lines) {
             int x = getX();
             for (Part part : line.parts) {
-                int textWidth = MilloMod.MC.textRenderer.getWidth(part.text);
+                int textWidth = MilloMod.MC.font.width(part.text);
                 if (part.snippet) {
                     context.fill(x, y - 2, x + textWidth + SNIPPET_PADDING * 2, y + 10, 0x30ffffff);
-                    context.drawText(MilloMod.MC.textRenderer, part.text, x + SNIPPET_PADDING, y, 0xFFFFE080, true);
+                    context.drawString(MilloMod.MC.font, part.text, x + SNIPPET_PADDING, y, 0xFFFFE080, true);
                     x += textWidth + SNIPPET_PADDING * 2;
                 } else {
-                    context.drawText(MilloMod.MC.textRenderer, part.text, x, y, 0xFFFFFFFF, true);
+                    context.drawString(MilloMod.MC.font, part.text, x, y, 0xFFFFFFFF, true);
                     x += textWidth;
                 }
             }
@@ -84,7 +83,7 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         return false;
     }
 

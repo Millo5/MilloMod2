@@ -1,19 +1,18 @@
 package millo.millomod2.client.features.addons;
 
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.HashMap;
+import net.minecraft.client.KeyMapping;
 
 public interface Keybound {
 
-    HashMap<String, KeyBinding> getKeybinds();
+    HashMap<String, KeyMapping> getKeybinds();
 
-    default void registerKeybind(String id, KeyBinding key) {
+    default void registerKeybind(String id, KeyMapping key) {
         getKeybinds().put(id, key);
     }
 
-    default KeyBinding getKeybind(String id) {
+    default KeyMapping getKeybind(String id) {
         return getKeybinds().get(id);
     }
 
@@ -21,7 +20,7 @@ public interface Keybound {
      * Gets the default keybind with the id "key", not always present
      * @return The default keybind
      */
-    default KeyBinding getKeybind() {
+    default KeyMapping getKeybind() {
         if (!getKeybinds().containsKey("key")) {
             throw new IllegalStateException("No default keybind registered for " + getId());
         }
@@ -33,8 +32,8 @@ public interface Keybound {
         return new String[] {"key"};
     }
 
-    default InputUtil.Type getDefaultType() {
-        return InputUtil.Type.KEYSYM;
+    default InputConstants.Type getDefaultType() {
+        return InputConstants.Type.KEYSYM;
     }
     default int getDefaultCode() {
         return -1;

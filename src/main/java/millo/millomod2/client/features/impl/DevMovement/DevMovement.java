@@ -6,14 +6,14 @@ import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
 
 public class DevMovement extends Feature implements Toggleable, Configurable {
     private final static DevMovement INSTANCE = new DevMovement();
@@ -49,7 +49,7 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
                 player() != null &&
                 player().isCreative() &&
                 HypercubeAPI.getHypercubeLocation() instanceof Plot plot &&
-                player().getX() < plot.getPos().getX();
+                player().getX() < plot.getPos().x();
     }
 
     public boolean isNoClipping() {
@@ -57,75 +57,75 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
     }
 
 
-    public Vec3d entityMove(Vec3d move) {
+    public Vec3 entityMove(Vec3 move) {
         if (!isEnabled()) return null;
         if (!(HypercubeAPI.getHypercubeLocation() instanceof Plot plot)) return null;
-        ClientPlayerEntity player = player();
+        LocalPlayer player = player();
 
-        Vec3d vel = player.getVelocity();
+        Vec3 vel = player.getDeltaMovement();
         double x = player.getX() + move.x;
         double y = player.getY() + move.y;
         double z = player.getZ() + move.z;
 
-        double halfWidth = player.getWidth() / 2;
+        double halfWidth = player.getBbWidth() / 2;
 
-        if (x > plot.getPos().getX() - halfWidth) return null;
+        if (x > plot.getPos().x() - halfWidth) return null;
 
-        x = Math.max(x, plot.getPos().getX() - plot.getDepth() + halfWidth);
-        z = Math.clamp(z, plot.getPos().getZ() + halfWidth, plot.getPos().getZ() + 301 - halfWidth);
+        x = Math.max(x, plot.getPos().x() - plot.getDepth() + halfWidth);
+        z = Math.clamp(z, plot.getPos().z() + halfWidth, plot.getPos().z() + 301 - halfWidth);
 
 
-        if (x == plot.getPos().getX() - plot.getDepth() + halfWidth) vel = new Vec3d(0, vel.y, vel.z);
-        if (z == plot.getPos().getZ() + halfWidth || z == plot.getPos().getZ() + 301 - halfWidth)
-            vel = new Vec3d(vel.x, vel.y, 0);
+        if (x == plot.getPos().x() - plot.getDepth() + halfWidth) vel = new Vec3(0, vel.y, vel.z);
+        if (z == plot.getPos().z() + halfWidth || z == plot.getPos().z() + 301 - halfWidth)
+            vel = new Vec3(vel.x, vel.y, 0);
 
-        if (!isNoClipping()) return new Vec3d(x, y, z);
+        if (!isNoClipping()) return new Vec3(x, y, z);
 
         double nearestFloor = Math.floor(player.getY() / 5) * 5;
         if (y < plot.getFloorHeight()) y = plot.getFloorHeight();
 
         player.setOnGround(false);
         boolean floorCollision = y < nearestFloor && !player.getAbilities().flying;
-        boolean desire = player.getPitch() > config.getInt("down_angle");
-        if (config.getBoolean("down_sneak") && !player.isSneaking()) desire = false;
+        boolean desire = player.getXRot() > config.getInt("down_angle");
+        if (config.getBoolean("down_sneak") && !player.isShiftKeyDown()) desire = false;
         if (y == plot.getFloorHeight() || (floorCollision && !desire)) {
-            vel = new Vec3d(vel.x, 0, vel.z);
+            vel = new Vec3(vel.x, 0, vel.z);
             y = nearestFloor;
             player.setOnGround(true);
         }
 
-        player.setVelocityClient(vel);
+        player.lerpMotion(vel);
 
         if (y > 256) y = 256;
 
-        return new Vec3d(x, y, z);
+        return new Vec3(x, y, z);
     }
 
 
     private int lastMovePacketTick = 0;
     private float lastYaw, lastPitch;
-    private Vec3d lastPos = Vec3d.ZERO;
+    private Vec3 lastPos = Vec3.ZERO;
 
     public boolean sendMovementPackets() {
         if (!isNoClipping()) return false;
-        ClientPlayerEntity player = player();
+        LocalPlayer player = player();
 
-        Vec3d pos = getServerPos();
+        Vec3 pos = getServerPos();
         boolean idle = lastMovePacketTick++ > 20;
         if (idle) lastMovePacketTick = 0;
         boolean moved = !lastPos.equals(pos) || idle;
 
-        float yaw = player.getYaw();
-        float pitch = player.getPitch();
+        float yaw = player.getYRot();
+        float pitch = player.getXRot();
         boolean rotated = lastYaw != yaw || lastPitch != pitch;
 
         if (moved || rotated) {
             if (moved && rotated) {
-                net().sendPacket(new PlayerMoveC2SPacket.Full(pos, yaw, pitch, false, true));
+                net().send(new ServerboundMovePlayerPacket.PosRot(pos, yaw, pitch, false, true));
             } else if (moved) {
-                net().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos, false, true));
+                net().send(new ServerboundMovePlayerPacket.Pos(pos, false, true));
             } else {
-                net().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, false, true));
+                net().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, false, true));
             }
 
             lastYaw = yaw;
@@ -137,23 +137,23 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
     }
 
 
-    private Vec3d getServerPos() {
-        ClientPlayerEntity player = player();
+    private Vec3 getServerPos() {
+        LocalPlayer player = player();
 
-        Vec3d middlePos = player.getEntityPos().add(0, 0.899500400000006, 0);
-        Box box = Box.of(middlePos, 0.68f, 1.799000800000012, 0.68f); // magic numbers from Entity.class
-        boolean insideWall = BlockPos.stream(box).anyMatch((pos) -> {
-            BlockState blockState = player.getEntityWorld().getBlockState(pos);
+        Vec3 middlePos = player.position().add(0, 0.899500400000006, 0);
+        AABB box = AABB.ofSize(middlePos, 0.68f, 1.799000800000012, 0.68f); // magic numbers from Entity.class
+        boolean insideWall = BlockPos.betweenClosedStream(box).anyMatch((pos) -> {
+            BlockState blockState = player.level().getBlockState(pos);
             return !blockState.isAir() &&
-                    VoxelShapes.matchesAnywhere(blockState.getCollisionShape(player.getEntityWorld(), pos).offset(pos), VoxelShapes.cuboid(box), BooleanBiFunction.AND);
+                    Shapes.joinIsNotEmpty(blockState.getCollisionShape(player.level(), pos).move(pos), Shapes.create(box), BooleanOp.AND);
         });
 
         if (insideWall) {
             double y = Math.floor(player.getY() / 5) * 5;
-            return new Vec3d(player.getX(), y + 2, player.getZ());
+            return new Vec3(player.getX(), y + 2, player.getZ());
         }
 
-        return new Vec3d(player.getX(), player.getY(), player.getZ());
+        return new Vec3(player.getX(), player.getY(), player.getZ());
     }
 
     public Float getOffGroundSpeed() {
@@ -165,12 +165,12 @@ public class DevMovement extends Feature implements Toggleable, Configurable {
 
     public Float getJumpVelocity() {
         if (!isEnabled() || !isNoClipping()) return null;
-        boolean desire = player().getPitch() < -config.getInt("up_angle");
+        boolean desire = player().getXRot() < -config.getInt("up_angle");
         if (!desire) return null;
         return 0.91f;
     }
 
-    public Vec3d applyMovementInput(Vec3d movementInput, float slipperiness) {
+    public Vec3 applyMovementInput(Vec3 movementInput, float slipperiness) {
         if (!config.getBoolean("ultrakill_mode")) return null;
         if (!isEnabled()) {
             ultrakill.reset();

@@ -6,9 +6,8 @@ import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -39,7 +38,7 @@ public class GuideSection {
     public GuideSection addHeader(String s) {
         searchTerms.add(s);
         content.add(target -> target.addChild(
-                TextElement.create(Text.literal(s).setStyle(Styles.HEADER.getStyle()))
+                TextElement.create(Component.literal(s).setStyle(Styles.HEADER.getStyle()))
         ));
         return this;
     }
@@ -55,7 +54,7 @@ public class GuideSection {
 
     public GuideSection addParagraph(String text) {
         searchTerms.add(text);
-        content.add(target -> target.addChild(WrappedTextElement.create(Text.literal(text))));
+        content.add(target -> target.addChild(WrappedTextElement.create(Component.literal(text))));
         return this;
     }
 
@@ -86,9 +85,9 @@ public class GuideSection {
             String binding = "Unbound";
             Feature feature = FeatureHandler.get(featureId);
             if (feature instanceof Keybound keybound) {
-                KeyBinding keybind = keybound.getKeybind(keybindId);
+                KeyMapping keybind = keybound.getKeybind(keybindId);
                 if (keybind != null && !keybind.isUnbound()) {
-                    binding = keybind.getBoundKeyLocalizedText().getString();
+                    binding = keybind.getTranslatedKeyMessage().getString();
                 }
             }
             target.addChild(GuideRichTextElement.create(List.of(
@@ -102,7 +101,7 @@ public class GuideSection {
     public GuideSection addWarning(String s) {
         searchTerms.add(s);
         content.add(target -> target.addChild(
-                WrappedTextElement.create(Text.literal(s).setStyle(Styles.SCARY.getStyle()))
+                WrappedTextElement.create(Component.literal(s).setStyle(Styles.SCARY.getStyle()))
         ));
         return this;
     }

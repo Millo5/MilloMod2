@@ -12,9 +12,9 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class WaypointMenu extends Menu {
 
@@ -33,10 +33,10 @@ public class WaypointMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(40)
                 .gap(10);
-        addDrawableChild(main);
+        addRenderableWidget(main);
 
         main.addChild(ButtonElement.create(200, 20)
-                .message(Text.literal("Help"))
+                .message(Component.literal("Help"))
                 .onPress(button -> new GuideMenu(this, "Waypoints").open())
                 .background(0x80000000)
         );
@@ -58,14 +58,14 @@ public class WaypointMenu extends Menu {
             wpButtons.addChildren(
                     ButtonElement.create(18, 14)
                             .background(0x80000000)
-                            .message(Text.literal("TP"))
+                            .message(Component.literal("TP"))
                             .onPress((button) -> waypoint.teleport()),
                     ButtonElement.create(14, 14)
                             .background(0x80ff0000)
-                            .message(Text.literal("x"))
+                            .message(Component.literal("x"))
                             .onPress((button) -> {
                                 feature.removeWaypoint(waypoint);
-                                clearAndInit();
+                                rebuildWidgets();
                             })
             );
 
@@ -76,15 +76,15 @@ public class WaypointMenu extends Menu {
         }
 
         main.addChild(ButtonElement.create(200, 20)
-                .message(Text.literal("Add Waypoint"))
+                .message(Component.literal("Add Waypoint"))
                 .onClick((click) -> {
                     if (MilloMod.player() == null) return;
                     if (click.click().button() == 1) {
-                        feature.addTemporaryWaypoint(MilloMod.player().getEntityPos());
-                        close();
+                        feature.addTemporaryWaypoint(MilloMod.player().position());
+                        onClose();
                         return;
                     }
-                    new AddWaypointMenu(this, MilloMod.player().getEntityPos()).open();
+                    new AddWaypointMenu(this, MilloMod.player().position()).open();
                 })
                 .background(0x80000000)
         );
@@ -92,6 +92,6 @@ public class WaypointMenu extends Menu {
 
     }
 
-    protected void applyBlur(DrawContext context) {}
+    protected void renderBlurredBackground(GuiGraphics context) {}
 
 }

@@ -2,9 +2,9 @@ package millo.millomod2.client.mixin.core;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.DevMovement.DevMovement;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,31 +19,31 @@ public abstract class MEntity {
     public abstract int getId();
 
     @Shadow
-    public abstract void setPosition(Vec3d pos);
+    public abstract void setPos(Vec3 pos);
 
 
     @Inject(method = "move", at = @At("HEAD"), cancellable = true)
-    private void move(MovementType type, Vec3d movement, CallbackInfo ci) {
+    private void move(MoverType type, Vec3 movement, CallbackInfo ci) {
         if (MilloMod.player() == null || MilloMod.player().getId() != this.getId()) return;
         if (!DevMovement.getInstance().isNoClipping()) return;
 
-        Vec3d pos = DevMovement.getInstance().entityMove(movement);
+        Vec3 pos = DevMovement.getInstance().entityMove(movement);
         if (pos != null) {
-            this.setPosition(pos);
+            this.setPos(pos);
             ci.cancel();
         }
     }
 
     @ModifyVariable(method = "move", at = @At("HEAD"), argsOnly = true)
-    private Vec3d modifyMoveVec(Vec3d movement) {
+    private Vec3 modifyMoveVec(Vec3 movement) {
         if (MilloMod.player() == null || MilloMod.player().getId() != this.getId()) return movement;
         if (DevMovement.getInstance().isNoClipping()) return movement;
         if (!DevMovement.getInstance().isEnabled()) return movement;
 
-        Vec3d newMovement = DevMovement.getInstance().entityMove(movement);
+        Vec3 newMovement = DevMovement.getInstance().entityMove(movement);
         if (newMovement != null) {
             var player = MilloMod.player();
-            return new Vec3d(
+            return new Vec3(
                     newMovement.x - player.getX(),
                     newMovement.y - player.getY(),
                     newMovement.z - player.getZ()

@@ -2,12 +2,12 @@ package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.world.GameMode;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import org.joml.Vector2f;
 
 public class ItemStackElement extends ClickableElement<ItemStackElement> {
@@ -16,7 +16,7 @@ public class ItemStackElement extends ClickableElement<ItemStackElement> {
     private final boolean drawOverlay;
     private final boolean hasTooltip;
 
-    public ItemStackElement(int x, int y, int width, int height, Text message, ItemStack stack, boolean drawOverlay, boolean hasTooltip) {
+    public ItemStackElement(int x, int y, int width, int height, Component message, ItemStack stack, boolean drawOverlay, boolean hasTooltip) {
         super(x, y, width, height, message);
 
         this.stack = stack;
@@ -25,23 +25,23 @@ public class ItemStackElement extends ClickableElement<ItemStackElement> {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
 
-        context.drawItem(stack, getX() - 4, getY() - 4, 0);
+        context.renderItem(stack, getX() - 4, getY() - 4, 0);
         if (drawOverlay) {
-            context.drawStackOverlay(getTextRenderer(), stack, getX(), getY(), null);
+            context.renderItemDecorations(getTextRenderer(), stack, getX(), getY(), null);
         }
 
         if (isMouseOver(mouseX, mouseY)) {
-            var pos = context.getMatrices().transformPosition(mouseX, mouseY, new Vector2f());
-            context.drawItemTooltip(getTextRenderer(), stack, (int) pos.x, (int) pos.y);
+            var pos = context.pose().transformPosition(mouseX, mouseY, new Vector2f());
+            context.setTooltipForNextFrame(getTextRenderer(), stack, (int) pos.x, (int) pos.y);
         }
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
-        ClientPlayerEntity player = MilloMod.player();
-        if (player != null && player.getGameMode() == GameMode.CREATIVE) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
+        LocalPlayer player = MilloMod.player();
+        if (player != null && player.gameMode() == GameType.CREATIVE) {
             PlayerUtil.giveItem(stack);
         }
     }

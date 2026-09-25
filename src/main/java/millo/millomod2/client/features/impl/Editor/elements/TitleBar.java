@@ -14,8 +14,8 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class TitleBar extends FlexElement<TitleBar> {
 
@@ -26,7 +26,7 @@ public class TitleBar extends FlexElement<TitleBar> {
 
     private DropDownElement currentPlotDropDown;
 
-    protected TitleBar(int x, int y, int width, int height, Text message, EditorMenu menu) {
+    protected TitleBar(int x, int y, int width, int height, Component message, EditorMenu menu) {
         super(x, y, width, height, message);
         this.menu = menu;
 
@@ -46,17 +46,17 @@ public class TitleBar extends FlexElement<TitleBar> {
         currentPlotDropDown = DropDownElement.create(100, 15)
                 .offsetY(3)
                 .background(0x33000000)
-                .message(Text.literal("No Plot Loaded"))
-                .addOption(Text.literal("Open..."), menu::openPlotSelector);
+                .message(Component.literal("No Plot Loaded"))
+                .addOption(Component.literal("Open..."), menu::openPlotSelector);
 
         if (!menu.getRecentPlots().isEmpty()) {
             currentPlotDropDown
                     .addSpacer()
-                    .addHeader(Text.literal("Recent Plots").withColor(0x33AAAAAA));
+                    .addHeader(Component.literal("Recent Plots").withColor(0x33AAAAAA));
 
             for (EditorPlot.Metadata recentPlot : menu.getRecentPlots()) {
                 currentPlotDropDown
-                    .addOption(Text.literal(recentPlot.name() + " (" + recentPlot.id() + ")"), (button) -> menu.loadPlot(recentPlot));
+                    .addOption(Component.literal(recentPlot.name() + " (" + recentPlot.id() + ")"), (button) -> menu.loadPlot(recentPlot));
             }
         }
 
@@ -71,7 +71,7 @@ public class TitleBar extends FlexElement<TitleBar> {
 
         right.addChild(
                 ButtonElement.create(60, 15)
-                        .message(Text.literal("Fetch All"))
+                        .message(Component.literal("Fetch All"))
                         .onPress(this::getAllTemplates)
         );
 
@@ -80,15 +80,15 @@ public class TitleBar extends FlexElement<TitleBar> {
 //                        .message(Text.literal("Clear"))
 //                        .onPress(menu::clear),
                 ButtonElement.create(60, 15)
-                        .message(Text.literal("Search"))
+                        .message(Component.literal("Search"))
                         .onPress(button -> menu.getMain().focusCodeBrowserSearch()),
                 ButtonElement.create(15, 15)
-                        .message(Text.literal("?"))
+                        .message(Component.literal("?"))
                         .onPress(button -> new GuideMenu(menu, "Editor").open()),
                 ButtonElement.create(15, 15)
-                        .message(Text.literal("X"))
+                        .message(Component.literal("X"))
                         .background(0xAAFF0000)
-                        .onPress(button -> menu.close())
+                        .onPress(button -> menu.onClose())
         );
 
         this.addChildren(
@@ -103,7 +103,7 @@ public class TitleBar extends FlexElement<TitleBar> {
     }
 
     public TitleBar(EditorMenu menu) {
-        this(0, 0, menu.width, 20, Text.empty(), menu);
+        this(0, 0, menu.width, 20, Component.empty(), menu);
 
         direction(ElementDirection.ROW);
         mainAlign(MainAxisAlignment.SPACE_BETWEEN);
@@ -115,13 +115,13 @@ public class TitleBar extends FlexElement<TitleBar> {
 
     public void setLoadedPlot(EditorPlot plot) {
         if (plot == null) {
-            MutableText text = Text.literal("No Plot Loaded");
+            MutableComponent text = Component.literal("No Plot Loaded");
             currentPlotDropDown.message(text);
-            currentPlotDropDown.setWidth(Math.max(100, MilloMod.MC.textRenderer.getWidth(text) + 10));
+            currentPlotDropDown.setWidth(Math.max(100, MilloMod.MC.font.width(text) + 10));
             return;
         }
-        MutableText text = Text.literal(plot.getMetadata().name() + " (" + plot.getPlotId() + ")");
+        MutableComponent text = Component.literal(plot.getMetadata().name() + " (" + plot.getPlotId() + ")");
         currentPlotDropDown.message(text);
-        currentPlotDropDown.setWidth(Math.max(150, MilloMod.MC.textRenderer.getWidth(text) + 10));
+        currentPlotDropDown.setWidth(Math.max(150, MilloMod.MC.font.width(text) + 10));
     }
 }

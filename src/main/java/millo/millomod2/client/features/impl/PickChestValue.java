@@ -7,17 +7,16 @@ import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import java.util.Iterator;
 
 
@@ -32,20 +31,20 @@ public class PickChestValue extends Feature implements Keybound, PacketEventSubs
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(ScreenHandlerSlotUpdateS2CPacket.class, this::receive);
+        eventBus.subscribeReceive(ClientboundContainerSetSlotPacket.class, this::receive);
     }
 
-    public boolean receive(ScreenHandlerSlotUpdateS2CPacket packet) {
+    public boolean receive(ClientboundContainerSetSlotPacket packet) {
         if (MilloMod.net() == null) return false;
         if (!requested) return false;
 
-        ItemStack stack = packet.getStack();
-        ContainerComponent container = stack.get(DataComponentTypes.CONTAINER);
+        ItemStack stack = packet.getItem();
+        ItemContainerContents container = stack.get(DataComponents.CONTAINER);
         if (container == null) return false;
 
         requested = false;
 
-        Iterator<ItemStack> itemIterator = container.iterateNonEmpty().iterator();
+        Iterator<ItemStack> itemIterator = container.nonEmptyItems().iterator();
         if (!itemIterator.hasNext()) return true;
         ItemStack item = itemIterator.next();
 
@@ -56,23 +55,23 @@ public class PickChestValue extends Feature implements Keybound, PacketEventSubs
 
     @Override
     public void onTick() {
-        while (getKeybind().wasPressed()) {
-            ClientPlayerEntity player = player();
-            MinecraftClient mc = MilloMod.MC;
+        while (getKeybind().consumeClick()) {
+            LocalPlayer player = player();
+            Minecraft mc = MilloMod.MC;
             if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
-            if (mc.world == null || player == null || MilloMod.net() == null) return;
-            if (!(MilloMod.MC.crosshairTarget instanceof BlockHitResult block)) return;
+            if (mc.level == null || player == null || MilloMod.net() == null) return;
+            if (!(MilloMod.MC.hitResult instanceof BlockHitResult block)) return;
             if (block.getType() != HitResult.Type.BLOCK) return;
 
             BlockPos pos = block.getBlockPos();
-            if (!(mc.world.getBlockEntity(pos) instanceof ChestBlockEntity)) return;
+            if (!(mc.level.getBlockEntity(pos) instanceof ChestBlockEntity)) return;
 
             if (MilloMod.net() == null) return;
             requested = true;
 
-            if (MilloMod.MC.interactionManager == null) return;
+            if (MilloMod.MC.gameMode == null) return;
 
-            MilloMod.MC.interactionManager.pickItemFromBlock(pos, true);
+            MilloMod.MC.gameMode.handlePickItemFromBlock(pos, true);
         }
     }
 }

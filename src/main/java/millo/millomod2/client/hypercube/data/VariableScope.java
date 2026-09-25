@@ -1,7 +1,7 @@
 package millo.millomod2.client.hypercube.data;
 
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.Style;
+import net.minecraft.network.chat.Style;
 
 public enum VariableScope {
 

@@ -1,42 +1,42 @@
 package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.model.BlockStateModel;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockFaceElement extends ClickableElement<BlockFaceElement> {
 
-    private final Sprite sprite;
+    private final TextureAtlasSprite sprite;
     private float rotation = 0;
 
     public BlockFaceElement(Identifier id, int x, int y, int width, int height) {
-        super(x, y, width, height, Text.empty());
+        super(x, y, width, height, Component.empty());
 
-        Block block = Registries.BLOCK.get(id);
-        BlockState state = block.getDefaultState();
+        Block block = BuiltInRegistries.BLOCK.getValue(id);
+        BlockState state = block.defaultBlockState();
 
-        BlockRenderManager brm = MilloMod.MC.getBlockRenderManager();
+        BlockRenderDispatcher brm = MilloMod.MC.getBlockRenderer();
 
-        BlockStateModel model = brm.getModel(state);
-        sprite = model.particleSprite();
+        BlockStateModel model = brm.getBlockModel(state);
+        sprite = model.particleIcon();
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
-        if (rotation != 0) context.getMatrices().rotate(rotation);
-        context.getMatrices().translate(-getWidth() / 2f, -getHeight() / 2f);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, getWidth(), getHeight(),0xFFFFFFFF);
-        context.getMatrices().popMatrix();
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+        context.pose().pushMatrix();
+        context.pose().translate(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
+        if (rotation != 0) context.pose().rotate(rotation);
+        context.pose().translate(-getWidth() / 2f, -getHeight() / 2f);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, getWidth(), getHeight(),0xFFFFFFFF);
+        context.pose().popMatrix();
     }
 
     public void rotate(float amount) {

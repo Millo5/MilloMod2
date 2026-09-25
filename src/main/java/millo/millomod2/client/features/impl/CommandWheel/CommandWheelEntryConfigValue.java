@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.CommandWheel;
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.config.Instantiable;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.components.AbstractWidget;
 
 public final class CommandWheelEntryConfigValue extends ConfigValue<CommandWheelEntry> implements Instantiable<CommandWheelEntryConfigValue> {
 
@@ -21,7 +21,7 @@ public final class CommandWheelEntryConfigValue extends ConfigValue<CommandWheel
     }
 
     @Override
-    public ClickableWidget createWidget() {
+    public AbstractWidget createWidget() {
         return TextElement.create(getValue().name + "; " + getValue().command);
     }
 

@@ -9,8 +9,7 @@ import millo.millomod2.menu.elements.TextFieldElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -29,16 +28,16 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     private boolean active = false;
 
     public SearchBar(int width, int height, CodeBrowser browser) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.browser = browser;
 
         mainAlign(MainAxisAlignment.CENTER);
         crossAlign(CrossAxisAlignment.CENTER);
 
-        searchField = new TextFieldElement(width, 16, Text.literal(""));
-        searchField.setPlaceholder(Text.literal("Search...").setStyle(Styles.COMMENT.getStyle()));
+        searchField = new TextFieldElement(width, 16, Component.literal(""));
+        searchField.setHint(Component.literal("Search...").setStyle(Styles.COMMENT.getStyle()));
         searchField.setMaxLength(1000);
-        searchField.setChangedListener((value) -> {
+        searchField.setResponder((value) -> {
             searchQuery = value;
             search();
         });
@@ -65,7 +64,7 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     public void setActive(boolean active) {
         this.active = active;
         if (!active) {
-            searchField.setText("");
+            searchField.setValue("");
             searchQuery = "";
             search();
         }
@@ -78,8 +77,8 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     }
 
     public void focus() {
-        if (MilloMod.MC.currentScreen == null) return;
-        MilloMod.MC.currentScreen.setFocused(searchField);
+        if (MilloMod.MC.screen == null) return;
+        MilloMod.MC.screen.setFocused(searchField);
     }
 
     public ArrayList<SearchResult> getCurrentResults() {

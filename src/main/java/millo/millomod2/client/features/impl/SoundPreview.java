@@ -14,13 +14,13 @@ import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.KeyUtil;
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -34,21 +34,21 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
     private final ArrayList<SoundInstance> previewQueue = new ArrayList<>();
 
     @Override
-    public <T extends ScreenHandler> void containerInit(HandledScreen<T> handledScreen, CallbackInfo ci) {
+    public <T extends AbstractContainerMenu> void containerInit(AbstractContainerScreen<T> handledScreen, CallbackInfo ci) {
         if (!isEnabled()) return;
 
-        if (!(handledScreen.getScreenHandler() instanceof GenericContainerScreenHandler containerHandler)) return;
-        if (!(containerHandler.getInventory() instanceof SimpleInventory)) return;
+        if (!(handledScreen.getMenu() instanceof ChestMenu containerHandler)) return;
+        if (!(containerHandler.getContainer() instanceof SimpleContainer)) return;
 
         HandledScreenAccessor hsAccessor = (HandledScreenAccessor) handledScreen;
 
         ButtonElement button = ButtonElement.create(20, 20)
-                .message(Text.of("P"))
+                .message(Component.nullToEmpty("P"))
                 .muted()
                 .position(hsAccessor.getX() + hsAccessor.getBackgroundWidth() + 5, hsAccessor.getY())
                 .background(0xffffffff)
                 .onPress((b) -> {
-                    Inventory inv = containerHandler.getInventory();
+                    Container inv = containerHandler.getContainer();
 
                     int delay = 0;
 
@@ -64,8 +64,8 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
                     }
 
                     int currentDelay = 0;
-                    for (int i = 0; i < inv.size(); i++) {
-                        ItemStack itemStack = inv.getStack(i);
+                    for (int i = 0; i < inv.getContainerSize(); i++) {
+                        ItemStack itemStack = inv.getItem(i);
                         if (itemStack.isEmpty()) continue;
 
                         try {

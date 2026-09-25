@@ -3,8 +3,8 @@ package millo.millomod2.client.features.impl.Editor.elements.codeline.segments.s
 import millo.millomod2.client.hypercube.model.arguments.VariableArgumentModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class VariableArgumentSegment extends SimpleSegment<VariableArgumentModel> {
 
@@ -16,8 +16,8 @@ public class VariableArgumentSegment extends SimpleSegment<VariableArgumentModel
 
     @Override
     TextElement createContent(VariableArgumentModel model) {
-        MutableText name = Text.literal(model.getName()).setStyle(Styles.VAR.getStyle())
-                .append(Text.literal("°").setStyle(model.getScope().getStyle()));
+        MutableComponent name = Component.literal(model.getName()).setStyle(Styles.VAR.getStyle())
+                .append(Component.literal("°").setStyle(model.getScope().getStyle()));
 
         String cmd = "var " + model.getName() + switch (model.getScope()) {
             case SAVED -> " -s";
@@ -27,7 +27,7 @@ public class VariableArgumentSegment extends SimpleSegment<VariableArgumentModel
         };
 
         return new SimpleArgumentBuilder(name)
-                .tooltip(Text.literal(model.getScope().name()).setStyle(model.getScope().getStyle()))
+                .tooltip(Component.literal(model.getScope().name()).setStyle(model.getScope().getStyle()))
                 .onClickCmd(cmd)
                 .build();
     }

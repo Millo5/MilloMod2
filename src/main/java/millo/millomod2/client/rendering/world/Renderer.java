@@ -7,24 +7,24 @@ import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import millo.millomod2.client.MilloMod;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.MappableRingBuffer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BuiltBuffer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.state.WorldRenderState;
-import net.minecraft.client.util.BufferAllocator;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MappableRingBuffer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -35,7 +35,7 @@ public class Renderer {
 
     private static long lastFrame;
     private final float tickDelta;
-    private final Quaternionf flipX = RotationAxis.POSITIVE_X.rotationDegrees(180);
+    private final Quaternionf flipX = Axis.XP.rotationDegrees(180);
     private final WorldRenderContext context;
 
     public Renderer(WorldRenderContext context) {
@@ -50,7 +50,7 @@ public class Renderer {
         return tickDelta;
     }
 
-    public WorldRenderState getRenderState() {
+    public LevelRenderState getRenderState() {
         return context.worldState();
     }
 
@@ -59,49 +59,49 @@ public class Renderer {
     }
 
     public void cube(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color color) {
-        MatrixStack matrices = context.matrices();
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        matrices.push();
+        PoseStack matrices = context.matrices();
+        Vec3 camera = context.worldState().cameraRenderState.pos;
+        matrices.pushPose();
         matrices.translate(-camera.x, -camera.y, -camera.z);
         prepareBuffer(FILLED_THROUGH_WALLS);
-        renderFilledBox(matrices.peek().getPositionMatrix(),
+        renderFilledBox(matrices.last().pose(),
                 buffer,
                 (float) minX, (float) minY, (float) minZ,
                 (float) maxX, (float) maxY, (float) maxZ,
                 color.r(), color.g(), color.b(), color.a());
-        matrices.pop();
+        matrices.popPose();
 
         drawFilledThroughWalls(MilloMod.MC, FILLED_THROUGH_WALLS);
     }
 
-    public void text(Text text, Vec3d pos, float scale, int background, int outline) {
-        MatrixStack matrices = context.matrices();
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        matrices.push();
+    public void text(Component text, Vec3 pos, float scale, int background, int outline) {
+        PoseStack matrices = context.matrices();
+        Vec3 camera = context.worldState().cameraRenderState.pos;
+        matrices.pushPose();
         matrices.translate(pos.x-camera.x, pos.y-camera.y, pos.z-camera.z);
-        matrices.multiply(context.worldState().cameraRenderState.orientation);
-        matrices.multiply(flipX);
+        matrices.mulPose(context.worldState().cameraRenderState.orientation);
+        matrices.mulPose(flipX);
         final float s = scale * 0.02f;
         matrices.scale(s, s, s);
         context.commandQueue().submitText(matrices,
-                -MilloMod.MC.textRenderer.getWidth(text) / 2f,
+                -MilloMod.MC.font.width(text) / 2f,
                 -8,
-                text.asOrderedText(), true,
-                TextRenderer.TextLayerType.SEE_THROUGH, 15,
+                text.getVisualOrderText(), true,
+                Font.DisplayMode.SEE_THROUGH, 15,
                 0xffffffff, background, outline
         );
-        matrices.pop();
+        matrices.popPose();
     }
 
 
     // From https://docs.fabricmc.net/develop/rendering/world
-    private static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
-            .withLocation(Identifier.of("millomod/filled_through_walls"))
+    private static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+            .withLocation(Identifier.parse("millomod/filled_through_walls"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .build()
     );
 
-    private static final BufferAllocator allocator = new BufferAllocator(RenderLayer.field_64009);
+    private static final ByteBufferBuilder allocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
     private static MappableRingBuffer vertexBuffer;
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);
     private static final Vector3f MODEL_OFFSET = new Vector3f();
@@ -113,9 +113,9 @@ public class Renderer {
         if (buffer == null) buffer = new BufferBuilder(allocator, pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
     }
 
-    private void drawFilledThroughWalls(MinecraftClient client, RenderPipeline pipeline) {
-        BuiltBuffer builtBuffer = buffer.end();
-        BuiltBuffer.DrawParameters drawParameters = builtBuffer.getDrawParameters();
+    private void drawFilledThroughWalls(Minecraft client, RenderPipeline pipeline) {
+        MeshData builtBuffer = buffer.buildOrThrow();
+        MeshData.DrawState drawParameters = builtBuffer.drawState();
         VertexFormat format = drawParameters.format();
 
         GpuBuffer vertices = upload(drawParameters, format, builtBuffer);
@@ -127,7 +127,7 @@ public class Renderer {
         buffer = null;
     }
 
-    private static GpuBuffer upload(BuiltBuffer.DrawParameters drawParameters, VertexFormat format, BuiltBuffer builtBuffer) {
+    private static GpuBuffer upload(MeshData.DrawState drawParameters, VertexFormat format, MeshData builtBuffer) {
         int vertexBufferSize = drawParameters.vertexCount() * format.getVertexSize();
 
         if (vertexBuffer == null || vertexBuffer.size() < vertexBufferSize) {
@@ -141,37 +141,37 @@ public class Renderer {
         // Copy vertex data into the vertex buffer
         CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
 
-        try (GpuBuffer.MappedView mappedView = commandEncoder.mapBuffer(vertexBuffer.getBlocking().slice(0, builtBuffer.getBuffer().remaining()), false, true)) {
-            MemoryUtil.memCopy(builtBuffer.getBuffer(), mappedView.data());
+        try (GpuBuffer.MappedView mappedView = commandEncoder.mapBuffer(vertexBuffer.currentBuffer().slice(0, builtBuffer.vertexBuffer().remaining()), false, true)) {
+            MemoryUtil.memCopy(builtBuffer.vertexBuffer(), mappedView.data());
         }
 
-        return vertexBuffer.getBlocking();
+        return vertexBuffer.currentBuffer();
     }
 
 
-    private static void draw(MinecraftClient client, RenderPipeline pipeline, BuiltBuffer builtBuffer, BuiltBuffer.DrawParameters drawParameters, GpuBuffer vertices, VertexFormat format) {
+    private static void draw(Minecraft client, RenderPipeline pipeline, MeshData builtBuffer, MeshData.DrawState drawParameters, GpuBuffer vertices, VertexFormat format) {
         GpuBuffer indices;
         VertexFormat.IndexType indexType;
 
-        if (pipeline.getVertexFormatMode() == VertexFormat.DrawMode.QUADS) {
+        if (pipeline.getVertexFormatMode() == VertexFormat.Mode.QUADS) {
             // Sort the quads if there is translucency
-            builtBuffer.sortQuads(allocator, RenderSystem.getProjectionType().getVertexSorter());
+            builtBuffer.sortQuads(allocator, RenderSystem.getProjectionType().vertexSorting());
             // Upload the index buffer
-            indices = pipeline.getVertexFormat().uploadImmediateIndexBuffer(builtBuffer.getSortedBuffer());
-            indexType = builtBuffer.getDrawParameters().indexType();
+            indices = pipeline.getVertexFormat().uploadImmediateIndexBuffer(builtBuffer.indexBuffer());
+            indexType = builtBuffer.drawState().indexType();
         } else {
             // Use the general shape index buffer for non-quad draw modes
-            RenderSystem.ShapeIndexBuffer shapeIndexBuffer = RenderSystem.getSequentialBuffer(pipeline.getVertexFormatMode());
-            indices = shapeIndexBuffer.getIndexBuffer(drawParameters.indexCount());
-            indexType = shapeIndexBuffer.getIndexType();
+            RenderSystem.AutoStorageIndexBuffer shapeIndexBuffer = RenderSystem.getSequentialBuffer(pipeline.getVertexFormatMode());
+            indices = shapeIndexBuffer.getBuffer(drawParameters.indexCount());
+            indexType = shapeIndexBuffer.type();
         }
 
         // Actually execute the draw
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms()
-                .write(RenderSystem.getModelViewMatrix(), COLOR_MODULATOR, MODEL_OFFSET, TEXTURE_MATRIX);
+                .writeTransform(RenderSystem.getModelViewMatrix(), COLOR_MODULATOR, MODEL_OFFSET, TEXTURE_MATRIX);
         try (RenderPass renderPass = RenderSystem.getDevice()
                 .createCommandEncoder()
-                .createRenderPass(() -> MilloMod.MOD_ID + " render pipeline rendering", client.getFramebuffer().getColorAttachmentView(), OptionalInt.empty(), client.getFramebuffer().getDepthAttachmentView(), OptionalDouble.empty())) {
+                .createRenderPass(() -> MilloMod.MOD_ID + " render pipeline rendering", client.getMainRenderTarget().getColorTextureView(), OptionalInt.empty(), client.getMainRenderTarget().getDepthTextureView(), OptionalDouble.empty())) {
             renderPass.setPipeline(pipeline);
 
             RenderSystem.bindDefaultUniforms(renderPass);
@@ -204,40 +204,40 @@ public class Renderer {
 
     private void renderFilledBox(Matrix4fc positionMatrix, BufferBuilder buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float red, float green, float blue, float alpha) {
         // Front Face
-        buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);
 
         // Back face
-        buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);
 
         // Left face
-        buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, minZ).setColor(red, green, blue, alpha);
 
         // Right face
-        buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);
 
         // Top face
-        buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, maxY, minZ).setColor(red, green, blue, alpha);
 
         // Bottom face
-        buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
-        buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, minZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);
+        buffer.addVertex(positionMatrix, minX, minY, maxZ).setColor(red, green, blue, alpha);
     }
 
     public float lerp(float start, float end, float t) {

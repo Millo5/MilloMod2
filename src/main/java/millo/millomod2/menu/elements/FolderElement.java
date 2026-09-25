@@ -1,22 +1,22 @@
 package millo.millomod2.menu.elements;
 
 import millo.millomod2.menu.ContainerElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.joml.Matrix3x2fStack;
 
 public class FolderElement extends ContainerElement<FolderElement> {
 
     private boolean opened = false;
-    private final Text title;
+    private final Component title;
     private final ListElement contentList;
 
     private int maxHeightWhenOpened = 24;
 
-    public FolderElement(int x, int y, int width, int height, Text title) {
-        super(x, y, width, height, Text.empty());
+    public FolderElement(int x, int y, int width, int height, Component title) {
+        super(x, y, width, height, Component.empty());
         this.title = title;
         contentList = ListElement.create(width, 12)
                 .gap(4)
@@ -27,7 +27,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
         maxHeightWhenOpened = height;
     }
 
-    public static FolderElement create(int width, int height, Text title) {
+    public static FolderElement create(int width, int height, Component title) {
         return new FolderElement(0, 0, width, height, title)
                 .background(0x40000000);
     }
@@ -57,18 +57,18 @@ public class FolderElement extends ContainerElement<FolderElement> {
     protected void renderElement(RenderArgs args) {
         args.context().fill(0, 0, getWidth(), getHeight(), background);
 
-        args.context().drawText(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
+        args.context().drawString(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
 
         float targetHeight = opened ? Math.min(maxHeightWhenOpened, contentList.getHeight() + 12) : 12;
 
-        Matrix3x2fStack mats = args.context().getMatrices();
+        Matrix3x2fStack mats = args.context().pose();
         mats.pushMatrix();
         mats.rotateAbout((contentList.getHeight() / visualHeight) * 1.570796f, 9f, 5);
-        args.context().drawText(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
+        args.context().drawString(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
         mats.popMatrix();
 
 //        visualHeight += (targetHeight - visualHeight) * 0.2f;
-        visualHeight = MathHelper.clampedLerp(args.deltaTicks(), visualHeight, targetHeight);
+        visualHeight = Mth.clampedLerp(args.deltaTicks(), visualHeight, targetHeight);
         setHeight(Math.round(visualHeight));
 
         renderChildren(args);
@@ -76,7 +76,7 @@ public class FolderElement extends ContainerElement<FolderElement> {
 
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!active || !visible) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
 
@@ -89,12 +89,12 @@ public class FolderElement extends ContainerElement<FolderElement> {
 
 
     @Override
-    public void addChild(ClickableWidget child) {
+    public void addChild(AbstractWidget child) {
         contentList.addChild(child);
     }
 
     
-    public Text getTitle() {
+    public Component getTitle() {
         return title;
     }
 

@@ -12,13 +12,13 @@ import millo.millomod2.client.menus.AddWaypointMenu;
 import millo.millomod2.client.menus.WaypointMenu;
 import millo.millomod2.client.util.PlayerUtil;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandBuildContext;
 
 public class CommandWaypoint extends Command {
 
     @Override
-    public void register(MinecraftClient instance, CommandDispatcher<FabricClientCommandSource> cd, CommandRegistryAccess context) {
+    public void register(Minecraft instance, CommandDispatcher<FabricClientCommandSource> cd, CommandBuildContext context) {
         LiteralArgumentBuilder<FabricClientCommandSource> cmdb = Arg.literal("waypoint")
                 .executes(ctx -> {
                     new WaypointMenu(null).open();
@@ -27,13 +27,13 @@ public class CommandWaypoint extends Command {
                 .then(Arg.literal("new")
                         .executes(ctx -> {
                             if (instance.player == null) return 1;
-                            new AddWaypointMenu(null, instance.player.getEntityPos()).open();
+                            new AddWaypointMenu(null, instance.player.position()).open();
                             return 1;
                         })
                         .then(Arg.argument("name", StringArgumentType.greedyString())
                                 .executes(ctx -> {
                                     if (instance.player == null) return 1;
-                                    var menu = new AddWaypointMenu(null, instance.player.getEntityPos(), StringArgumentType.getString(ctx, "name"));
+                                    var menu = new AddWaypointMenu(null, instance.player.position(), StringArgumentType.getString(ctx, "name"));
                                     menu.open();
                                     return 1;
                                 })

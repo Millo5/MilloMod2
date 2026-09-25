@@ -4,6 +4,7 @@
   "package": "millo.millomod2.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "core.KeyMappingAccessor",
     "core.MClientPlayerInteractionManager",
     "core.MMouse",
     "network.MClientCommonNetworkHandler",

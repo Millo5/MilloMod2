@@ -15,19 +15,18 @@ import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import java.util.regex.Pattern;
 
 public class Editor extends Feature implements Keybound, Configurable, PacketEventSubscriber {
@@ -61,7 +60,7 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
 
     @Override
     public void onTick() {
-        while (getKeybind().wasPressed()) {
+        while (getKeybind().consumeClick()) {
             onKeyPress();
         }
 
@@ -72,7 +71,7 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
                 // all shulkers have been received.
                 fetchingAllTemplates = false;
                 waitForShulkers = 0;
-                player().sendMessage(Text.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()), false);
+                player().displayClientMessage(Component.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()), false);
                 screen.getMain().getHierarchy().reload();
             }
         }
@@ -80,25 +79,25 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(ScreenHandlerSlotUpdateS2CPacket.class, this::slotUpdate);
+        eventBus.subscribeReceive(ClientboundContainerSetSlotPacket.class, this::slotUpdate);
     }
 
-    public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
+    public boolean slotUpdate(ClientboundContainerSetSlotPacket packet) {
         if (fetchingAllTemplates) {
-            extractShulkerbox(packet.getStack());
+            extractShulkerbox(packet.getItem());
             return false;
         }
         return legacy.slotUpdate(packet);
     }
 
     private boolean extractShulkerbox(ItemStack item) {
-        ComponentMap shulkerComponents = item.getComponents();
+        DataComponentMap shulkerComponents = item.getComponents();
         if (shulkerComponents == null) return false;
 
-        ContainerComponent containerComponent = shulkerComponents.get(DataComponentTypes.CONTAINER);
+        ItemContainerContents containerComponent = shulkerComponents.get(DataComponents.CONTAINER);
         if (containerComponent == null) return false;
 
-        for (ItemStack itemStack : containerComponent.iterateNonEmpty()) {
+        for (ItemStack itemStack : containerComponent.nonEmptyItems()) {
 
             String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
             if (codeTemplateData == null) continue;
@@ -117,14 +116,14 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
         openEditor();
 
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
-        if (MilloMod.MC.world == null || player() == null || net() == null) return;
-        if (!(MilloMod.MC.crosshairTarget instanceof BlockHitResult hit)) return;
+        if (MilloMod.MC.level == null || player() == null || net() == null) return;
+        if (!(MilloMod.MC.hitResult instanceof BlockHitResult hit)) return;
         if (hit.getType() != HitResult.Type.BLOCK) return;
 
         BlockPos pos = hit.getBlockPos();
-        if (MilloMod.MC.world.getBlockEntity(pos) instanceof SignBlockEntity) pos = pos.add(1, 0, 0);
-        Block block = MilloMod.MC.world.getBlockState(pos).getBlock();
-        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold|netherite)_block").matcher(Registries.BLOCK.getId(block).toString()).matches()) return;
+        if (MilloMod.MC.level.getBlockEntity(pos) instanceof SignBlockEntity) pos = pos.offset(1, 0, 0);
+        Block block = MilloMod.MC.level.getBlockState(pos).getBlock();
+        if (!Pattern.compile("minecraft:(diamond|emerald|lapis|gold|netherite)_block").matcher(BuiltInRegistries.BLOCK.getKey(block).toString()).matches()) return;
 
 
         legacy.getMethodFromPosition(pos, player(), net(), (template) -> {
@@ -143,7 +142,7 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
     }
 
     public void openEditor() {
-        MC.send(() -> {
+        MC.schedule(() -> {
             screen = new EditorMenu(null);
             MC.setScreen(screen);
         });
@@ -157,14 +156,14 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
             return;
         }
 
-        player().sendMessage(Text.literal("Fetching all templates...").setStyle(Styles.ANY.getStyle()), false);
+        player().displayClientMessage(Component.literal("Fetching all templates...").setStyle(Styles.ANY.getStyle()), false);
         fetchingAllTemplates = true;
         waitForShulkers = 0;
         PlayerUtil.sendCommand("p totemplate");
     }
 
     public void abort() {
-        player().sendMessage(Text.literal("Aborting template fetching...").setStyle(Styles.SCARY.getStyle()), false);
+        player().displayClientMessage(Component.literal("Aborting template fetching...").setStyle(Styles.SCARY.getStyle()), false);
 
         fetchingAllTemplates = false;
         waitForShulkers = 0;

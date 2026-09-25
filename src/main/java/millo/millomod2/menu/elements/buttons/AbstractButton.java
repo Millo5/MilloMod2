@@ -2,19 +2,19 @@ package millo.millomod2.menu.elements.buttons;
 
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.Alignment;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public abstract class AbstractButton<T extends AbstractButton<T>> extends ClickableElement<T> {
 
     private int hoverBackgroundColor = -1;
-    private Alignment textAlignment = Alignment.CENTER;
+    private TextAlignment textAlignment = TextAlignment.CENTER;
     private boolean muted = false;
 
-    public AbstractButton(int x, int y, int width, int height, Text message) {
+    public AbstractButton(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
@@ -22,8 +22,8 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        if (!this.isInteractable()) return false;
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+        if (!this.isActive()) return false;
 //        if (!this.isValidClickButton(click.buttonInfo())) return false;
 
         if (isMouseOver(click.x(), click.y())) {
@@ -37,7 +37,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         boolean hovered = isMouseOver(mouseX, mouseY);
 
         int background = this.background;
@@ -47,17 +47,17 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
 
         int textX = switch (textAlignment) {
             case LEFT -> getX() + 4;
-            case RIGHT -> getX() + getWidth() - 4 - MinecraftClient.getInstance().textRenderer.getWidth(getMessage());
-            case CENTER -> getX() + (getWidth() - MinecraftClient.getInstance().textRenderer.getWidth(getMessage())) / 2;
+            case RIGHT -> getX() + getWidth() - 4 - Minecraft.getInstance().font.width(getMessage());
+            case CENTER -> getX() + (getWidth() - Minecraft.getInstance().font.width(getMessage())) / 2;
         };
-        context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), textX, getY() + (getHeight() - 8) / 2, getTextColor(), true);
+        context.drawString(Minecraft.getInstance().font, getMessage(), textX, getY() + (getHeight() - 8) / 2, getTextColor(), true);
     }
 
     protected int getTextColor() {
         return isHovered() ? 0xFFFFFFAA : 0xFFFFFFFF;
     }
 
-    public T message(Text message) {
+    public T message(Component message) {
         setMessage(message);
         return self();
     }
@@ -77,7 +77,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         return self();
     }
 
-    public T textAlignment(Alignment alignment) {
+    public T textAlignment(TextAlignment alignment) {
         this.textAlignment = alignment;
         return self();
     }

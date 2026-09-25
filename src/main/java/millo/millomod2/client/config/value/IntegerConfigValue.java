@@ -2,8 +2,8 @@ package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.menu.elements.TextFieldElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 
 public class IntegerConfigValue extends ConfigValue<Integer> {
 
@@ -12,9 +12,9 @@ public class IntegerConfigValue extends ConfigValue<Integer> {
     }
 
     @Override
-    public ClickableWidget createWidget() {
-        TextFieldElement element = new TextFieldElement(150, 20, Text.literal(String.valueOf(value)));
-        element.setChangedListener((str) -> {
+    public AbstractWidget createWidget() {
+        TextFieldElement element = new TextFieldElement(150, 20, Component.literal(String.valueOf(value)));
+        element.setResponder((str) -> {
             try {
                 setValue(Integer.parseInt(str));
             } catch (NumberFormatException e) {

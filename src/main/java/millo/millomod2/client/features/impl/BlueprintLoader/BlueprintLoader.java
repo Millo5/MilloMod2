@@ -5,10 +5,9 @@ import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.NbtUtil;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -85,40 +84,40 @@ public class BlueprintLoader extends Feature {
             byte[] blockData = in.readNBytes(blockDataLength);
             DataInputStream blockDataStream = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(blockData)));
 
-            NbtCompound blockDataTag = NbtUtil.read(blockDataStream);
+            CompoundTag blockDataTag = NbtUtil.read(blockDataStream);
 
             blockDataStream.close();
             in.close();
-            NbtList blockRegions = blockDataTag.getList("BlockRegion").orElseThrow();
+            ListTag blockRegions = blockDataTag.getList("BlockRegion").orElseThrow();
             int minX = Integer.MAX_VALUE;
             int minY = Integer.MAX_VALUE;
             int minZ = Integer.MAX_VALUE;
             int maxX = Integer.MIN_VALUE;
             int maxY = Integer.MIN_VALUE;
             int maxZ = Integer.MIN_VALUE;
-            for (NbtElement tag : blockRegions) {
-                NbtCompound region = (NbtCompound) tag;
-                minX = Math.min(minX, region.getInt("X", 0));
-                minY = Math.min(minY, region.getInt("Y", 0));
-                minZ = Math.min(minZ, region.getInt("Z", 0));
-                maxX = Math.max(maxX, region.getInt("X", 0));
-                maxY = Math.max(maxY, region.getInt("Y", 0));
-                maxZ = Math.max(maxZ, region.getInt("Z", 0));
+            for (Tag tag : blockRegions) {
+                CompoundTag region = (CompoundTag) tag;
+                minX = Math.min(minX, region.getIntOr("X", 0));
+                minY = Math.min(minY, region.getIntOr("Y", 0));
+                minZ = Math.min(minZ, region.getIntOr("Z", 0));
+                maxX = Math.max(maxX, region.getIntOr("X", 0));
+                maxY = Math.max(maxY, region.getIntOr("Y", 0));
+                maxZ = Math.max(maxZ, region.getIntOr("Z", 0));
             }
             int[] size = {(maxX - minX + 1) * 16, (maxY - minY + 1) * 16, (maxZ - minZ + 1) * 16};
-            int dataVersion =  blockDataTag.getInt("DataVersion", -1);
+            int dataVersion =  blockDataTag.getIntOr("DataVersion", -1);
             Schematic.Builder builder = new Schematic.Builder(file, dataVersion, size);
-            for (NbtElement tag : blockRegions) {
-                NbtCompound region = (NbtCompound) tag;
-                NbtCompound blockStatesTag = region.getCompound("BlockStates").orElseThrow();
-                NbtList paletteTag = blockStatesTag.getList("palette").orElseThrow();
+            for (Tag tag : blockRegions) {
+                CompoundTag region = (CompoundTag) tag;
+                CompoundTag blockStatesTag = region.getCompound("BlockStates").orElseThrow();
+                ListTag paletteTag = blockStatesTag.getList("palette").orElseThrow();
                 String[] palette = new String[paletteTag.size()];
                 for (int i = 0; i < palette.length; i++)
-                    palette[i] = NbtUtil.convertToBlockString((NbtCompound) paletteTag.get(i));
+                    palette[i] = NbtUtil.convertToBlockString((CompoundTag) paletteTag.get(i));
                 long[] data = palette.length == 1 ? new long[256] : blockStatesTag.getLongArray("data").orElseThrow();
-                int regionX = region.getInt("X", 0) - minX;
-                int regionY = region.getInt("Y", 0) - minY;
-                int regionZ = region.getInt("Z", 0) - minZ;
+                int regionX = region.getIntOr("X", 0) - minX;
+                int regionY = region.getIntOr("Y", 0) - minY;
+                int regionZ = region.getIntOr("Z", 0) - minZ;
                 int[] blockStateData = new int[4096];
                 int bitsPerValue = Math.max(4, Integer.SIZE - Integer.numberOfLeadingZeros(palette.length - 1));
                 int valuesPerLong = Long.SIZE / bitsPerValue;

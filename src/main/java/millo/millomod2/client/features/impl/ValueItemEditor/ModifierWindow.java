@@ -7,14 +7,14 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class ModifierWindow {
 
-    protected abstract ClickableWidget getElement();
+    protected abstract AbstractWidget getElement();
     protected abstract String getTitle();
-    protected abstract ClickableWidget getDefaultFocus();
+    protected abstract AbstractWidget getDefaultFocus();
 
     public abstract void applyToItem(ItemStack stack);
 
@@ -37,7 +37,7 @@ public abstract class ModifierWindow {
         return listElement;
     }
 
-    protected ClickableWidget encase(ListElement parent, String label, ClickableWidget widget) {
+    protected AbstractWidget encase(ListElement parent, String label, AbstractWidget widget) {
         FlexElement<? extends FlexElement<?>> flex = FlexElement.create(parent.getWidth(), widget.getHeight())
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .mainAlign(MainAxisAlignment.SPACE_BETWEEN)

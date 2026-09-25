@@ -2,9 +2,8 @@ package millo.millomod2.menu.elements.flex;
 
 import millo.millomod2.menu.AbsoluteElement;
 import millo.millomod2.menu.ContainerElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,14 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
     private int padding = 0;
     private int gap = 0;
 
-    private final Map<ClickableWidget, Integer> growMap = new HashMap<>();
+    private final Map<AbstractWidget, Integer> growMap = new HashMap<>();
 
-    protected FlexElement(int x, int y, int width, int height, Text message) {
+    protected FlexElement(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
     public static FlexElement<?> create(int width, int height) {
-        return new FlexElement<>(0, 0, width, height, Text.empty());
+        return new FlexElement<>(0, 0, width, height, Component.empty());
     }
 
     protected T self() {
@@ -59,7 +58,7 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
         return self();
     }
 
-    public T grow(ClickableWidget child, int factor) {
+    public T grow(AbstractWidget child, int factor) {
         growMap.put(child, factor);
         return self();
     }
@@ -68,7 +67,7 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
 
     @Override
     public void layoutChildren() {
-        List<ClickableWidget> children = getChildren();
+        List<AbstractWidget> children = getChildren();
         if (children.isEmpty()) return;
 
         int contentX = padding;
@@ -80,7 +79,7 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
 
         int totalMainSize = 0;
         int totalGrow = 0;
-        for (ClickableWidget child : children) {
+        for (AbstractWidget child : children) {
             if (child instanceof AbsoluteElement) continue; // Skip absolute elements
             totalMainSize += row ? child.getWidth() : child.getHeight();
             totalGrow += growMap.getOrDefault(child, 0);
@@ -102,7 +101,7 @@ public class FlexElement<T extends FlexElement<T>> extends ContainerElement<T> {
             default -> cursor = 0;
         }
 
-        for (ClickableWidget child : children) {
+        for (AbstractWidget child : children) {
             if (child instanceof AbsoluteElement absolute) {
                 // Position absolute elements at their current position + padding
                 child.setPosition(contentX + absolute.getAbsoluteX(), contentY + absolute.getAbsoluteY());

@@ -1,9 +1,9 @@
 package millo.millomod2.client.mixin.render.accessors;
 
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Screen.class)
 public interface ScreenAccessor {
 
-    @Invoker("addSelectableChild")
-    <T extends Element & Selectable> T iAddSelectableChild(T child);
+    @Invoker("addWidget")
+    <T extends GuiEventListener & NarratableEntry> T iAddSelectableChild(T child);
 
-    @Invoker("addDrawableChild")
-    <T extends Element & Drawable & Selectable> T iAddDrawableChild(T drawableElement);
+    @Invoker("addRenderableWidget")
+    <T extends GuiEventListener & Renderable & NarratableEntry> T iAddDrawableChild(T drawableElement);
 
-    @Invoker("remove")
-    void iRemove(Element child);
+    @Invoker("removeWidget")
+    void iRemove(GuiEventListener child);
 
     @Accessor("width")
     int getWidth();

@@ -1,21 +1,20 @@
 package millo.millomod2.menu.elements.buttons;
 
-import net.minecraft.client.gui.Click;
-import net.minecraft.text.Text;
-
 import java.util.function.Consumer;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public class ButtonElement extends AbstractButton<ButtonElement> {
 
     private Consumer<ButtonElement> onPress;
     private Consumer<ClickInfo> onClick;
 
-    protected ButtonElement(int x, int y, int width, int height, Text message) {
+    protected ButtonElement(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
     public static ButtonElement create(int width, int height) {
-        return new ButtonElement(0, 0, width, height, Text.empty());
+        return new ButtonElement(0, 0, width, height, Component.empty());
     }
 
     protected ButtonElement self() {
@@ -23,7 +22,7 @@ public class ButtonElement extends AbstractButton<ButtonElement> {
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         if (onClick != null) {
             onClick.accept(new ClickInfo(click, doubled));
         }
@@ -42,5 +41,5 @@ public class ButtonElement extends AbstractButton<ButtonElement> {
         return this;
     }
 
-    public record ClickInfo(Click click, boolean doubled) { }
+    public record ClickInfo(MouseButtonEvent click, boolean doubled) { }
 }

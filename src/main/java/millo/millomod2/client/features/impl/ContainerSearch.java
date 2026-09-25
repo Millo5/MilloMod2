@@ -9,24 +9,24 @@ import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
 import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 
 public class ContainerSearch extends Feature implements Toggleable, Configurable, ContainerMod {
-    private TextFieldWidget searchBox;
+    private EditBox searchBox;
 
     private int xOffset, yOffset;
 
@@ -46,24 +46,24 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public <T extends ScreenHandler> void containerInit(HandledScreen<T> handledScreen, CallbackInfo ci) {
+    public <T extends AbstractContainerMenu> void containerInit(AbstractContainerScreen<T> handledScreen, CallbackInfo ci) {
         searchBox = null;
         if (!isEnabled()) return;
 
-        if (!(handledScreen.getScreenHandler() instanceof GenericContainerScreenHandler containerHandler)) return;
-        if (!(containerHandler.getInventory() instanceof SimpleInventory)) return;
+        if (!(handledScreen.getMenu() instanceof ChestMenu containerHandler)) return;
+        if (!(containerHandler.getContainer() instanceof SimpleContainer)) return;
 
         ScreenAccessor screen = (ScreenAccessor) handledScreen;
         HandledScreenAccessor container = (HandledScreenAccessor) handledScreen;
 
         int searchBoxWidth = 96;
-        searchBox = new TextFieldWidget(MilloMod.MC.textRenderer,
+        searchBox = new EditBox(MilloMod.MC.font,
                 container.getBackgroundWidth() - searchBoxWidth - 8,
                 -16,
                 searchBoxWidth,
                 16,
-                Text.literal(""));
-        searchBox.setPlaceholder(Text.literal("Search.."));
+                Component.literal(""));
+        searchBox.setHint(Component.literal("Search.."));
         searchBox.setVisible(false);
 
         xOffset = container.getX();
@@ -75,11 +75,11 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public void containerMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+    public void containerMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
         if (!isShown()) return;
 
-        Click relativeClick = new Click(
+        MouseButtonEvent relativeClick = new MouseButtonEvent(
                 click.x() - xOffset,
                 click.y() - yOffset,
                 click.buttonInfo()
@@ -99,14 +99,14 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public <T extends ScreenHandler> void containerRender(T handler, RenderInfo info) {
+    public <T extends AbstractContainerMenu> void containerRender(T handler, RenderInfo info) {
         if (!isEnabled() || searchBox == null) return;
-        boolean isChestScreen = handler instanceof GenericContainerScreenHandler containerHandler
-                && containerHandler.getInventory() instanceof SimpleInventory;
+        boolean isChestScreen = handler instanceof ChestMenu containerHandler
+                && containerHandler.getContainer() instanceof SimpleContainer;
 
         if (!isChestScreen) return;
         if (!isShown() && config.getBoolean("always_show")) {
-            showSearchBox((MilloMod.MC.currentScreen instanceof ScreenAccessor screen) ? screen : null);
+            showSearchBox((MilloMod.MC.screen instanceof ScreenAccessor screen) ? screen : null);
         }
 
         if (!isShown()) return;
@@ -114,14 +114,14 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public void containerDrawSlot(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    public void containerDrawSlot(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled() || !isShown()) return;
 
-        String searchTerm = searchBox.getText().trim();
+        String searchTerm = searchBox.getValue().trim();
         if (searchTerm.isEmpty()) return;
 
         final int color;
-        String itemName = slot.getStack().getName().getString().toLowerCase();
+        String itemName = slot.getItem().getHoverName().getString().toLowerCase();
         String[] searchTerms = searchTerm.toLowerCase().split(" ");
         if (Arrays.stream(searchTerms).allMatch(itemName::contains)) color = 0x40ffffff;
         else color = 0x80000000;
@@ -130,9 +130,9 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public <T extends ScreenHandler> void containerKeyPressed(T handler, KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+    public <T extends AbstractContainerMenu> void containerKeyPressed(T handler, KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
-        if (MilloMod.MC.currentScreen == null) return;
+        if (MilloMod.MC.screen == null) return;
         if (searchBox == null) return;
 
         int keyCode = input.key();
@@ -149,18 +149,18 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
             cir.setReturnValue(true);
 
             if (keyCode == 257 && config.getBoolean("enter_click")) {
-                String searchTerm = searchBox.getText().trim();
+                String searchTerm = searchBox.getValue().trim();
                 if (searchTerm.isEmpty()) return;
                 searchBox.setFocused(false);
 
                 String[] searchTerms = searchTerm.toLowerCase().split(" ");
 
-                if (MilloMod.MC.interactionManager == null) return;
+                if (MilloMod.MC.gameMode == null) return;
 
                 for (Slot slot : handler.slots) {
-                    String itemName = slot.getStack().getName().getString().toLowerCase();
+                    String itemName = slot.getItem().getHoverName().getString().toLowerCase();
                     if (Arrays.stream(searchTerms).allMatch(itemName::contains)) {
-                        MilloMod.MC.interactionManager.clickSlot(handler.syncId, slot.id, 0, SlotActionType.PICKUP, MilloMod.MC.player);
+                        MilloMod.MC.gameMode.handleInventoryMouseClick(handler.containerId, slot.index, 0, ClickType.PICKUP, MilloMod.MC.player);
                         break;
                     }
                 }
@@ -175,14 +175,14 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     private void focusSearchBox() {
         if (searchBox == null) return;
 
-        showSearchBox((MilloMod.MC.currentScreen instanceof ScreenAccessor screen) ? screen : null);
+        showSearchBox((MilloMod.MC.screen instanceof ScreenAccessor screen) ? screen : null);
 
         searchBox.setEditable(true);
-        searchBox.setSelectionStart(0);
-        searchBox.setSelectionEnd(searchBox.getText().length());
+        searchBox.setCursorPosition(0);
+        searchBox.setHighlightPos(searchBox.getValue().length());
         searchBox.setFocused(true);
 
-        if (MilloMod.MC.currentScreen != null) MilloMod.MC.currentScreen.setFocused(searchBox);
+        if (MilloMod.MC.screen != null) MilloMod.MC.screen.setFocused(searchBox);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
         if (!isEnabled()) return;
         if (!isShown()) return;
 
-        searchBox.setText("");
+        searchBox.setValue("");
         searchBox.setFocused(false);
         searchBox.setVisible(false);
         searchBox = null;

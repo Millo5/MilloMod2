@@ -4,7 +4,7 @@ import millo.millomod2.client.features.impl.TemporaryTracker;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class HypercubeAPI {
 
@@ -12,7 +12,7 @@ public class HypercubeAPI {
         return true;
     }
 
-    public static Vec3d getPlotOrigin() {
+    public static Vec3 getPlotOrigin() {
         return TemporaryTracker.getHypercubeLocation().getPos();
     }
 

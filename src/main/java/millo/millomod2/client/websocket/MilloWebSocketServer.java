@@ -10,9 +10,9 @@ import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -63,18 +63,18 @@ public class MilloWebSocketServer extends WebSocketServer {
         SUCCESS
     }
     private static void message(MessageType type, String source, String message) {
-        MutableText text = switch (type) {
-            case INFO -> Text.literal(" » ").setStyle(Styles.LINE_NUM.getStyle());
-            case ERROR -> Text.literal(" » ").setStyle(Styles.SCARY.getStyle());
-            case SUCCESS -> Text.literal(" » ").setStyle(Styles.TRUE.getStyle());
+        MutableComponent text = switch (type) {
+            case INFO -> Component.literal(" » ").setStyle(Styles.LINE_NUM.getStyle());
+            case ERROR -> Component.literal(" » ").setStyle(Styles.SCARY.getStyle());
+            case SUCCESS -> Component.literal(" » ").setStyle(Styles.TRUE.getStyle());
         };
 
         String name = source == null ? "WSS" : source;
 
-        if (type != MessageType.INFO) text.append(Text.literal("["+name+"] ").setStyle(Styles.NAME.getStyle()));
-        text.append(Text.literal(message).setStyle(Styles.DEFAULT.getStyle()));
+        if (type != MessageType.INFO) text.append(Component.literal("["+name+"] ").setStyle(Styles.NAME.getStyle()));
+        text.append(Component.literal(message).setStyle(Styles.DEFAULT.getStyle()));
 
-        if (MilloMod.player() != null) MilloMod.player().sendMessage(text, false);
+        if (MilloMod.player() != null) MilloMod.player().displayClientMessage(text, false);
     }
 
     private static String accept(String message) {
@@ -138,7 +138,7 @@ public class MilloWebSocketServer extends WebSocketServer {
                 return false;
             }
             PlayerUtil.giveItem(stack);
-            message(MessageType.SUCCESS, source, "Received " + stack.getName().getString() + "!");
+            message(MessageType.SUCCESS, source, "Received " + stack.getHoverName().getString() + "!");
             return true;
         }
     }

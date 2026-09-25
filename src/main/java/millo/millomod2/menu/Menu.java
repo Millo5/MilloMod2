@@ -2,31 +2,31 @@ package millo.millomod2.menu;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.elements.ConfirmationElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public abstract class Menu extends Screen {
 
     private final Screen parent;
 
-    private ClickableWidget contextMenu = null;
+    private AbstractWidget contextMenu = null;
 
     public Menu(Screen parent) {
-        super(Text.empty());
+        super(Component.empty());
         this.parent = parent;
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         setFocused(null);
-        this.client.setScreen(parent);
+        this.minecraft.setScreen(parent);
     }
 
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (contextMenu != null) {
             if (contextMenu.isMouseOver(click.x(), click.y())) return contextMenu.mouseClicked(click, doubled);
             else closeContextMenu();
@@ -46,33 +46,33 @@ public abstract class Menu extends Screen {
 
     public void closeContextMenu() {
         if (this.contextMenu != null) {
-            remove(this.contextMenu);
+            removeWidget(this.contextMenu);
             this.contextMenu = null;
         }
     }
 
 
-    public void openContextMenuAtCursor(ClickableWidget menu) {
+    public void openContextMenuAtCursor(AbstractWidget menu) {
         openContextMenu(menu,
-                (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
-                (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())
+                (int) MilloMod.MC.mouseHandler.getScaledXPos(MilloMod.MC.getWindow()),
+                (int) MilloMod.MC.mouseHandler.getScaledYPos(MilloMod.MC.getWindow())
         );
     }
 
-    public void openContextMenuAtCursor(ClickableWidget menu, int offsetX, int offsetY) {
+    public void openContextMenuAtCursor(AbstractWidget menu, int offsetX, int offsetY) {
         openContextMenu(menu,
-                (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()) + offsetX,
-                (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow()) + offsetY
+                (int) MilloMod.MC.mouseHandler.getScaledXPos(MilloMod.MC.getWindow()) + offsetX,
+                (int) MilloMod.MC.mouseHandler.getScaledYPos(MilloMod.MC.getWindow()) + offsetY
         );
     }
 
-    public void openContextMenu(ClickableWidget menu, int x, int y) {
+    public void openContextMenu(AbstractWidget menu, int x, int y) {
         menu.setX(x);
         menu.setY(y);
         openContextMenu(menu);
     }
 
-    public void openContextMenu(ClickableWidget menu) {
+    public void openContextMenu(AbstractWidget menu) {
         if (this.contextMenu != null) {
             closeContextMenu();
         }
@@ -81,16 +81,16 @@ public abstract class Menu extends Screen {
             fade.getFade().reset();
         }
         this.contextMenu = menu;
-        addDrawableChild(menu);
+        addRenderableWidget(menu);
     }
 
-    public void openConfirmationMenu(Text title, Text message, Runnable onConfirm) {
+    public void openConfirmationMenu(Component title, Component message, Runnable onConfirm) {
         openContextMenu(new ConfirmationElement(title, message, onConfirm),
                 (width - 400) / 2, (height - 200) / 2);
     }
 
     public void open() {
-        MilloMod.MC.send(() -> MilloMod.MC.setScreen(this));
+        MilloMod.MC.schedule(() -> MilloMod.MC.setScreen(this));
     }
 
 }

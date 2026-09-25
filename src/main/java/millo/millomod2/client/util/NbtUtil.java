@@ -1,31 +1,30 @@
 package millo.millomod2.client.util;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtSizeTracker;
-import net.minecraft.nbt.NbtTypes;
-
 import java.io.DataInputStream;
 import java.io.IOException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagTypes;
 
 public class NbtUtil {
 
-    public static NbtCompound read(DataInputStream in) throws IOException {
+    public static CompoundTag read(DataInputStream in) throws IOException {
         byte type = in.readByte();
-        if (type != NbtElement.COMPOUND_TYPE) {
+        if (type != Tag.TAG_COMPOUND) {
             throw MilloLog.throwError("Expected TAG_COMPOUND (10) but found " + type);
         }
         in.readUTF();
-        return (NbtCompound) NbtTypes.byId(type).read(in, NbtSizeTracker.forLevel());
+        return (CompoundTag) TagTypes.getType(type).load(in, NbtAccounter.uncompressedQuota());
     }
 
-    public static String convertToBlockString(NbtCompound entry) {
+    public static String convertToBlockString(CompoundTag entry) {
         StringBuilder sb = new StringBuilder();
         sb.append(entry.getString("Name").orElseThrow());
         if (entry.contains("Properties")) {
-            NbtCompound properties = entry.getCompound("Properties").orElseThrow();
+            CompoundTag properties = entry.getCompound("Properties").orElseThrow();
             sb.append("[");
-            for (String key : properties.getKeys()) {
+            for (String key : properties.keySet()) {
                 sb.append(key);
                 sb.append("=");
                 sb.append(properties.getString(key).orElseThrow());

@@ -1,8 +1,8 @@
 package millo.millomod2.client.hypercube.data;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public enum ValueType {
     STRING(Items.STRING),

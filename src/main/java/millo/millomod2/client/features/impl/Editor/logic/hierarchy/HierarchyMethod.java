@@ -7,8 +7,8 @@ import millo.millomod2.client.features.impl.Editor.elements.HierarchyMethodEleme
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.font.Alignment;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.network.chat.Component;
 
 public class HierarchyMethod implements HierarchyEntry {
 
@@ -39,9 +39,9 @@ public class HierarchyMethod implements HierarchyEntry {
 
         return new HierarchyMethodElement(browser, templateName, 100, 10)
                 .position(20, 0)
-                .message(Text.literal(displayName))
+                .message(Component.literal(displayName))
                 .border(new ClickableElement.Border().left(0xff000000 | borderColor))
-                .textAlignment(Alignment.LEFT);
+                .textAlignment(TextAlignment.LEFT);
     }
 
     @Override

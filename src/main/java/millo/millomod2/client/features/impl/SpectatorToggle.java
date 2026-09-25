@@ -24,25 +24,25 @@ public class SpectatorToggle extends Feature implements Keybound, Configurable {
     public void onTick() {
         if (player() == null) return;
         if (getConfig().getBoolean("hold_toggle")) {
-            if (player().isCreative() && getKeybind().isPressed() && !wasPressed) {
+            if (player().isCreative() && getKeybind().isDown() && !wasPressed) {
                 PlayerUtil.sendCommand("gmsp");
                 wasPressed = true;
                 return;
             }
-            if (!player().isCreative() && !getKeybind().isPressed() && wasPressed) {
+            if (!player().isCreative() && !getKeybind().isDown() && wasPressed) {
                 PlayerUtil.sendCommand("gmc");
                 wasPressed = false;
             }
             return;
         }
 
-        while (getKeybind("key").wasPressed()) {
+        while (getKeybind("key").consumeClick()) {
             if (player().isCreative()) {
                 PlayerUtil.sendCommand("gmsp");
             } else {
                 PlayerUtil.sendCommand("gmc");
             }
-            player().sendAbilitiesUpdate();
+            player().onUpdateAbilities();
         }
     }
 

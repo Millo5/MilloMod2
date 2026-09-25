@@ -43,8 +43,8 @@ public class FeaturePosition {
     }
 
     public int getX() {
-        if (anchor.x == 2) return MilloMod.MC.getWindow().getScaledWidth() - x - width;
-        if (anchor.x == 1) return MilloMod.MC.getWindow().getScaledWidth() / 2 - width / 2 + x;
+        if (anchor.x == 2) return MilloMod.MC.getWindow().getGuiScaledWidth() - x - width;
+        if (anchor.x == 1) return MilloMod.MC.getWindow().getGuiScaledWidth() / 2 - width / 2 + x;
         return x;
     }
 
@@ -53,14 +53,14 @@ public class FeaturePosition {
     }
 
     public void setScreenX(int x) {
-        if (anchor.x == 2) this.x = MilloMod.MC.getWindow().getScaledWidth() - x - width;
-        else if (anchor.x == 1) this.x = x - MilloMod.MC.getWindow().getScaledWidth() / 2 + width / 2;
+        if (anchor.x == 2) this.x = MilloMod.MC.getWindow().getGuiScaledWidth() - x - width;
+        else if (anchor.x == 1) this.x = x - MilloMod.MC.getWindow().getGuiScaledWidth() / 2 + width / 2;
         else this.x = x;
     }
 
     public int getY() {
-        if (anchor.y == 2) return MilloMod.MC.getWindow().getScaledHeight() - y - height;
-        if (anchor.y == 1) return MilloMod.MC.getWindow().getScaledHeight() / 2 - height / 2 + y;
+        if (anchor.y == 2) return MilloMod.MC.getWindow().getGuiScaledHeight() - y - height;
+        if (anchor.y == 1) return MilloMod.MC.getWindow().getGuiScaledHeight() / 2 - height / 2 + y;
         return y;
     }
 
@@ -69,8 +69,8 @@ public class FeaturePosition {
     }
 
     public void setScreenY(int y) {
-        if (anchor.y == 2) this.y = MilloMod.MC.getWindow().getScaledHeight() - y - height;
-        else if (anchor.y == 1) this.y = y - MilloMod.MC.getWindow().getScaledHeight() / 2 + height / 2;
+        if (anchor.y == 2) this.y = MilloMod.MC.getWindow().getGuiScaledHeight() - y - height;
+        else if (anchor.y == 1) this.y = y - MilloMod.MC.getWindow().getGuiScaledHeight() / 2 + height / 2;
         else this.y = y;
     }
 

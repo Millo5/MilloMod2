@@ -13,8 +13,7 @@ import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.data.Spawn;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 
 public class Debug extends Feature implements Configurable, HUDRendered, Positional {
@@ -58,7 +57,7 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
     private void renderTracker(RenderInfo renderInfo) {
         boolean inHypercube = HypercubeAPI.isInHypercube();
         HypercubeAPI.Mode mode = HypercubeAPI.getMode();
-        Vec3d plotOrigin = HypercubeAPI.getPlotOrigin();
+        Vec3 plotOrigin = HypercubeAPI.getPlotOrigin();
         HypercubeLocation location = HypercubeAPI.getHypercubeLocation();
         TemporaryTracker.Sequence trackerStep = TemporaryTracker.getStep();
 
@@ -96,7 +95,7 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
 
         int yOffset = 0;
         for (String line : lines) {
-            renderInfo.context().drawText(MilloMod.MC.textRenderer, line, getPosition().getX(), getPosition().getY() + yOffset, 0xFFFFFFFF, true);
+            renderInfo.context().drawString(MilloMod.MC.font, line, getPosition().getX(), getPosition().getY() + yOffset, 0xFFFFFFFF, true);
             yOffset += 10;
         }
     }

@@ -6,9 +6,8 @@ import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 
 public class BlueprintsMenu extends Menu {
@@ -35,32 +34,32 @@ public class BlueprintsMenu extends Menu {
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(40)
                 .gap(10);
-        addDrawableChild(main);
+        addRenderableWidget(main);
 
         main.addChild(ButtonElement.create(200, 20)
-                .message(Text.literal("Help"))
+                .message(Component.literal("Help"))
                 .onPress(button -> new GuideMenu(this, "Blueprint Loader").open())
         );
 
         for (String blueprint : found) {
             ButtonElement button = ButtonElement.create(200, 20)
-                    .message(Text.literal(blueprint))
+                    .message(Component.literal(blueprint))
                     .onPress(b -> {
                         feat.readBlueprint(blueprint);
-                        close();
+                        onClose();
                     });
             main.addChild(button);
         }
 
         main.addChildren(ButtonElement.create(200, 20)
-                .message(Text.literal("Refresh"))
+                .message(Component.literal("Refresh"))
                 .onClick(b -> {
                     feat.searchForBlueprints();
                     found = feat.getFoundBlueprints();
-                    clearAndInit();
+                    rebuildWidgets();
                 }),
             ButtonElement.create(200, 20)
-                    .message(Text.literal("Get Template"))
+                    .message(Component.literal("Get Template"))
                     .onClick(b -> {
                         feat.giveTemplate();
                     }));

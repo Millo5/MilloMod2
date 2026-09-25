@@ -1,8 +1,8 @@
 package millo.millomod2.client.hypercube.data;
 
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public enum LineStarterType {
     NONE(Styles.ANY, "txt"),
@@ -33,7 +33,7 @@ public enum LineStarterType {
         return style.getColor();
     }
 
-    public MutableText getPrefix() {
-        return Text.literal(name().toLowerCase()).setStyle(style.getStyle());
+    public MutableComponent getPrefix() {
+        return Component.literal(name().toLowerCase()).setStyle(style.getStyle());
     }
 }

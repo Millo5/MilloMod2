@@ -7,8 +7,8 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 
 public class ActionDumpReader extends Feature implements PacketEventSubscriber {
 
@@ -24,21 +24,21 @@ public class ActionDumpReader extends Feature implements PacketEventSubscriber {
         reading = true;
         PlayerUtil.sendCommand("dumpactioninfo");
         fullDump = new StringBuilder();
-        player().sendMessage(Text.of("Reading action dump..."), false);
+        player().displayClientMessage(Component.nullToEmpty("Reading action dump..."), false);
     }
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::onChat);
+        eventBus.subscribeReceive(ClientboundSystemChatPacket.class, this::onChat);
     }
 
-    public boolean onChat(GameMessageS2CPacket message) {
+    public boolean onChat(ClientboundSystemChatPacket message) {
         if (!reading) return false;
         String content = message.content().getString();
 
         if (content.startsWith("Error:")) {
             reading = false;
-            player().sendMessage(Text.of("Error while reading action dump!"), false);
+            player().displayClientMessage(Component.nullToEmpty("Error while reading action dump!"), false);
             return false;
         }
 
@@ -49,7 +49,7 @@ public class ActionDumpReader extends Feature implements PacketEventSubscriber {
             JsonObject json = JsonParser.parseString(fullDump.toString()).getAsJsonObject();
             FileUtil.writeJson("action_dump.json", json);
 
-            player().sendMessage(Text.of("Action dump saved!"), false);
+            player().displayClientMessage(Component.nullToEmpty("Action dump saved!"), false);
         }
         return true;
     }

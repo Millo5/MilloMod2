@@ -1,18 +1,18 @@
 package millo.millomod2.client.rendering;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.render.state.SimpleGuiElementRenderState;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.texture.TextureSetup;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
-public class DonutRenderState implements SimpleGuiElementRenderState {
+public class DonutRenderState implements GuiElementRenderState {
 
     private final RenderPipeline pipeline;
     private final Matrix3x2f pose;
-    private final ScreenRect bounds;
+    private final ScreenRectangle bounds;
 
     private final int segments;
     private float centerX, centerY;
@@ -23,7 +23,7 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
     public DonutRenderState(RenderPipeline pipeline, Matrix3x2f pose, int segments, float centerX, float centerY, float innerRadius, float outerRadius, int color, float startAngle, float endAngle) {
         this.pipeline = pipeline;
         this.pose = pose;
-        this.bounds = new ScreenRect(
+        this.bounds = new ScreenRectangle(
                 (int) (centerX - outerRadius),
                 (int) (centerY - outerRadius),
                 (int) (outerRadius * 2),
@@ -60,7 +60,7 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
     }
 
     @Override
-    public void setupVertices(VertexConsumer vertices) {
+    public void buildVertices(VertexConsumer vertices) {
 
         double startAngle = this.startAngle * 2 * Math.PI;
         double endAngle = this.endAngle * 2 * Math.PI;
@@ -82,15 +82,15 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
             float x2_outer = centerX + (float) (Math.cos(angle2) * outerRadius);
             float y2_outer = centerY + (float) (Math.sin(angle2) * outerRadius);
 
-            vertices.vertex(pose, x1_outer, y1_outer).color(color);
-            vertices.vertex(pose, x2_outer, y2_outer).color(color);
-            vertices.vertex(pose, x2_inner, y2_inner).color(color);
-            vertices.vertex(pose, x1_inner, y1_inner).color(color);
+            vertices.addVertexWith2DPose(pose, x1_outer, y1_outer).setColor(color);
+            vertices.addVertexWith2DPose(pose, x2_outer, y2_outer).setColor(color);
+            vertices.addVertexWith2DPose(pose, x2_inner, y2_inner).setColor(color);
+            vertices.addVertexWith2DPose(pose, x1_inner, y1_inner).setColor(color);
 
-            vertices.vertex(pose, x1_inner, y1_inner).color(color);
-            vertices.vertex(pose, x2_inner, y2_inner).color(color);
-            vertices.vertex(pose, x2_outer, y2_outer).color(color);
-            vertices.vertex(pose, x1_outer, y1_outer).color(color);
+            vertices.addVertexWith2DPose(pose, x1_inner, y1_inner).setColor(color);
+            vertices.addVertexWith2DPose(pose, x2_inner, y2_inner).setColor(color);
+            vertices.addVertexWith2DPose(pose, x2_outer, y2_outer).setColor(color);
+            vertices.addVertexWith2DPose(pose, x1_outer, y1_outer).setColor(color);
         }
 
     }
@@ -102,18 +102,18 @@ public class DonutRenderState implements SimpleGuiElementRenderState {
 
     @Override
     public TextureSetup textureSetup() {
-        return TextureSetup.empty();
+        return TextureSetup.noTexture();
     }
 
     @Nullable
     @Override
-    public ScreenRect scissorArea() {
+    public ScreenRectangle scissorArea() {
         return null;
     }
 
     @Nullable
     @Override
-    public ScreenRect bounds() {
+    public ScreenRectangle bounds() {
         return bounds;
     }
 }

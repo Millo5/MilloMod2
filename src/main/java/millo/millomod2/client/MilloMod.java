@@ -14,12 +14,11 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -34,11 +33,11 @@ public class MilloMod implements ClientModInitializer {
             .create();
     public static final Gson GSON_COMPACT = new Gson();
 
-    public static MinecraftClient MC = MinecraftClient.getInstance();
-    public static ClientPlayNetworkHandler net() {
-        return MC.getNetworkHandler();
+    public static Minecraft MC = Minecraft.getInstance();
+    public static ClientPacketListener net() {
+        return MC.getConnection();
     }
-    public static ClientPlayerEntity player() {
+    public static LocalPlayer player() {
         return MC.player;
     }
 
@@ -75,8 +74,8 @@ public class MilloMod implements ClientModInitializer {
         executor.schedule(() -> MilloMod.MC.execute(task), delayMs, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
-    public static MutableText translatable(String... keys) {
-        return Text.translatable("millo." + String.join(".", keys));
+    public static MutableComponent translatable(String... keys) {
+        return Component.translatable("millo." + String.join(".", keys));
     }
 
 

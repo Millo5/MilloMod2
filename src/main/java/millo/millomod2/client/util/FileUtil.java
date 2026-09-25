@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class FileUtil {
 
     public static Path getModFolder() {
-        Path path = MilloMod.MC.runDirectory.toPath().resolve(MilloMod.MOD_ID);
+        Path path = MilloMod.MC.gameDirectory.toPath().resolve(MilloMod.MOD_ID);
         path.toFile().mkdirs();
         return path;
     }

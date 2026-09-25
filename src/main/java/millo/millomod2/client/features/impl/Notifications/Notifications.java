@@ -9,10 +9,9 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.util.ChatMatchRule;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,10 +57,10 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(GameMessageS2CPacket.class, this::onMessage);
+        eventBus.subscribeReceive(ClientboundSystemChatPacket.class, this::onMessage);
     }
 
-    public boolean onMessage(GameMessageS2CPacket packet) {
+    public boolean onMessage(ClientboundSystemChatPacket packet) {
         if (!isEnabled()) return false;
 
         String message = packet.content().getString();
@@ -101,11 +100,11 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
     public void HUDRender(RenderInfo renderInfo) {
         if (!isEnabled()) return;
 
-        DrawContext context = renderInfo.context();
+        GuiGraphics context = renderInfo.context();
         int direction = (config.getChoice("direction").equals("up") ? -1 : 1);
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(position.getX(), position.getY());
+        context.pose().pushMatrix();
+        context.pose().translate(position.getX(), position.getY());
 
         for (Notification notification : List.copyOf(notifications)) {
             float visible = renderInfo.lerp(notification.getVisible(), notification.isFadingOut() ? 0f : 1f, 1f);
@@ -115,20 +114,20 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
             float progress = notification.getProgress();
 
             float xOffset = (1 - visible) * position.getWidth();
-            context.getMatrices().translate(xOffset, 0);
+            context.pose().translate(xOffset, 0);
 
-            int height = MilloMod.MC.textRenderer.getWrappedLinesHeight(notification.getMessage(), position.getWidth());
+            int height = MilloMod.MC.font.wordWrapHeight(notification.getMessage(), position.getWidth());
             context.fill(-2, -2, position.getWidth(), height + 2, new Color(0, 0, 0, (int)(150 * visible)).hashCode());
             context.fill(-2, height, -2 + (int) (position.getWidth() * (1 - progress)), height + 2, new Color(255, 255, 255, (int)(150 * visible)).hashCode());
-            context.drawWrappedText(MilloMod.MC.textRenderer, notification.getMessage(), 0, 0, position.getWidth(), new Color(1f, 1f, 1f, visible).hashCode(), true);
+            context.drawWordWrap(MilloMod.MC.font, notification.getMessage(), 0, 0, position.getWidth(), new Color(1f, 1f, 1f, visible).hashCode(), true);
 
-            context.getMatrices().translate(-xOffset, 0);
+            context.pose().translate(-xOffset, 0);
 
             float yOffset = visible * (height + 6);
-            context.getMatrices().translate(0, yOffset * direction);
+            context.pose().translate(0, yOffset * direction);
         }
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
     public static void notify(Notification notification) {
@@ -143,7 +142,7 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
         feature.notifications.add(notification);
     }
 
-    public static void notify(Text message) {
+    public static void notify(Component message) {
         notify(new Notification(message));
     }
 

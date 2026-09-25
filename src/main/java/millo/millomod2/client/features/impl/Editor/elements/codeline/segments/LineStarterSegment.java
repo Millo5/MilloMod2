@@ -10,15 +10,15 @@ import millo.millomod2.client.hypercube.model.codefields.ActionCodeFields;
 import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
 public class LineStarterSegment extends CodeLineSegment<BlockCodeBlockModel> {
-    private final static Text FUNC_PREFIX = Text.literal("function ").setStyle(Styles.FUNCTION.getStyle());
-    private final static Text PROC_PREFIX = Text.literal("process ").setStyle(Styles.PROCESS.getStyle());
-    private final static Text EVENT_PREFIX = Text.literal("player_event ").setStyle(Styles.PLAYER_EVENT.getStyle());
-    private final static Text EEVENT_PREFIX = Text.literal("entity_event ").setStyle(Styles.ENTITY_EVENT.getStyle());
-    private final static Text GEVENT_PREFIX = Text.literal("game_event ").setStyle(Styles.GAME_EVENT.getStyle());
+    private final static Component FUNC_PREFIX = Component.literal("function ").setStyle(Styles.FUNCTION.getStyle());
+    private final static Component PROC_PREFIX = Component.literal("process ").setStyle(Styles.PROCESS.getStyle());
+    private final static Component EVENT_PREFIX = Component.literal("player_event ").setStyle(Styles.PLAYER_EVENT.getStyle());
+    private final static Component EEVENT_PREFIX = Component.literal("entity_event ").setStyle(Styles.ENTITY_EVENT.getStyle());
+    private final static Component GEVENT_PREFIX = Component.literal("game_event ").setStyle(Styles.GAME_EVENT.getStyle());
 
     private final MethodType type;
 
@@ -34,7 +34,7 @@ public class LineStarterSegment extends CodeLineSegment<BlockCodeBlockModel> {
 
     @Override
     public void buildVisual(CodeLineElement lineElement) {
-        Text prefix = switch (type) {
+        Component prefix = switch (type) {
             case FUNC -> FUNC_PREFIX;
             case PROCESS -> PROC_PREFIX;
             case EVENT -> EVENT_PREFIX;

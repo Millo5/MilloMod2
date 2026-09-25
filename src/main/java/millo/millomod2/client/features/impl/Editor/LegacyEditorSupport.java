@@ -5,15 +5,15 @@ import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class LegacyEditorSupport {
 
@@ -25,34 +25,34 @@ public class LegacyEditorSupport {
         this.editor = editor;
     }
 
-    public void getMethodFromPosition(BlockPos pos, ClientPlayerEntity player, ClientPlayNetworkHandler net, TemplateCallback callback) {
-        if (MilloMod.MC.interactionManager == null) return;
+    public void getMethodFromPosition(BlockPos pos, LocalPlayer player, ClientPacketListener net, TemplateCallback callback) {
+        if (MilloMod.MC.gameMode == null) return;
         if (System.currentTimeMillis() - lastRequest < 2000) return;
         this.callback = callback;
 
         lastRequest = System.currentTimeMillis();
 
-        boolean sneaking = player.isSneaking();
+        boolean sneaking = player.isShiftKeyDown();
 
         if (!sneaking) PlayerUtil.sendSneak(true);
-        MilloMod.MC.interactionManager.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(
-                pos.toCenterPos(), Direction.UP, pos, false
+        MilloMod.MC.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, new BlockHitResult(
+                pos.getCenter(), Direction.UP, pos, false
         ));
         if (!sneaking) PlayerUtil.sendSneak(false);
     }
 
-    public boolean slotUpdate(ScreenHandlerSlotUpdateS2CPacket packet) {
+    public boolean slotUpdate(ClientboundContainerSetSlotPacket packet) {
         var currentTime = System.currentTimeMillis();
         if (currentTime - lastRequest > 2000) return false;
         if (currentTime - lastRequest > 1950) return true;
 
-        String codeTemplateData = ItemUtil.getPBVString(packet.getStack(), "hypercube:codetemplatedata");
+        String codeTemplateData = ItemUtil.getPBVString(packet.getItem(), "hypercube:codetemplatedata");
         if (codeTemplateData == null) return false;
         lastRequest = currentTime - 1950;
 
         if (callback != null) callback.onReceive(ModelUtil.parseFromItemNBT(codeTemplateData));
 
-        MilloMod.schedule(() -> MilloMod.net().sendPacket(new CreativeInventoryActionC2SPacket(packet.getSlot(), ItemStack.EMPTY)), 50);
+        MilloMod.schedule(() -> MilloMod.net().send(new ServerboundSetCreativeModeSlotPacket(packet.getSlot(), ItemStack.EMPTY)), 50);
 
         return true;
     }

@@ -6,8 +6,8 @@ import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.menu.Menu;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 
 public class ConfigPositionMenu extends Menu {
 
@@ -21,22 +21,22 @@ public class ConfigPositionMenu extends Menu {
             if (feat instanceof Positional positional) {
                 if (feat instanceof Toggleable tog && !tog.isEnabled()) return;
                 FeaturePosition pos = positional.getPosition();
-                addDrawableChild(new PositionalElement(pos, feat));
+                addRenderableWidget(new PositionalElement(pos, feat));
             }
         });
     }
 
     @Override
-    protected void applyBlur(DrawContext context) {
+    protected void renderBlurredBackground(GuiGraphics context) {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         FeatureHandler.forEach((feat) -> {
             if (feat instanceof Positional positional) {
 //                feat.getConfig().
             }
         });
-        super.close();
+        super.onClose();
     }
 }

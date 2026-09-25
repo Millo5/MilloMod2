@@ -3,7 +3,7 @@ package millo.millomod2.client.util;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.style.Styles;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,19 +21,19 @@ public class MilloLog {
         logInGame(message, true);
     }
 
-    private static void sendToPlayer(Text text) {
+    private static void sendToPlayer(Component text) {
         if (MilloMod.player() == null) return;
-        MilloMod.MC.send(() -> MilloMod.player().sendMessage(text, false));
+        MilloMod.MC.schedule(() -> MilloMod.player().displayClientMessage(text, false));
     }
 
     public static void logInGame(String message, boolean debugOnly) {
         LOGGER.info(message);
-        sendToPlayer(Text.literal("[MilloMod2] " + message));
+        sendToPlayer(Component.literal("[MilloMod2] " + message));
     }
 
-    public static void logInGame(Text text) {
+    public static void logInGame(Component text) {
         LOGGER.info(text.getString());
-        sendToPlayer(Text.literal("[MilloMod2] ").append(text));
+        sendToPlayer(Component.literal("[MilloMod2] ").append(text));
     }
 
     public static void error(String message) {
@@ -42,7 +42,7 @@ public class MilloLog {
 
     public static void errorInGame(String message) {
         error(message);
-        sendToPlayer(Text.literal("[MilloMod2] Error: " + message).setStyle(Styles.SCARY.getStyle()));
+        sendToPlayer(Component.literal("[MilloMod2] Error: " + message).setStyle(Styles.SCARY.getStyle()));
     }
 
     public static void stackTrace(Exception e) {
@@ -58,6 +58,6 @@ public class MilloLog {
 
     public static void logWarning(String s) {
         LOGGER.warn("Warning: {}", s);
-        sendToPlayer(Text.literal("[MilloMod2] Warning: " + s).setStyle(Styles.ITEM.getStyle()));
+        sendToPlayer(Component.literal("[MilloMod2] Warning: " + s).setStyle(Styles.ITEM.getStyle()));
     }
 }

@@ -7,12 +7,11 @@ import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 import java.util.ArrayList;
 
 public class SoundModifierWindow extends ModifierWindow {
@@ -24,7 +23,7 @@ public class SoundModifierWindow extends ModifierWindow {
     }
 
     @Override
-    protected ClickableWidget getElement() {
+    protected AbstractWidget getElement() {
         ListElement list = ListElement.create(100, 20)
                 .direction(ElementDirection.COLUMN)
                 .crossAlign(CrossAxisAlignment.STRETCH)
@@ -66,20 +65,20 @@ public class SoundModifierWindow extends ModifierWindow {
 
     @Override
     public void applyToItem(ItemStack stack) {
-        LoreComponent lore = stack.get(DataComponentTypes.LORE);
+        ItemLore lore = stack.get(DataComponents.LORE);
         if (lore == null) return;
 
         var lines = new ArrayList<>(lore.styledLines());
-        lines.set(2, Text.literal("Pitch: ").setStyle(Styles.UNSAVED.getStyle().withItalic(false))
-                .append(Text.literal(String.format("%.1f", sound.getPitch())).setStyle(Styles.DEFAULT.getStyle())));
-        lines.set(3, Text.literal("Volume: ").setStyle(Styles.UNSAVED.getStyle().withItalic(false))
-                .append(Text.literal(String.format("%.1f", sound.getVolume())).setStyle(Styles.DEFAULT.getStyle())));
+        lines.set(2, Component.literal("Pitch: ").setStyle(Styles.UNSAVED.getStyle().withItalic(false))
+                .append(Component.literal(String.format("%.1f", sound.getPitch())).setStyle(Styles.DEFAULT.getStyle())));
+        lines.set(3, Component.literal("Volume: ").setStyle(Styles.UNSAVED.getStyle().withItalic(false))
+                .append(Component.literal(String.format("%.1f", sound.getVolume())).setStyle(Styles.DEFAULT.getStyle())));
 
-        stack.set(DataComponentTypes.LORE, new LoreComponent(lines));
+        stack.set(DataComponents.LORE, new ItemLore(lines));
     }
 
     @Override
-    protected ClickableWidget getDefaultFocus() {
+    protected AbstractWidget getDefaultFocus() {
         return null;
     }
 }

@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements.codeline.segments.s
 import millo.millomod2.client.hypercube.model.arguments.SoundArgumentModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class SoundArgumentSegment extends SimpleSegment<SoundArgumentModel> {
 
@@ -15,8 +15,8 @@ public class SoundArgumentSegment extends SimpleSegment<SoundArgumentModel> {
     TextElement createContent(SoundArgumentModel model) {
         String name = model.getSound() == null ? model.getKey() : model.getSound();
 
-        var tooltip = Text.literal("Pitch: " + model.getPitch() + "\nVolume: " + model.getVolume());
-        if (model.getVariant() != null && !model.getVariant().isBlank()) tooltip.append(Text.literal("\nVariant: " + model.getVariant()));
+        var tooltip = Component.literal("Pitch: " + model.getPitch() + "\nVolume: " + model.getVolume());
+        if (model.getVariant() != null && !model.getVariant().isBlank()) tooltip.append(Component.literal("\nVariant: " + model.getVariant()));
 
         return new SimpleArgumentBuilder(name)
                 .style(Styles.SOUND)

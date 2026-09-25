@@ -15,10 +15,10 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class EditorMenu extends Menu {
                 titleBar,
                 mainBody
         );
-        addDrawableChild(main);
+        addRenderableWidget(main);
     }
 
     public void loadPlot(int plotId) {
@@ -125,14 +125,14 @@ public class EditorMenu extends Menu {
         mainBody.getHierarchy().reload();
 
         // Refresh layout
-        this.clearChildren();
+        this.clearWidgets();
         this.init();
     }
 
     private long lastShiftPressTime = 0;
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == 340) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastShiftPressTime < 250) {
@@ -142,8 +142,8 @@ public class EditorMenu extends Menu {
             lastShiftPressTime = currentTime;
         }
 
-        if (input.hasCtrl() && input.key() == 70) {
-            if (input.hasShift()) {
+        if (input.hasControlDown() && input.key() == 70) {
+            if (input.hasShiftDown()) {
                 mainBody.focusHierarchySearch();
                 return true;
             }
@@ -151,10 +151,10 @@ public class EditorMenu extends Menu {
             return true;
         }
 
-        if (input.hasCtrl() && input.key() == 80) {
+        if (input.hasControlDown() && input.key() == 80) {
             openConfirmationMenu(
-                    Text.literal("Export Plot"),
-                    Text.literal("Are you sure you want to export this plot? This will save the plot data to a file on your computer."),
+                    Component.literal("Export Plot"),
+                    Component.literal("Are you sure you want to export this plot? This will save the plot data to a file on your computer."),
                     () -> {
                         EditorFileManager.exportPlot(loadedPlot);
                     });
@@ -171,8 +171,8 @@ public class EditorMenu extends Menu {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        Matrix3x2fStack originalMatrices = context.getMatrices();
+    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+        Matrix3x2fStack originalMatrices = context.pose();
         Matrix3x2fStack matrices = new Matrix3x2fStack(32);
         matrices.set(originalMatrices);
 
@@ -206,7 +206,7 @@ public class EditorMenu extends Menu {
     }
 
     public void openPlotSelector(ButtonElement button) {
-        client.setScreen(new PlotSelectorMenu(this));
+        minecraft.setScreen(new PlotSelectorMenu(this));
     }
 
     public MainBody getMain() {

@@ -2,9 +2,8 @@ package millo.millomod2.menu.elements;
 
 import millo.millomod2.menu.ContainerElement;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import java.util.List;
 
 public class GridElement extends ContainerElement<GridElement> {
@@ -13,7 +12,7 @@ public class GridElement extends ContainerElement<GridElement> {
     private int padding, gap;
 
     public GridElement(int width, int height) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
     }
 
     public GridElement padding(int padding) {
@@ -34,7 +33,7 @@ public class GridElement extends ContainerElement<GridElement> {
 
     @Override
     public void layoutChildren() {
-        List<ClickableWidget> children = getChildren();
+        List<AbstractWidget> children = getChildren();
 
         if (children.isEmpty()) return;
 
@@ -44,7 +43,7 @@ public class GridElement extends ContainerElement<GridElement> {
         int cursorCross = padding;
         int crossLayerSize = 0;
 
-        for (ClickableWidget child : children) {
+        for (AbstractWidget child : children) {
             if (children instanceof ContainerElement<?> ce) {
                 ce.layoutChildren();
             }

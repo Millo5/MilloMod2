@@ -7,8 +7,7 @@ import millo.millomod2.client.features.impl.Editor.logic.search.SearchResult;
 import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.ListElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-
+import net.minecraft.client.gui.components.AbstractWidget;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -32,7 +31,7 @@ public class CodeTextArea extends ListElement implements Searchable {
     }
 
     public void loadTemplate(TemplateModel template) {
-        MilloMod.MC.send(() -> {
+        MilloMod.MC.schedule(() -> {
             clearContents();
             loadCodeBody(template);
         });
@@ -47,7 +46,7 @@ public class CodeTextArea extends ListElement implements Searchable {
     }
 
     public void focusLine(int line) {
-        MilloMod.MC.send(() -> {
+        MilloMod.MC.schedule(() -> {
             int index = line - 1;
             if (index < 0 || index >= getChildren().size()) return;
             if (!(getChildren().get(index) instanceof CodeLineElement codeLine)) return;
@@ -74,7 +73,7 @@ public class CodeTextArea extends ListElement implements Searchable {
         for (var child : getChildren()) {
             if (child instanceof CodeLineElement line) {
                 int segment = 0;
-                for (ClickableWidget lineChild : line.getChildren()) {
+                for (AbstractWidget lineChild : line.getChildren()) {
                     if (segment++ < 2) continue; // Skip block and line number
                     String lineContent = lineChild.getMessage().getString();
                     builder.append(lineContent);

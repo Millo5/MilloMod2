@@ -8,8 +8,8 @@ import millo.millomod2.client.hypercube.model.arguments.ArgumentModel;
 import millo.millomod2.client.hypercube.model.arguments.ParameterArgumentModel;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -150,39 +150,39 @@ public final class MethodIndex {
         return List.copyOf(usages.get(templateName));
     }
 
-    public @Nullable MutableText getCallTooltip(MethodType type, String name) {
+    public @Nullable MutableComponent getCallTooltip(MethodType type, String name) {
         MethodDefinition definition = getDefinition(type, name);
         if (definition == null || definition.parameters().isEmpty()) return null;
         return getParameterTooltip(definition);
     }
 
-    public MutableText getUsageTooltip(String templateName) {
-        MutableText tooltip = Text.empty();
+    public MutableComponent getUsageTooltip(String templateName) {
+        MutableComponent tooltip = Component.empty();
         List<MethodUsage> methodUsages = getUsages(templateName);
-        tooltip.append(Text.literal("Usages: " + methodUsages.size()).setStyle(Styles.ACTION.getStyle()));
-        if (isIndexing()) tooltip.append(Text.literal(" (indexing...)").setStyle(Styles.COMMENT.getStyle()));
+        tooltip.append(Component.literal("Usages: " + methodUsages.size()).setStyle(Styles.ACTION.getStyle()));
+        if (isIndexing()) tooltip.append(Component.literal(" (indexing...)").setStyle(Styles.COMMENT.getStyle()));
 
         for (MethodUsage usage : methodUsages) {
             tooltip.append("\n  ");
-            tooltip.append(Text.literal(MethodType.trimSuffix(usage.sourceTemplateName())).setStyle(Styles.NAME.getStyle()));
-            tooltip.append(Text.literal(" line " + usage.line()).setStyle(Styles.LINE_NUM.getStyle()));
+            tooltip.append(Component.literal(MethodType.trimSuffix(usage.sourceTemplateName())).setStyle(Styles.NAME.getStyle()));
+            tooltip.append(Component.literal(" line " + usage.line()).setStyle(Styles.LINE_NUM.getStyle()));
         }
         return tooltip;
     }
 
-    private MutableText getParameterTooltip(MethodDefinition definition) {
-        MutableText tooltip = Text.empty();
+    private MutableComponent getParameterTooltip(MethodDefinition definition) {
+        MutableComponent tooltip = Component.empty();
 
         for (int i = 0; i < definition.parameters().size(); i++) {
             MethodParameter parameter = definition.parameters().get(i);
             if (i > 0) tooltip.append("\n");
             if (parameter.optional()) tooltip.append("[");
-            tooltip.append(Text.literal(parameter.type()).setStyle(getParameterStyle(parameter.type()).getStyle()));
+            tooltip.append(Component.literal(parameter.type()).setStyle(getParameterStyle(parameter.type()).getStyle()));
             if (parameter.plural()) tooltip.append("...");
             tooltip.append(" " + parameter.name());
             if (parameter.optional()) tooltip.append("]");
             if (parameter.description() != null && !parameter.description().isBlank()) {
-                tooltip.append(Text.literal(" - " + parameter.description()).setStyle(Styles.COMMENT.getStyle()));
+                tooltip.append(Component.literal(" - " + parameter.description()).setStyle(Styles.COMMENT.getStyle()));
             }
         }
         return tooltip;

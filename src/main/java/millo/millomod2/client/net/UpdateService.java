@@ -101,7 +101,7 @@ public class UpdateService {
     }
 
     public static void openUpdateScreen() {
-        new UpdateMenu(MilloMod.MC.currentScreen).open();
+        new UpdateMenu(MilloMod.MC.screen).open();
     }
 
     public static CompletableFuture<UpdateResult> update() {

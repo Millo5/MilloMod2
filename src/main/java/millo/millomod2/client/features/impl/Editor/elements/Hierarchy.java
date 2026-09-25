@@ -16,9 +16,8 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
 import millo.millomod2.menu.elements.flex.ResizableFlexElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 
 public class Hierarchy extends ResizableFlexElement<Hierarchy> {
@@ -32,7 +31,7 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
     private final TextFieldElement search;
 
     public Hierarchy(EditorMenu menu, int width, int height) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.menu = menu;
 
         border(new Border().right(0xFFFFFFFF));
@@ -48,9 +47,9 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
                 .gap(2)
                 .maxExpansion(height - 12);
 
-        search = new TextFieldElement(200, 12, Text.empty());
-        search.setPlaceholder(Text.literal("Search...").setStyle(Styles.COMMENT.getStyle()));
-        search.setChangedListener(newValue -> {
+        search = new TextFieldElement(200, 12, Component.empty());
+        search.setHint(Component.literal("Search...").setStyle(Styles.COMMENT.getStyle()));
+        search.setResponder(newValue -> {
             searchQuery = newValue;
             searchTimeout = 3;
         });
@@ -87,7 +86,7 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         String query = searchQuery.toLowerCase();
 
         if (query.isEmpty()) { // Cheaper loop
-            for (ClickableWidget child : folder.getContent().getChildren()) {
+            for (AbstractWidget child : folder.getContent().getChildren()) {
                 if (child instanceof FolderElement subFolder) {
                     subFolder.visible = true;
                     subFolder.setOpened(false);
@@ -100,7 +99,7 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
         }
 
         boolean anyChildVisible = false;
-        for (ClickableWidget child : folder.getContent().getChildren()) {
+        for (AbstractWidget child : folder.getContent().getChildren()) {
             if (child instanceof FolderElement subFolder) {
                 search(subFolder);
                 if (subFolder.visible) anyChildVisible = true;
@@ -170,8 +169,8 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
     }
 
     public void focusSearch() {
-        if (MilloMod.MC.currentScreen == null) return;
-        MilloMod.MC.currentScreen.setFocused(search);
+        if (MilloMod.MC.screen == null) return;
+        MilloMod.MC.screen.setFocused(search);
     }
 
     public void removeTemplate(String templateName) {

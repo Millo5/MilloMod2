@@ -10,8 +10,8 @@ import millo.millomod2.client.hypercube.model.codeblocks.BlockCodeBlockModel;
 import millo.millomod2.client.hypercube.model.codeblocks.BracketCodeBlockModel;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -52,20 +52,20 @@ public abstract class CodeLineSegment<T> {
     ///
 
 
-    protected static TextElement text(Text text) {
+    protected static TextElement text(Component text) {
         return TextElement.create(text);
     }
 
-    protected static TextElement text(MutableText text, Styles style) {
+    protected static TextElement text(MutableComponent text, Styles style) {
         return text(text.setStyle(style.getStyle()));
     }
 
     protected static TextElement text(String text) {
-        return text(Text.literal(text));
+        return text(Component.literal(text));
     }
 
     protected static TextElement text(String text, Styles style) {
-        return text(Text.literal(text), style);
+        return text(Component.literal(text), style);
     }
 
     ///

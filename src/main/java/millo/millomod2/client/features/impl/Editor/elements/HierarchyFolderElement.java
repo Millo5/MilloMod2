@@ -9,9 +9,9 @@ import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public class HierarchyFolderElement extends FolderElement {
 
@@ -19,29 +19,29 @@ public class HierarchyFolderElement extends FolderElement {
     private final CodeBrowser browser;
 
     public HierarchyFolderElement(CodeBrowser browser, HierarchyFolder folder) {
-        super(0, 0, 500, 5000, Text.literal(folder.getName()));
+        super(0, 0, 500, 5000, Component.literal(folder.getName()));
 
         this.folder = folder;
         this.browser = browser;
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (click.y() <= getY() + 12 && click.button() == 1) {
-            if (MilloMod.MC.currentScreen instanceof Menu menu) {
+            if (MilloMod.MC.screen instanceof Menu menu) {
                 ListElement contextMenu = ListElement.create(100, 20)
                         .background(0xCC222222)
                         .direction(ElementDirection.COLUMN)
                         .crossAlign(CrossAxisAlignment.STRETCH)
                         .gap(0);
                 contextMenu.addChild(ButtonElement.create(100, 20)
-                        .message(Text.literal("New Template").setStyle(Styles.CONTROL.getStyle()))
+                        .message(Component.literal("New Template").setStyle(Styles.CONTROL.getStyle()))
                         .onPress(button -> {
                             menu.closeContextMenu();
                         })
                 );
                 contextMenu.addChild(ButtonElement.create(100, 20)
-                        .message(Text.literal("Delete").setStyle(Styles.SCARY.getStyle()))
+                        .message(Component.literal("Delete").setStyle(Styles.SCARY.getStyle()))
                         .onPress(button -> {
                             browser.getHierarchy().removeFolder(folder);
                             menu.closeContextMenu();
@@ -49,8 +49,8 @@ public class HierarchyFolderElement extends FolderElement {
                 );
 
                 menu.openContextMenu(contextMenu,
-                        (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
-                        (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())
+                        (int) MilloMod.MC.mouseHandler.getScaledXPos(MilloMod.MC.getWindow()),
+                        (int) MilloMod.MC.mouseHandler.getScaledYPos(MilloMod.MC.getWindow())
                 );
             }
             return true;
@@ -59,7 +59,7 @@ public class HierarchyFolderElement extends FolderElement {
     }
 
     public void removeTemplate(String templateName) {
-        for (ClickableWidget child : getContent().getChildren()) {
+        for (AbstractWidget child : getContent().getChildren()) {
             if (child instanceof HierarchyMethodElement methodElement) {
                 if (methodElement.getTemplateName().equals(templateName)) {
                     getContent().removeChild(methodElement);

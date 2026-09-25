@@ -14,10 +14,10 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class ConfigMenu extends Menu {
 
@@ -41,7 +41,7 @@ public class ConfigMenu extends Menu {
 
         list.addChild(
                 ButtonElement.create(200, 20)
-                        .message(Text.literal("Feature Guide"))
+                        .message(Component.literal("Feature Guide"))
                         .background(0x80_000000)
                         .onPress((b) -> new GuideMenu(this).open())
         );
@@ -71,7 +71,7 @@ public class ConfigMenu extends Menu {
 
                 if (configValue.getConfigValue().isHidden()) return;
                 
-                ClickableWidget widget = configValue.getConfigValue().createWidget();
+                AbstractWidget widget = configValue.getConfigValue().createWidget();
                 setting.addChildren(
                         configText,
                         widget
@@ -84,7 +84,7 @@ public class ConfigMenu extends Menu {
             list.addChild(folder);
         });
 
-        addDrawableChild(list);
+        addRenderableWidget(list);
     }
 
     //    @Override
@@ -167,16 +167,16 @@ public class ConfigMenu extends Menu {
 
 
     @Override
-    protected void applyBlur(DrawContext context) {}
+    protected void renderBlurredBackground(GuiGraphics context) {}
 
 
     @Override
-    public void close() {
+    public void onClose() {
         try {
             ConfigSaving.getInstance().save();
         } catch (Exception e) {
             MilloLog.error("Failed to save config: " + e.getMessage());
         }
-        super.close();
+        super.onClose();
     }
 }

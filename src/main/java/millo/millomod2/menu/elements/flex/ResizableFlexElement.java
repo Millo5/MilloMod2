@@ -1,8 +1,8 @@
 package millo.millomod2.menu.elements.flex;
 
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends FlexElement<T> {
 
@@ -22,7 +22,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
     private int maxHeight = 500;
 
 
-    protected ResizableFlexElement(int x, int y, int width, int height, Text message) {
+    protected ResizableFlexElement(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
 
         minWidth = width / 2;
@@ -32,7 +32,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
     }
 
     public static ResizableFlexElement<?> create(int width, int height) {
-        return new ResizableFlexElement<>(0, 0, width, height, Text.empty());
+        return new ResizableFlexElement<>(0, 0, width, height, Component.empty());
     }
 
     @Override
@@ -48,13 +48,13 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
             switch (resizeDirection) {
                 case EAST, WEST -> {
                     if (Math.abs(x) <= DISTANCE || resizing) {
-                        args.context().setCursor(StandardCursors.RESIZE_EW);
+                        args.context().requestCursor(CursorTypes.RESIZE_EW);
                         mouseOverResizeArea = true;
                     }
                 }
                 case NORTH, SOUTH -> {
                     if (Math.abs(y) <= DISTANCE || resizing) {
-                        args.context().setCursor(StandardCursors.RESIZE_NS);
+                        args.context().requestCursor(CursorTypes.RESIZE_NS);
                         mouseOverResizeArea = true;
                     }
                 }
@@ -65,7 +65,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (mouseOverResizeArea && resizeDirection != null) {
             resizing = true;
             mouseXStart = click.x();
@@ -79,7 +79,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (resizing) {
             resizing = false;
             return true;
@@ -88,7 +88,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
         if (resizing) {
             int newWidth = getWidth();
             int newHeight = getHeight();
@@ -103,7 +103,7 @@ public class ResizableFlexElement<T extends ResizableFlexElement<T>> extends Fle
             newWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
             newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
 
-            setDimensions(newWidth, newHeight);
+            setSize(newWidth, newHeight);
             layoutChildren();
             return true;
         }

@@ -1,11 +1,10 @@
 package millo.millomod2.client.util.style;
 
 import millo.millomod2.client.MilloMod;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -25,33 +24,33 @@ public enum Styles {
     CONTROL(new Color(0x6A7696)),
 
     // Scopes
-    UNSAVED(Formatting.GRAY),
-    LOCAL(Formatting.GREEN),
-    SAVED(Formatting.YELLOW),
+    UNSAVED(ChatFormatting.GRAY),
+    LOCAL(ChatFormatting.GREEN),
+    SAVED(ChatFormatting.YELLOW),
     LINE(new Color(0x55aaff)),
 
     // Item Types
-    TEXT(Formatting.AQUA),
-    NUMBER(Formatting.RED),
-    VARIABLE(Formatting.YELLOW),
-    BLOCK_TAG(Formatting.AQUA),
+    TEXT(ChatFormatting.AQUA),
+    NUMBER(ChatFormatting.RED),
+    VARIABLE(ChatFormatting.YELLOW),
+    BLOCK_TAG(ChatFormatting.AQUA),
     GAME_VALUE(new Color(0xFFD47F)),
-    ITEM(Formatting.GOLD),
+    ITEM(ChatFormatting.GOLD),
     PARAMETER(new Color(0xFFD47F)),
 
 
     // Parameter Colors
     ANY(new Color(0xFFD47F)),
-    TXT(Formatting.AQUA),
+    TXT(ChatFormatting.AQUA),
     NUM(NUMBER.style),
     VAR(VARIABLE.style),
-    LIST(Formatting.DARK_GREEN),
+    LIST(ChatFormatting.DARK_GREEN),
     DICT(new Color(0x55AAFF)),
     VECTOR(new Color(0x2AFFAA)),
-    SOUND(Formatting.BLUE),
+    SOUND(ChatFormatting.BLUE),
     PARTICLE(new Color(0xAA55FF)),
     POTION(new Color(0xFF557F)),
-    LOCATION(Formatting.GREEN),
+    LOCATION(ChatFormatting.GREEN),
     LOC(LOCATION.style),
     VEC(VECTOR.style),
     COMPONENT(new Color(0x7FD42A)),
@@ -80,14 +79,14 @@ public enum Styles {
     Styles(Style style) {
         this.style = style;
         TextColor c = style.getColor();
-        this.color = c == null ? Color.WHITE.hashCode() : c.getRgb();
+        this.color = c == null ? Color.WHITE.hashCode() : c.getValue();
     }
 
-    Styles(Formatting formatting) {
+    Styles(ChatFormatting formatting) {
         this(Style.EMPTY.withColor(formatting));
     }
 
-    public static MutableText getTrueFalse(boolean state) {
+    public static MutableComponent getTrueFalse(boolean state) {
         if (state) return MilloMod.translatable("enabled").setStyle(TRUE.getStyle());
         return MilloMod.translatable("disabled").setStyle(FALSE.getStyle());
     }

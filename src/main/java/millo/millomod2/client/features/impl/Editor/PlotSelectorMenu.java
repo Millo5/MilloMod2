@@ -7,7 +7,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class PlotSelectorMenu extends PopUpMenu {
 
@@ -25,7 +25,7 @@ public class PlotSelectorMenu extends PopUpMenu {
                 .crossAlign(CrossAxisAlignment.CENTER)
                 .padding(0)
                 .gap(0);
-        addDrawableChild(screenFlex);
+        addRenderableWidget(screenFlex);
 
         FlexElement<?> centerFlex = FlexElement.create(200, 100)
                 .background(0x80000000)
@@ -36,8 +36,8 @@ public class PlotSelectorMenu extends PopUpMenu {
                 .gap(4);
         screenFlex.addChild(centerFlex);
 
-        TextFieldElement plotIdField = new TextFieldElement(192, 20, Text.literal(""));
-        plotIdField.setPlaceholder(Text.literal("Enter Plot ID..."));
+        TextFieldElement plotIdField = new TextFieldElement(192, 20, Component.literal(""));
+        plotIdField.setHint(Component.literal("Enter Plot ID..."));
         centerFlex.addChild(plotIdField);
 
         FlexElement<?> buttonFlex = FlexElement.create(200, 20)
@@ -49,20 +49,20 @@ public class PlotSelectorMenu extends PopUpMenu {
         centerFlex.addChild(buttonFlex);
         buttonFlex.addChild(
                 ButtonElement.create(70, 20)
-                        .message(Text.literal("Cancel"))
+                        .message(Component.literal("Cancel"))
                         .onPress((button) -> {
-                            close();
+                            onClose();
                         })
         );
         buttonFlex.addChild(
                 ButtonElement.create(70, 20)
-                        .message(Text.literal("Load"))
+                        .message(Component.literal("Load"))
                         .onPress((button) -> {
-                            String input = plotIdField.getText();
+                            String input = plotIdField.getValue();
                             try {
                                 int plotId = Integer.parseInt(input);
                                 parent.loadPlot(plotId);
-                                close();
+                                onClose();
                             } catch (NumberFormatException e) {
                                 // Invalid input handling
                             }

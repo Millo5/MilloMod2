@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.Editor.elements.codeline.components;
 
 import millo.millomod2.client.features.impl.Editor.elements.codeline.SegmentComponent;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class BlockPrefixComponent extends SegmentComponent {
 

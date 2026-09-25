@@ -2,8 +2,8 @@ package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.menu.elements.buttons.DropDownElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 
 public class ChoiceConfigValue extends ConfigValue<String> {
 
@@ -17,16 +17,16 @@ public class ChoiceConfigValue extends ConfigValue<String> {
     }
 
     @Override
-    public ClickableWidget createWidget() {
+    public AbstractWidget createWidget() {
         DropDownElement element = DropDownElement.create(150, 20)
-                .message(Text.literal(value))
+                .message(Component.literal(value))
                 .background(0x33000000)
                 .offsetY(3);
 
         for (String choice : choices) {
-            element.addOption(Text.literal(choice), (button) -> {
+            element.addOption(Component.literal(choice), (button) -> {
                 setValue(choice);
-                element.setMessage(Text.literal(choice));
+                element.setMessage(Component.literal(choice));
             });
         }
         return element;

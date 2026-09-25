@@ -19,9 +19,8 @@ import millo.millomod2.client.util.MilloLog;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,7 @@ public final class FeatureHandler {
     public static FeatureHandler INSTANCE;
 
     private final PacketEventBus packetEventBus = new PacketEventBus();
-    private final KeyBinding.Category KEYBIND_CATEGORY = KeyBinding.Category.create(Identifier.of("category.millomod2"));
+    private final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(Identifier.parse("category.millomod2"));
 
     private final ArrayList<String> order = new ArrayList<>();
     private final HashMap<String, Feature> initialFeatureMap = new HashMap<>();
@@ -186,7 +185,7 @@ public final class FeatureHandler {
 
         if (feature instanceof Keybound keybound) {
             for (String keybindId : keybound.getKeybindIds()) {
-                keybound.registerKeybind(keybindId, KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                keybound.registerKeybind(keybindId, KeyBindingHelper.registerKeyBinding(new KeyMapping(
                         "key.millomod2." + feature.getId() + "." + keybindId,
                         keybound.getDefaultType(),
                         keybound.getDefaultCode(),

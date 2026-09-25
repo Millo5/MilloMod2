@@ -1,29 +1,29 @@
 package millo.millomod2.client.util;
 
 import millo.millomod2.client.MilloMod;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 
 public class SoundUtil {
 
     public static void playSound(String name, float volume, float pitch) {
-        playSound(name, SoundCategory.MASTER, volume, pitch);
+        playSound(name, SoundSource.MASTER, volume, pitch);
     }
 
-    public static void playSound(String name, SoundCategory category, float volume, float pitch) {
-        playSound(SoundEvent.of(Identifier.of(name)), category, volume, pitch);
+    public static void playSound(String name, SoundSource category, float volume, float pitch) {
+        playSound(SoundEvent.createVariableRangeEvent(Identifier.parse(name)), category, volume, pitch);
     }
 
-    public static void playSound(SoundEvent soundEvent, SoundCategory category, float volume, float pitch) {
-        ClientPlayerEntity player = MilloMod.player();
+    public static void playSound(SoundEvent soundEvent, SoundSource category, float volume, float pitch) {
+        LocalPlayer player = MilloMod.player();
         if (player == null) return;
 
-        PositionedSoundInstance soundInstance = new PositionedSoundInstance(soundEvent, category, volume, pitch, Random.create(), player.getX(), player.getY(), player.getZ());
+        SimpleSoundInstance soundInstance = new SimpleSoundInstance(soundEvent, category, volume, pitch, RandomSource.create(), player.getX(), player.getY(), player.getZ());
         MilloMod.MC.getSoundManager().play(soundInstance);
     }
 
@@ -31,13 +31,13 @@ public class SoundUtil {
         var player = MilloMod.player();
         if (player == null) return;
 
-        SoundEvent sound = SoundEvent.of(Identifier.of(soundId));
+        SoundEvent sound = SoundEvent.createVariableRangeEvent(Identifier.parse(soundId));
 
-        PositionedSoundInstance soundInstance = new PositionedSoundInstance(sound, SoundCategory.MASTER, volume, pitch, Random.create(seed), player.getX(), player.getY(), player.getZ());
+        SimpleSoundInstance soundInstance = new SimpleSoundInstance(sound, SoundSource.MASTER, volume, pitch, RandomSource.create(seed), player.getX(), player.getY(), player.getZ());
         MilloMod.MC.getSoundManager().play(soundInstance);
     }
 
     public static void playClickSound() {
-        MilloMod.MC.getSoundManager().play(PositionedSoundInstance.ui(SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, 1.0F));
+        MilloMod.MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_FRAME_ADD_ITEM, 1.0F));
     }
 }

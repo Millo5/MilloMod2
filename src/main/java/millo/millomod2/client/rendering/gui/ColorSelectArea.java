@@ -2,10 +2,9 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import java.awt.*;
 
 public class ColorSelectArea extends ClickableElement<ColorSelectArea> implements ColorElement {
@@ -16,13 +15,13 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
     private boolean dragging;
 
     public ColorSelectArea(ColorsMenu colorsMenu, int width, int height, float[] hsb) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.colorsMenu = colorsMenu;
         this.hsb = hsb;
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         background(0xff3300ff);
 
         for (int x = 0; x < getWidth(); x++) {
@@ -51,7 +50,7 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!isMouseOver(click.x(), click.y())) return false;
         dragging = true;
         updateFromMouse(click);
@@ -59,13 +58,13 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
         if (!dragging) return false;
         updateFromMouse(click);
         return true;
     }
 
-    private void updateFromMouse(Click click) {
+    private void updateFromMouse(MouseButtonEvent click) {
         double x = Math.clamp(click.x(), getX(), getRight());
         double y = Math.clamp(click.y(), getY(), getBottom());
 
@@ -79,7 +78,7 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (!dragging) return false;
         updateFromMouse(click);
         dragging = false;

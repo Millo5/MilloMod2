@@ -3,21 +3,20 @@ package millo.millomod2.client.features.impl.CommandWheel;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import java.awt.*;
 
 public class CommandWheelEntry {
     protected final String name;
     protected final String command;
-    protected final Text text;
+    protected final Component text;
 
     public CommandWheelEntry(String name, String command) {
         this.name = name;
         this.command = command;
-        this.text = Text.literal(name);
+        this.text = Component.literal(name);
     }
 
     private boolean selected = false;
@@ -29,32 +28,32 @@ public class CommandWheelEntry {
         return selected;
     }
 
-    public void draw(RenderInfo info, int x, int y, TextRenderer textRenderer, float shown) {
+    public void draw(RenderInfo info, int x, int y, Font textRenderer, float shown) {
         hover = info.lerp(hover, isSelected() ? 1f : 0f, 1f);
-        DrawContext context = info.context();
+        GuiGraphics context = info.context();
 
         if (selected) drawMouseLine(context, x, y);
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(x, y);
-        context.getMatrices().scale(shown, shown);
-        context.getMatrices().scale(hover*0.2f+1f, hover*0.2f+1f);
+        context.pose().pushMatrix();
+        context.pose().translate(x, y);
+        context.pose().scale(shown, shown);
+        context.pose().scale(hover*0.2f+1f, hover*0.2f+1f);
 
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
         context.fill(-20, -20, 20, 20, color);
-        context.drawStrokedRectangle(-20, -20, 40, 40, borderCol);
+        context.renderOutline(-20, -20, 40, 40, borderCol);
 
-        int w = textRenderer.getWidth(text);
-        context.drawText(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);
+        int w = textRenderer.width(text);
+        context.drawString(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
-    private void drawMouseLine(DrawContext context, int x, int y) {
+    private void drawMouseLine(GuiGraphics context, int x, int y) {
         var window = MilloMod.MC.getWindow();
-        double mouseX = MilloMod.MC.mouse.getX() / window.getWidth() * window.getScaledWidth();
-        double mouseY = MilloMod.MC.mouse.getY() / window.getHeight() * window.getScaledHeight();
+        double mouseX = MilloMod.MC.mouseHandler.xpos() / window.getScreenWidth() * window.getGuiScaledWidth();
+        double mouseY = MilloMod.MC.mouseHandler.ypos() / window.getScreenHeight() * window.getGuiScaledHeight();
 
         double dx = (x - mouseX);
         double dy = (y - mouseY);

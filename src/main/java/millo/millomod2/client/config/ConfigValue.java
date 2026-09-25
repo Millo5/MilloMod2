@@ -1,9 +1,8 @@
 package millo.millomod2.client.config;
 
-import net.minecraft.client.gui.widget.ClickableWidget;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.gui.components.AbstractWidget;
 
 public abstract class ConfigValue<T> {
     protected final T defaultValue;
@@ -39,7 +38,7 @@ public abstract class ConfigValue<T> {
         return defaultValue;
     }
 
-    public abstract ClickableWidget createWidget();
+    public abstract AbstractWidget createWidget();
 
     public Object serialize() {
         return value;

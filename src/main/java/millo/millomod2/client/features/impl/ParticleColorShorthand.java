@@ -6,7 +6,7 @@ import millo.millomod2.client.features.addons.ChatSendInjector;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class ParticleColorShorthand extends Feature implements Toggleable, ChatSendInjector {
 
@@ -19,7 +19,7 @@ public class ParticleColorShorthand extends Feature implements Toggleable, ChatS
     public boolean onSendMessage(String msg) {
         if (!isEnabled() || player() == null) return false;
 
-        ItemStack heldItem = player().getMainHandStack();
+        ItemStack heldItem = player().getMainHandItem();
         JsonObject obj = ItemUtil.getVarItem(heldItem);
         if (obj == null) return false;
 

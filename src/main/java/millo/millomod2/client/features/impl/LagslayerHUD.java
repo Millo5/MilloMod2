@@ -8,9 +8,9 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.rendering.DonutRenderState;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import org.joml.Matrix3x2f;
 
 import java.awt.*;
@@ -49,10 +49,10 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(OverlayMessageS2CPacket.class, this::onActionBar);
+        eventBus.subscribeReceive(ClientboundSetActionBarTextPacket.class, this::onActionBar);
     }
 
-    public boolean onActionBar(OverlayMessageS2CPacket packet) {
+    public boolean onActionBar(ClientboundSetActionBarTextPacket packet) {
         if (!isEnabled()) return false;
 
         String content = packet.text().getString();
@@ -73,7 +73,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
     public void HUDRender(RenderInfo renderInfo) {
         if (!isEnabled()) return;
         FeaturePosition pos = getPosition();
-        DrawContext context = renderInfo.context();
+        GuiGraphics context = renderInfo.context();
 
         double time = (System.currentTimeMillis() - lastUpdateTime) / 1000d;
         float alpha = (float) Math.max(Math.min(1, 5 - time), 0);
@@ -91,7 +91,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         }
 
         if (config.getBoolean("show_text")) {
-            context.drawText(MilloMod.MC.textRenderer,
+            context.drawString(MilloMod.MC.font,
                     Math.round(renderedCpuUsage * 100d) / 100d + "%",
                     pos.getX() + 10 + textOffsetX, pos.getY() + 6,
                     new Color(1f, 1f, 1f, renderedAlpha).hashCode(), true
@@ -100,7 +100,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
 
     }
 
-    private void renderBar(DrawContext context, FeaturePosition pos) {
+    private void renderBar(GuiGraphics context, FeaturePosition pos) {
         int barWidth = 100;
         int barHeight = 10;
         int x = pos.getX();
@@ -119,12 +119,12 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
                 new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, renderedAlpha).hashCode());
     }
 
-    private void renderRadial(DrawContext context, FeaturePosition pos) {
+    private void renderRadial(GuiGraphics context, FeaturePosition pos) {
         textOffsetX = 12;
         if (backgroundDonut == null) {
             this.backgroundDonut = new DonutRenderState(
                     RenderPipelines.GUI,
-                    new Matrix3x2f(context.getMatrices()),
+                    new Matrix3x2f(context.pose()),
                     20,
                     pos.getX() + 10, pos.getY() + 10,
                     4.9f, 9.9f,
@@ -133,7 +133,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
             );
             this.foregroundDonut = new DonutRenderState(
                     RenderPipelines.GUI,
-                    new Matrix3x2f(context.getMatrices()),
+                    new Matrix3x2f(context.pose()),
                     20,
                     pos.getX() + 10, pos.getY() + 10,
                     5f, 10f,
@@ -147,8 +147,8 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         foregroundDonut.setAngles(0.75f - (Math.round(renderedCpuUsage) / 100f), 0.75f);
         backgroundDonut.setColor(new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode());
 
-        context.state.addSimpleElement(backgroundDonut);
-        context.state.addSimpleElement(foregroundDonut);
+        context.guiRenderState.submitGuiElement(backgroundDonut);
+        context.guiRenderState.submitGuiElement(foregroundDonut);
     }
 
 

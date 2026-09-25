@@ -3,9 +3,9 @@ package millo.millomod2.client.mixin.screen;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
 import millo.millomod2.client.net.UpdateService;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,24 +18,24 @@ public abstract class MTitleScreen {
 
     @Shadow
     @Nullable
-    protected abstract Text getMultiplayerDisabledText();
+    protected abstract Component getMultiplayerDisabledReason();
 
 
-    @Inject(method = "addNormalWidgets", at = @At("RETURN"))
+    @Inject(method = "createNormalMenuOptions", at = @At("RETURN"))
     void addUpdateButton(int y, int spacingY, CallbackInfoReturnable<Integer> cir) {
         TitleScreen titleScreen = (TitleScreen) (Object) this;
 
         UpdateService.checkForUpdates().thenAccept(result -> {
             MilloMod.MC.execute(() -> {
-                if (!result.outdated() || MilloMod.MC.currentScreen != titleScreen) return;
+                if (!result.outdated() || MilloMod.MC.screen != titleScreen) return;
                 ScreenAccessor accessor = (ScreenAccessor) titleScreen;
                 accessor.iAddDrawableChild(
-                        (ButtonWidget.builder(Text.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),
+                        (Button.builder(Component.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),
                                         (button) -> UpdateService.openUpdateScreen())
-                                .dimensions(accessor.getWidth() / 2 - 100, y + spacingY * 3, 200, 20)
+                                .bounds(accessor.getWidth() / 2 - 100, y + spacingY * 3, 200, 20)
                                 .tooltip(null)
                                 .build()
-                        )).active = getMultiplayerDisabledText() == null;
+                        )).active = getMultiplayerDisabledReason() == null;
             });
         });
 

@@ -3,16 +3,15 @@ package millo.millomod2.client.rendering.gui;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.style.GUIStyle;
 import millo.millomod2.menu.FadeElement;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
-public class NumberSliderElement extends ClickableWidget implements FadeElement {
+public class NumberSliderElement extends AbstractWidget implements FadeElement {
 
     private DecimalFormat df = new DecimalFormat("#.##");
 
@@ -33,24 +32,24 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
         this.onChange = onChange;
     }
 
-    private boolean hovered = false;
+    private boolean isHovered = false;
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
-        context.getMatrices().pushMatrix();
-        getFade().applyTranslation(context.getMatrices());
+        context.pose().pushMatrix();
+        getFade().applyTranslation(context.pose());
 
-        hovered = isMouseOver(mouseX, mouseY);
+        isHovered = isMouseOver(mouseX, mouseY);
 
         if (dragging) {
             updateValueFromMouse(mouseX);
             onChange.accept(value);
         }
 
-        TextRenderer textRenderer = MilloMod.MC.textRenderer;
+        Font textRenderer = MilloMod.MC.font;
         String text = df.format(value);
-        int textWidth = textRenderer.getWidth(text);
+        int textWidth = textRenderer.width(text);
 
         double progress = (value - min) / (max - min);
         int middle = getY() + getHeight() / 2;
@@ -59,15 +58,15 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
         context.fill(getX() + (getWidth() + textWidth) / 2 + 2, middle -1, getRight(), middle + 1, GUIStyle.GUIDE);
         context.fill(getX(), getY(), (int) (getX() + progress * getWidth()), getBottom(), GUIStyle.ACCENT);
 
-        int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
-        context.drawText(textRenderer, text, getX() + (getWidth() - textWidth) / 2, middle - 4, textColor, false);
+        int textColor = isHovered ? 0xFFFFFFAA : 0xFFFFFFFF;
+        context.drawString(textRenderer, text, getX() + (getWidth() - textWidth) / 2, middle - 4, textColor, false);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!active || !visible) return false;
         if (!isValidClickButton(click.buttonInfo())) return false;
         if (!isMouseOver(click.x(), click.y())) return false;
@@ -78,13 +77,13 @@ public class NumberSliderElement extends ClickableWidget implements FadeElement 
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         dragging = false;
         return true;
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
 
     }
 

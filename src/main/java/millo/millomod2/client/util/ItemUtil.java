@@ -5,41 +5,40 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.DataResult;
 import millo.millomod2.client.MilloMod;
-import net.minecraft.command.argument.ItemStackArgument;
-import net.minecraft.command.argument.ItemStringReader;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.commands.arguments.item.ItemParser;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringNbtReader;
-
+import net.minecraft.nbt.TagParser;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ItemUtil {
 
-    public static NbtCompound getPBV(ItemStack stack) {
-        ComponentMap components = stack.getComponents();
+    public static CompoundTag getPBV(ItemStack stack) {
+        DataComponentMap components = stack.getComponents();
         if (components == null) return null;
 
-        NbtComponent custom_data = components.get(DataComponentTypes.CUSTOM_DATA);
+        CustomData custom_data = components.get(DataComponents.CUSTOM_DATA);
         if (custom_data == null) return null;
 
-        NbtCompound nbt = custom_data.copyNbt();
+        CompoundTag nbt = custom_data.copyTag();
         return nbt.getCompound("PublicBukkitValues").orElse(null);
     }
 
     public static Map<String, Object> getItemTags(ItemStack item) {
 
-        NbtCompound pbv = getPBV(item);
+        CompoundTag pbv = getPBV(item);
         if (pbv == null) return null;
 
         HashMap<String, Object> result = new HashMap<>();
 
-        pbv.getKeys().forEach(key -> {
+        pbv.keySet().forEach(key -> {
             Object value = pbv.get(key);
             result.put(key, value);
         });
@@ -49,17 +48,17 @@ public class ItemUtil {
     }
 
     public static ItemStack fromNbt(String data) {
-        if (MilloMod.MC.world == null) return ItemStack.EMPTY;
+        if (MilloMod.MC.level == null) return ItemStack.EMPTY;
 
         try {
-            NbtCompound nbt = StringNbtReader.readCompound(data);
-            DataResult<ItemStack> result = ItemStack.CODEC.parse(MilloMod.MC.world.getRegistryManager().getOps(NbtOps.INSTANCE), nbt);
+            CompoundTag nbt = TagParser.parseCompoundFully(data);
+            DataResult<ItemStack> result = ItemStack.CODEC.parse(MilloMod.MC.level.registryAccess().createSerializationContext(NbtOps.INSTANCE), nbt);
             return result.getOrThrow();
         } catch (Exception e) {
             try {
-                ItemStringReader stringReader = new ItemStringReader(MilloMod.MC.world.getRegistryManager());
-                ItemStringReader.ItemResult result = stringReader.consume(new StringReader(data));
-                return new ItemStackArgument(result.item(), result.components()).createStack(1, false);
+                ItemParser stringReader = new ItemParser(MilloMod.MC.level.registryAccess());
+                ItemParser.ItemResult result = stringReader.parse(new StringReader(data));
+                return new ItemInput(result.item(), result.components()).createItemStack(1, false);
             } catch (Exception e2) {
                 System.out.println("Error parsing item NBT: " + e2.getMessage());
             }
@@ -70,7 +69,7 @@ public class ItemUtil {
 
 
     public static String getPBVString(ItemStack stack, String key) {
-        NbtCompound pbv = getPBV(stack);
+        CompoundTag pbv = getPBV(stack);
         if (pbv == null) return null;
 
         if (!pbv.contains(key)) return null;
@@ -78,8 +77,8 @@ public class ItemUtil {
         return pbv.getString(key).orElse(null);
     }
 
-    public static LoreComponent getLore(ItemStack stack) {
-        return stack.get(DataComponentTypes.LORE);
+    public static ItemLore getLore(ItemStack stack) {
+        return stack.get(DataComponents.LORE);
     }
 
     public static String getItemTagAsString(ItemStack stack, String tag) {
@@ -94,17 +93,17 @@ public class ItemUtil {
     }
 
     public static void setVarItem(ItemStack stack, JsonObject varItem) {
-        ComponentMap components = stack.getComponents();
+        DataComponentMap components = stack.getComponents();
         if (components == null) return;
 
-        NbtComponent custom_data = components.get(DataComponentTypes.CUSTOM_DATA);
+        CustomData custom_data = components.get(DataComponents.CUSTOM_DATA);
         if (custom_data == null) return;
 
-        NbtCompound nbt = custom_data.copyNbt();
-        NbtCompound pbv = nbt.getCompound("PublicBukkitValues").orElse(null);
+        CompoundTag nbt = custom_data.copyTag();
+        CompoundTag pbv = nbt.getCompound("PublicBukkitValues").orElse(null);
         if (pbv == null) return;
 
         pbv.putString("hypercube:varitem", varItem.toString());
-        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
     }
 }

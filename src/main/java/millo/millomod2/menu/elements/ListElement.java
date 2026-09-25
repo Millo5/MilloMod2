@@ -3,10 +3,9 @@ package millo.millomod2.menu.elements;
 import millo.millomod2.menu.ContainerElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import java.util.List;
 
 public class ListElement extends ContainerElement<ListElement> {
@@ -26,7 +25,7 @@ public class ListElement extends ContainerElement<ListElement> {
     private double scrollSpeed = 40.0d;
 
     protected ListElement(int x, int y, int width, int height) {
-        super(x, y, width, height, Text.empty());
+        super(x, y, width, height, Component.empty());
     }
 
     public static ListElement create(int width, int height) {
@@ -92,7 +91,7 @@ public class ListElement extends ContainerElement<ListElement> {
     //
     @Override
     public void layoutChildren() {
-        List<ClickableWidget> children = getChildren();
+        List<AbstractWidget> children = getChildren();
 
         if (children.isEmpty()) {
             setExpansion(0);
@@ -103,7 +102,7 @@ public class ListElement extends ContainerElement<ListElement> {
 
         int cursor = padding - (int) renderedScrollOffset;
 
-        for (ClickableWidget child : children) {
+        for (AbstractWidget child : children) {
             if (!child.visible) continue;
             if (children instanceof ContainerElement<?> ce) {
                 ce.layoutChildren();
@@ -148,7 +147,7 @@ public class ListElement extends ContainerElement<ListElement> {
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
     }
 
-    public void scrollToChild(ClickableWidget child) {
+    public void scrollToChild(AbstractWidget child) {
         if (!getChildren().contains(child)) return;
 
         boolean vertical = direction == ElementDirection.COLUMN;
@@ -164,7 +163,7 @@ public class ListElement extends ContainerElement<ListElement> {
 
     @Override
     protected void renderElement(RenderArgs args) {
-        renderedScrollOffset = MathHelper.lerp(args.deltaTicks(), renderedScrollOffset, scrollOffset);
+        renderedScrollOffset = Mth.lerp(args.deltaTicks(), renderedScrollOffset, scrollOffset);
         layoutChildren();
         renderChildren(args);
     }

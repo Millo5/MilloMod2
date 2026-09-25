@@ -9,8 +9,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ public class CodeBrowser extends FlexElement<CodeBrowser> implements Searchable 
 
 
     public CodeBrowser(Hierarchy hierarchy, int width, int height) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
         this.hierarchy = hierarchy;
 
         direction(ElementDirection.COLUMN);

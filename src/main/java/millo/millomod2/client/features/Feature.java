@@ -7,22 +7,21 @@ import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.KeyBinding;
-
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
 import java.util.HashMap;
 
 public abstract class Feature {
 
-    protected final MinecraftClient MC = MilloMod.MC;
-    protected HashMap<String, KeyBinding> keybinds = new HashMap<>();
+    protected final Minecraft MC = MilloMod.MC;
+    protected HashMap<String, KeyMapping> keybinds = new HashMap<>();
 
-    protected ClientPlayerEntity player() {
+    protected LocalPlayer player() {
         return MilloMod.player();
     }
-    protected ClientPlayNetworkHandler net() {
+    protected ClientPacketListener net() {
         return MilloMod.net();
     }
 
@@ -47,7 +46,7 @@ public abstract class Feature {
 
     }
 
-    public HashMap<String, KeyBinding> getKeybinds() {
+    public HashMap<String, KeyMapping> getKeybinds() {
         return keybinds;
     }
 

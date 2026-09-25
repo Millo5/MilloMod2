@@ -1,7 +1,7 @@
 package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.rendering.gui.NumberSliderElement;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.components.AbstractWidget;
 
 public class IntegerRangeConfigValue extends IntegerConfigValue {
 
@@ -19,9 +19,9 @@ public class IntegerRangeConfigValue extends IntegerConfigValue {
     }
 
     @Override
-    public ClickableWidget createWidget() {
-        ClickableWidget element = new NumberSliderElement(value, min, max, 1, (value) -> setValue(value.intValue()));
-        element.setDimensions(150, 20);
+    public AbstractWidget createWidget() {
+        AbstractWidget element = new NumberSliderElement(value, min, max, 1, (value) -> setValue(value.intValue()));
+        element.setSize(150, 20);
         return element;
     }
 

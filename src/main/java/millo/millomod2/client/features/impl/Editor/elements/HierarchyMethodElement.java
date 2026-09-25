@@ -10,10 +10,10 @@ import millo.millomod2.menu.elements.buttons.AbstractButton;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElement> {
 
@@ -23,17 +23,17 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
     private float highlight = 0f;
 
     public HierarchyMethodElement(CodeBrowser browser, String templateName, int width, int height) {
-        super(0, 0, width, height, Text.empty());
+        super(0, 0, width, height, Component.empty());
 
         this.templateName = templateName;
         this.browser = browser;
     }
 
     @Override
-    public void setMessage(Text message) {
+    public void setMessage(Component message) {
         super.setMessage(message);
 
-        int textWidth = getTextRenderer().getWidth(message);
+        int textWidth = getTextRenderer().width(message);
         if (textWidth > getWidth() - 10) {
             setWidth(textWidth + 10);
         }
@@ -45,9 +45,9 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         if (click.button() == 1) {
-            if (MilloMod.MC.currentScreen instanceof Menu menu) {
+            if (MilloMod.MC.screen instanceof Menu menu) {
                 ListElement contextMenu = ListElement.create(100, 20)
                         .background(0xCC222222)
                         .direction(ElementDirection.COLUMN)
@@ -55,11 +55,11 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                         .gap(0);
                 int usageCount = EditorMenu.getActivePlot().getMethodIndex().getUsages(templateName).size();
                 contextMenu.addChild(ButtonElement.create(100, 20)
-                        .message(Text.literal("Usages (" + usageCount + ")"))
+                        .message(Component.literal("Usages (" + usageCount + ")"))
                         .onPress(button -> EditorMenu.getCachedBody().openUsages(templateName))
                 );
                 contextMenu.addChild(ButtonElement.create(100, 20)
-                        .message(Text.literal("Give Item"))
+                        .message(Component.literal("Give Item"))
                         .onPress(button -> {
                             ItemStack item = browser.getHierarchy().getTemplate(templateName).getItem();
                             PlayerUtil.giveItem(item);
@@ -67,7 +67,7 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                         })
                 );
                 contextMenu.addChild(ButtonElement.create(100, 20)
-                        .message(Text.literal("Delete").setStyle(Styles.SCARY.getStyle()))
+                        .message(Component.literal("Delete").setStyle(Styles.SCARY.getStyle()))
                         .onPress(button -> {
                             browser.getHierarchy().removeTemplate(templateName);
                             menu.closeContextMenu();
@@ -75,8 +75,8 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
                 );
 
                 menu.openContextMenu(contextMenu,
-                        (int) MilloMod.MC.mouse.getScaledX(MilloMod.MC.getWindow()),
-                        (int) MilloMod.MC.mouse.getScaledY(MilloMod.MC.getWindow())
+                        (int) MilloMod.MC.mouseHandler.getScaledXPos(MilloMod.MC.getWindow()),
+                        (int) MilloMod.MC.mouseHandler.getScaledYPos(MilloMod.MC.getWindow())
                 );
             }
             return;
@@ -86,7 +86,7 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
 
 
         if (highlight > 0f) {

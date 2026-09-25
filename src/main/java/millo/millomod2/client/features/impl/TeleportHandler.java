@@ -4,11 +4,10 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.phys.Vec3;
 import java.util.function.Consumer;
 
 public class TeleportHandler extends Feature implements PacketEventSubscriber {
@@ -17,8 +16,8 @@ public class TeleportHandler extends Feature implements PacketEventSubscriber {
 
     private boolean active = false;
     private boolean cancel = false;
-    private Consumer<PlayerPositionLookS2CPacket> callback;
-    private Vec3d target;
+    private Consumer<ClientboundPlayerPositionPacket> callback;
+    private Vec3 target;
 
 
 
@@ -33,18 +32,18 @@ public class TeleportHandler extends Feature implements PacketEventSubscriber {
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::positionLook);
+        eventBus.subscribeReceive(ClientboundPlayerPositionPacket.class, this::positionLook);
     }
 
-    public boolean positionLook(PlayerPositionLookS2CPacket packet) {
+    public boolean positionLook(ClientboundPlayerPositionPacket packet) {
         if (!active) return false;
         if (net() == null || player() == null) return false;
 
         boolean handle = target != null && target.equals(packet.change().position());
         if (target == null &&
-                (!packet.relatives().contains(PositionFlag.X_ROT) &&
-                        !packet.relatives().contains(PositionFlag.Y_ROT) &&
-                        packet.change().pitch() == 0 && packet.change().yaw() == 0
+                (!packet.relatives().contains(Relative.X_ROT) &&
+                        !packet.relatives().contains(Relative.Y_ROT) &&
+                        packet.change().xRot() == 0 && packet.change().yRot() == 0
                 )) {
             handle = true;
         }
@@ -52,21 +51,21 @@ public class TeleportHandler extends Feature implements PacketEventSubscriber {
         if (!handle) return false;
 
         if (callback != null) callback.accept(packet);
-        if (cancel) net().sendPacket(new TeleportConfirmC2SPacket(packet.teleportId()));
+        if (cancel) net().send(new ServerboundAcceptTeleportationPacket(packet.id()));
         callback = null;
         active = false;
         return cancel;
     }
 
-    public static void teleportTo(Vec3d position) {
+    public static void teleportTo(Vec3 position) {
         teleportTo(position, false, false);
     }
 
-    public static void teleportTo(Vec3d target, boolean cancel) {
+    public static void teleportTo(Vec3 target, boolean cancel) {
         teleportTo(target, cancel, false);
     }
 
-    public static void teleportTo(Vec3d target, boolean cancel, boolean devmode) {
+    public static void teleportTo(Vec3 target, boolean cancel, boolean devmode) {
         PlayerUtil.sendCommand("p tp " + target.x + " " + target.y + " " + target.z + (devmode ? " -d" : ""));
         instance.active = true;
         instance.cancel = cancel;
@@ -74,14 +73,14 @@ public class TeleportHandler extends Feature implements PacketEventSubscriber {
         instance.callback = null;
     }
 
-    public static void teleportToMethod(String methodName, boolean cancel, Consumer<Vec3d> callback) {
+    public static void teleportToMethod(String methodName, boolean cancel, Consumer<Vec3> callback) {
         PlayerUtil.sendCommand("ctp " + methodName);
 
         instance.active = true;
         instance.cancel = cancel;
         instance.target = null;
         instance.callback = (packet) -> {
-            Vec3d pos = packet.change().position();
+            Vec3 pos = packet.change().position();
             callback.accept(pos);
         };
 

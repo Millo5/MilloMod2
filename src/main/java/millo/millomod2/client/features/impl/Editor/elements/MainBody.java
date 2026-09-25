@@ -12,9 +12,8 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.font.Alignment;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.network.chat.Component;
 import java.util.stream.Stream;
 
 public class MainBody extends FlexElement<MainBody> {
@@ -26,7 +25,7 @@ public class MainBody extends FlexElement<MainBody> {
     private EditorMenu menu;
 
     public MainBody(EditorMenu menu) {
-        super(0, 0, menu.width, menu.height - 20, Text.empty());
+        super(0, 0, menu.width, menu.height - 20, Component.empty());
         this.menu = menu;
 
         direction(ElementDirection.ROW);
@@ -93,15 +92,15 @@ public class MainBody extends FlexElement<MainBody> {
         String suffix = methodType.suffixString("");
 
         filtered.forEach(name -> list.addChild(ButtonElement.create(200, 10)
-                .message(Text.literal(name.replaceFirst(suffix + "$", "")))
-                .textAlignment(Alignment.LEFT)
+                .message(Component.literal(name.replaceFirst(suffix + "$", "")))
+                .textAlignment(TextAlignment.LEFT)
                 .onPress(button -> {
                     codeBrowser.openTemplate(name);
                     menu.closeContextMenu();
                 })));
 
         if (list.getChildren().isEmpty()) {
-            list.addChild(TextElement.create(Text.literal("No compatible templates found!").setStyle(Styles.SCARY.getStyle())));
+            list.addChild(TextElement.create(Component.literal("No compatible templates found!").setStyle(Styles.SCARY.getStyle())));
         }
 
         menu.openContextMenuAtCursor(list, 0, 8);
@@ -120,8 +119,8 @@ public class MainBody extends FlexElement<MainBody> {
         MethodIndex methodIndex = menu.getLoadedPlot().getMethodIndex();
         var usages = methodIndex.getUsages(templateName);
 
-        TextElement title = TextElement.create(Text.literal("Usages of ").setStyle(Styles.HEADER.getStyle())
-                .append(Text.literal(MethodType.trimSuffix(templateName)).setStyle(Styles.NAME.getStyle())));
+        TextElement title = TextElement.create(Component.literal("Usages of ").setStyle(Styles.HEADER.getStyle())
+                .append(Component.literal(MethodType.trimSuffix(templateName)).setStyle(Styles.NAME.getStyle())));
         title.setHeight(12);
         usageMenu.addChild(title);
         ButtonElement separator = ButtonElement.create(240, 1).background(0xAA666666).muted();
@@ -131,21 +130,21 @@ public class MainBody extends FlexElement<MainBody> {
         if (usages.isEmpty()) {
             String message = methodIndex.isIndexing() ? "Indexing usages..." : "No usages found";
             ButtonElement empty = ButtonElement.create(240, 18)
-                    .message(Text.literal(message).setStyle(Styles.COMMENT.getStyle()))
-                    .textAlignment(Alignment.LEFT)
+                    .message(Component.literal(message).setStyle(Styles.COMMENT.getStyle()))
+                    .textAlignment(TextAlignment.LEFT)
                     .removeHoverBackground();
             empty.active = false;
             usageMenu.addChild(empty);
         } else {
             for (MethodIndex.MethodUsage usage : usages) {
-                Text message = Text.literal(MethodType.trimSuffix(usage.sourceTemplateName())).setStyle(Styles.NAME.getStyle())
-                        .append(Text.literal("  line ").setStyle(Styles.COMMENT.getStyle()))
-                        .append(Text.literal(String.valueOf(usage.line())).setStyle(Styles.LINE.getStyle()));
+                Component message = Component.literal(MethodType.trimSuffix(usage.sourceTemplateName())).setStyle(Styles.NAME.getStyle())
+                        .append(Component.literal("  line ").setStyle(Styles.COMMENT.getStyle()))
+                        .append(Component.literal(String.valueOf(usage.line())).setStyle(Styles.LINE.getStyle()));
                 usageMenu.addChild(ButtonElement.create(240, 18)
                         .message(message)
                         .background(0x18000000)
                         .hoverBackground(0x4033AAAA)
-                        .textAlignment(Alignment.LEFT)
+                        .textAlignment(TextAlignment.LEFT)
                         .onPress(button -> {
                             codeBrowser.openTemplateAtLine(usage.sourceTemplateName(), usage.line());
                             menu.closeContextMenu();
@@ -153,7 +152,7 @@ public class MainBody extends FlexElement<MainBody> {
             }
 
             if (methodIndex.isIndexing()) {
-                TextElement indexing = TextElement.create(Text.literal("Still indexing...").setStyle(Styles.COMMENT.getStyle()));
+                TextElement indexing = TextElement.create(Component.literal("Still indexing...").setStyle(Styles.COMMENT.getStyle()));
                 indexing.setHeight(10);
                 usageMenu.addChild(indexing);
             }

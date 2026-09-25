@@ -10,15 +10,14 @@ import millo.millomod2.client.hypercube.model.codefields.DynamicCodeFields;
 import millo.millomod2.client.hypercube.template.MethodType;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CallFunctionSegment extends CodeLineSegment<DynamicCodeFields> {
-    private static final Text FUNC_PREFIX = Text.literal("call ").setStyle(Styles.FUNCTION.getStyle());
-    private static final Text PROC_PREFIX = Text.literal("start ").setStyle(Styles.PROCESS.getStyle());
+    private static final Component FUNC_PREFIX = Component.literal("call ").setStyle(Styles.FUNCTION.getStyle());
+    private static final Component PROC_PREFIX = Component.literal("start ").setStyle(Styles.PROCESS.getStyle());
 
     private final MethodType methodType;
 

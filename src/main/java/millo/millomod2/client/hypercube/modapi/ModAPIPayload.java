@@ -1,10 +1,10 @@
 package millo.millomod2.client.hypercube.modapi;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 /**
  * ModAPI payload, make sure Messages are serialized with
  * {@link com.mcdiamondfire.proto.ModAPIUtility#serializeMessage(Message)} or
@@ -13,14 +13,14 @@ import net.minecraft.util.Identifier;
  *
  * @param json
  */
-public record ModAPIPayload(String json) implements CustomPayload {
+public record ModAPIPayload(String json) implements CustomPacketPayload {
 
-    public static final Identifier CHANNEL = Identifier.of("hypercube", "pm");
-    public static final CustomPayload.Id<ModAPIPayload> ID = new CustomPayload.Id<>(CHANNEL);
-    public static final PacketCodec<RegistryByteBuf, ModAPIPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, ModAPIPayload::json, ModAPIPayload::new);
+    public static final Identifier CHANNEL = Identifier.fromNamespaceAndPath("hypercube", "pm");
+    public static final CustomPacketPayload.Type<ModAPIPayload> ID = new CustomPacketPayload.Type<>(CHANNEL);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ModAPIPayload> CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ModAPIPayload::json, ModAPIPayload::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 

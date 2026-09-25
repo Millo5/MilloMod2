@@ -4,9 +4,8 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
 import java.awt.*;
 
 public class PositionalElement extends ClickableElement<PositionalElement> {
@@ -26,7 +25,7 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!this.isMouseOver(click.x(), click.y())) return false;
 
         dragging = true;
@@ -38,7 +37,7 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
         if (!dragging) return false;
 
         double offX = click.x() - dragStartX;
@@ -53,8 +52,8 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
         setPosition(feature.getPosition().getX(), feature.getPosition().getY());
 
         for (FeaturePosition.Anchor anchor : FeaturePosition.Anchor.values()) {
-            int anchorX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getScaledWidth());
-            int anchorY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getScaledHeight());
+            int anchorX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getGuiScaledWidth());
+            int anchorY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getGuiScaledHeight());
 
             if (Math.abs(click.x() - anchorX) < 10 && Math.abs(click.y() - anchorY) < 10) {
                 feature.getPosition().setAnchor(anchor);
@@ -66,19 +65,19 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         dragging = false;
         return true;
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         context.fill(getX(), getY(), getRight(), getBottom(), 0x80000000);
-        context.drawStrokedRectangle(getX(), getY(), getWidth(), getHeight(), 0xff00ffff);
+        context.renderOutline(getX(), getY(), getWidth(), getHeight(), 0xff00ffff);
 
         if (dragging || isMouseOver(mouseX, mouseY)) {
-            int anchorX = (int) (feature.getPosition().getAnchor().x / 2d * MilloMod.MC.getWindow().getScaledWidth());
-            int anchorY = (int) (feature.getPosition().getAnchor().y / 2d * MilloMod.MC.getWindow().getScaledHeight());
+            int anchorX = (int) (feature.getPosition().getAnchor().x / 2d * MilloMod.MC.getWindow().getGuiScaledWidth());
+            int anchorY = (int) (feature.getPosition().getAnchor().y / 2d * MilloMod.MC.getWindow().getGuiScaledHeight());
 
             double dx = anchorX - (getX() + getWidth() / 2d);
             double dy = anchorY - (getY() + getHeight() / 2d);
@@ -109,13 +108,13 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
 
             for (FeaturePosition.Anchor anchor : FeaturePosition.Anchor.values()) {
                 if (anchor == feature.getPosition().getAnchor()) continue;
-                int anchorPosX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getScaledWidth());
-                int anchorPosY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getScaledHeight());
-                context.drawStrokedRectangle(anchorPosX - 3, anchorPosY - 3, 5,5, 0xffffffff);
+                int anchorPosX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getGuiScaledWidth());
+                int anchorPosY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getGuiScaledHeight());
+                context.renderOutline(anchorPosX - 3, anchorPosY - 3, 5,5, 0xffffffff);
             }
 
             context.fill(anchorX - 4, anchorY - 4, anchorX + 3, anchorY + 3, 0xffffffff);
-            context.drawTextWithShadow(getTextRenderer(), message, getX() + 2, getY() + 2, 0xffffffff);
+            context.drawString(getTextRenderer(), message, getX() + 2, getY() + 2, 0xffffffff);
         }
 
 

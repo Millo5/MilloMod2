@@ -16,11 +16,11 @@ import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class CodeBodyBuilder {
-    private static final Identifier STRUCTURE_VOID_ID = Identifier.of("minecraft", "structure_void");
+    private static final Identifier STRUCTURE_VOID_ID = Identifier.fromNamespaceAndPath("minecraft", "structure_void");
 
     private final CodeTextArea codeTextArea;
 
@@ -72,7 +72,7 @@ public class CodeBodyBuilder {
         // Create line number button
         int physicalOffset = this.physicalOffset;
         element.addChild(ButtonElement.create(30, 10)
-                .message(Text.literal(lineNumber+++"").setStyle(Styles.LINE_NUM.getStyle()))
+                .message(Component.literal(lineNumber+++"").setStyle(Styles.LINE_NUM.getStyle()))
                 .hoverBackground(0x33000000)
                 .background(0)
                 .onPress((button) -> {

@@ -3,10 +3,10 @@ package millo.millomod2.client.features.guides;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 /** A copyable one-line snippet or multi-line code block. */
 public class GuideSnippetElement extends ClickableElement<GuideSnippetElement> {
@@ -18,10 +18,10 @@ public class GuideSnippetElement extends ClickableElement<GuideSnippetElement> {
     private final String[] lines;
 
     private GuideSnippetElement(String snippet, String tooltip) {
-        super(0, 0, 0, snippet.stripTrailing().split("\\R", -1).length * LINE_HEIGHT + PADDING * 2, Text.empty());
+        super(0, 0, 0, snippet.stripTrailing().split("\\R", -1).length * LINE_HEIGHT + PADDING * 2, Component.empty());
         this.snippet = snippet.stripTrailing();
         this.lines = this.snippet.split("\\R", -1);
-        setTooltip(Tooltip.of(Text.literal(tooltip)));
+        setTooltip(Tooltip.create(Component.literal(tooltip)));
     }
 
     public static GuideSnippetElement create(String snippet, String tooltip) {
@@ -29,21 +29,21 @@ public class GuideSnippetElement extends ClickableElement<GuideSnippetElement> {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         background(isMouseOver(mouseX, mouseY) ? 0xA0303030 : 0x60000000);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
         int y = getY() + PADDING;
         for (String line : lines) {
-            context.drawText(MilloMod.MC.textRenderer, line, getX() + PADDING, y, 0xFFFFE080, true);
+            context.drawString(MilloMod.MC.font, line, getX() + PADDING, y, 0xFFFFE080, true);
             y += LINE_HEIGHT;
         }
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!isMouseOver(click.x(), click.y())) return false;
-        MilloMod.MC.keyboard.setClipboard(snippet);
+        MilloMod.MC.keyboardHandler.setClipboard(snippet);
         SoundUtil.playClickSound();
         return true;
     }

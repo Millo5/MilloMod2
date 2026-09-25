@@ -1,23 +1,23 @@
 package millo.millomod2.client.hypercube.data;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class HypercubeLocation {
 
-    private Vec3d pos = null;
+    private Vec3 pos = null;
 
     public HypercubeLocation() {
     }
 
-    public HypercubeLocation(Vec3d pos) {
+    public HypercubeLocation(Vec3 pos) {
         this.pos = pos;
     }
 
-    public Vec3d getPos() {
+    public Vec3 getPos() {
         return pos;
     }
 
-    public void setPos(Vec3d pos) {
+    public void setPos(Vec3 pos) {
         this.pos = pos;
     }
 

@@ -4,9 +4,8 @@ import millo.millomod2.client.hypercube.model.arguments.ParticleArgumentModel;
 import millo.millomod2.client.hypercube.model.arguments.particle.ParticleField;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import java.lang.reflect.Field;
 
 public class ParticleArgumentSegment extends SimpleSegment<ParticleArgumentModel> {
@@ -18,7 +17,7 @@ public class ParticleArgumentSegment extends SimpleSegment<ParticleArgumentModel
     @Override
     TextElement createContent(ParticleArgumentModel model) {
 
-        MutableText tooltip = Text.empty();
+        MutableComponent tooltip = Component.empty();
         tooltip.append("Amount: " + model.getAmount() + "\n");
         tooltip.append("Spread: " + model.getHorizontal() + " " + model.getVertical() + "\n");
 

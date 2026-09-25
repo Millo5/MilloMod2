@@ -6,8 +6,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.client.websocket.MilloWebSocketServer;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,12 +76,12 @@ public class SocketServe extends Feature implements Toggleable {
                     serverState = ServerState.STOPPED;
                 }
                 lastError = "None";
-                notify(Text.literal("WebSocket server stopped").setStyle(Styles.REMOVED.getStyle()));
+                notify(Component.literal("WebSocket server stopped").setStyle(Styles.REMOVED.getStyle()));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 serverState = ServerState.RUNNING;
                 lastError = message(e);
-                notify(Text.literal("Failed to stop WebSocket server: " + message(e)).setStyle(Styles.SCARY.getStyle()));
+                notify(Component.literal("Failed to stop WebSocket server: " + message(e)).setStyle(Styles.SCARY.getStyle()));
             }
         }
     }
@@ -92,7 +91,7 @@ public class SocketServe extends Feature implements Toggleable {
         serverState = ServerState.RUNNING;
         lastError = "None";
         if (shouldRun) {
-            notify(Text.literal("WebSocket server started on port 31321").setStyle(Styles.ADDED.getStyle()));
+            notify(Component.literal("WebSocket server started on port 31321").setStyle(Styles.ADDED.getStyle()));
         } else {
             applyState();
         }
@@ -105,7 +104,7 @@ public class SocketServe extends Feature implements Toggleable {
         serverState = ServerState.STOPPED;
         lastError = message(exception);
         String prefix = wasRunning ? "WebSocket server stopped unexpectedly: " : "Failed to start WebSocket server: ";
-        notify(Text.literal(prefix + message(exception) + ". Toggle it to retry.")
+        notify(Component.literal(prefix + message(exception) + ". Toggle it to retry.")
                 .setStyle(Styles.SCARY.getStyle()));
     }
 
@@ -113,7 +112,7 @@ public class SocketServe extends Feature implements Toggleable {
         return exception.getMessage() == null ? exception.getClass().getSimpleName() : exception.getMessage();
     }
 
-    private void notify(Text message) {
+    private void notify(Component message) {
         MilloMod.MC.execute(() -> Notifications.notify(message));
     }
 

@@ -3,9 +3,9 @@ package millo.millomod2.client.features.impl.Editor.elements;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 
 public class Tab extends ButtonElement {
 
@@ -16,11 +16,11 @@ public class Tab extends ButtonElement {
     private TemplateModel template;
 
     public Tab(CodeBrowser browser, String displayName, TemplateModel template) {
-        super(0, 0, 100, 20, Text.literal(displayName));
+        super(0, 0, 100, 20, Component.literal(displayName));
         this.template = template;
         this.browser = browser;
 
-        textWidth = getTextRenderer().getWidth(displayName);
+        textWidth = getTextRenderer().width(displayName);
         setWidth(textWidth + 22);
 
         hoverBackground(0x30ffffff);
@@ -28,12 +28,12 @@ public class Tab extends ButtonElement {
         closeButton = ButtonElement.create(16, 16)
                 .position(textWidth + 4, 2)
                 .hoverBackground(0x30ffffff)
-                .message(Text.literal("x"))
+                .message(Component.literal("x"))
                 .onPress((button) -> browser.closeTab(this));
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         if (closeButton.mouseClicked(click, doubled)) return;
 
         if (click.button() == 2) {
@@ -45,7 +45,7 @@ public class Tab extends ButtonElement {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         boolean hovered = isMouseOver(mouseX, mouseY) && !closeButton.isMouseOver(mouseX, mouseY);
 
         int background = this.background;
@@ -56,7 +56,7 @@ public class Tab extends ButtonElement {
         this.background = background;
 
         int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
-        context.drawTextWithShadow(MilloMod.MC.textRenderer, getMessage(), getX() + 4, getY() + (getHeight() - 8) / 2, textColor);
+        context.drawString(MilloMod.MC.font, getMessage(), getX() + 4, getY() + (getHeight() - 8) / 2, textColor);
 
         closeButton.setX(getX() + textWidth + 4);
         closeButton.render(context, mouseX, mouseY, deltaTicks);

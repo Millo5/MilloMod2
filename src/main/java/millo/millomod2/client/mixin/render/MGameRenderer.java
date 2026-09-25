@@ -1,7 +1,7 @@
 package millo.millomod2.client.mixin.render;
 
 import millo.millomod2.client.rendering.world.Renderer;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

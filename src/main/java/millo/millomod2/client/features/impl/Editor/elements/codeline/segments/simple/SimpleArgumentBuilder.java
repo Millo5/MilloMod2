@@ -3,37 +3,37 @@ package millo.millomod2.client.features.impl.Editor.elements.codeline.segments.s
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public class SimpleArgumentBuilder {
 
-    private final MutableText name;
+    private final MutableComponent name;
     private Styles style;
-    private MutableText tooltip;
-    private Supplier<@Nullable Text> tooltipSupplier;
+    private MutableComponent tooltip;
+    private Supplier<@Nullable Component> tooltipSupplier;
     private Supplier<Boolean> onClick;
 
-    public SimpleArgumentBuilder(MutableText name) {
+    public SimpleArgumentBuilder(MutableComponent name) {
         this.name = name;
         this.tooltip = null;
         this.onClick = null;
     }
 
     public SimpleArgumentBuilder(String name) {
-        this(Text.literal(name));
+        this(Component.literal(name));
     }
 
-    public SimpleArgumentBuilder tooltip(MutableText tooltip) {
+    public SimpleArgumentBuilder tooltip(MutableComponent tooltip) {
         this.tooltip = tooltip;
         return this;
     }
 
-    public SimpleArgumentBuilder tooltip(Supplier<@Nullable Text> tooltipSupplier) {
+    public SimpleArgumentBuilder tooltip(Supplier<@Nullable Component> tooltipSupplier) {
         this.tooltipSupplier = tooltipSupplier;
         return this;
     }
@@ -60,7 +60,7 @@ public class SimpleArgumentBuilder {
         if (style != null) name.setStyle(style.getStyle());
         TextElement element = TextElement.create(name);
         if (tooltipSupplier != null) element.tooltip(tooltipSupplier);
-        else if (tooltip != null) element.setTooltip(Tooltip.of(tooltip));
+        else if (tooltip != null) element.setTooltip(Tooltip.create(tooltip));
         if (onClick != null) element.onClickListener(onClick);
         return element;
     }

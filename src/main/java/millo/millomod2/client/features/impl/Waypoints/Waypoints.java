@@ -19,9 +19,8 @@ import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,23 +76,23 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
                 config.getFloat("label_hide_distance")
         );
 
-        while (getKeybind().wasPressed()) {
+        while (getKeybind().consumeClick()) {
             if (selected != null && config.getBoolean("shown_in_world")) {
                 selected.teleport();
                 break;
             }
 //            if (player().isSneaking()) new AddWaypointMenu(null, player().getEntityPos()).open();
-            if (player().isSneaking()) new WaypointMenu(null).open();
+            if (player().isShiftKeyDown()) new WaypointMenu(null).open();
         }
 
-        Vec3d pos = player().getEyePos();
-        Vec3d dir = player().getRotationVector();
+        Vec3 pos = player().getEyePosition();
+        Vec3 dir = player().getLookAngle();
 
         double highest = 0.98d;
         Waypoint highestWp = null;
         for (Waypoint waypoint : waypoints) {
-            Vec3d off = waypoint.position().subtract(pos).normalize();
-            double dot = off.dotProduct(dir);
+            Vec3 off = waypoint.position().subtract(pos).normalize();
+            double dot = off.dot(dir);
 
             if (dot > highest) {
                 highest = dot;
@@ -115,7 +114,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         if (configCache == null) return;
         if (!config.getBoolean("shown_in_world")) return;
 
-        Vec3d camera = renderer.getRenderState().cameraRenderState.pos;
+        Vec3 camera = renderer.getRenderState().cameraRenderState.pos;
         for (Waypoint waypoint : new ArrayList<>(waypoints)) {
             waypoint.render(renderer, camera, configCache);
         }
@@ -135,14 +134,14 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
 
     @Override
     public void subscribePackets(PacketEventBus eventBus) {
-        eventBus.subscribeReceive(PlayerPositionLookS2CPacket.class, this::teleport);
+        eventBus.subscribeReceive(ClientboundPlayerPositionPacket.class, this::teleport);
     }
 
-    public boolean teleport(PlayerPositionLookS2CPacket packet) {
+    public boolean teleport(ClientboundPlayerPositionPacket packet) {
         if (!config.getBoolean("back_waypoint")) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV && HypercubeAPI.getMode() != HypercubeAPI.Mode.BUILD) return false;
 
-        double dist = packet.change().position().subtract(player().getEntityPos()).length();
+        double dist = packet.change().position().subtract(player().position()).length();
         if (dist < 5) return false;
 
         long currentTime = System.currentTimeMillis();
@@ -150,7 +149,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         lastBackTime = currentTime;
 
         if (backWaypoint != null) waypoints.remove(backWaypoint);
-        backWaypoint = new Waypoint(player().getEntityPos(), "Back", 0xaaffaa);
+        backWaypoint = new Waypoint(player().position(), "Back", 0xaaffaa);
         add(backWaypoint, false);
         return false;
     }
@@ -199,7 +198,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
                 String label = wpJson.get("label").getAsString();
                 int color = wpJson.get("color").getAsInt();
 
-                Waypoint waypoint = new Waypoint(new Vec3d(x, y, z), label, color);
+                Waypoint waypoint = new Waypoint(new Vec3(x, y, z), label, color);
                 list.add(waypoint);
             }
         }
@@ -249,7 +248,7 @@ public class Waypoints extends Feature implements WorldRendered, Keybound, Confi
         return null;
     }
 
-    public void addTemporaryWaypoint(Vec3d pos) {
+    public void addTemporaryWaypoint(Vec3 pos) {
         if (temporaryWaypoint != null) waypoints.remove(temporaryWaypoint);
         temporaryWaypoint = new Waypoint(pos, "Temp", 0xaaffaa);
         add(temporaryWaypoint, false);
