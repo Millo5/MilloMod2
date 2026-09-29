@@ -95,7 +95,7 @@ public class Debug extends Feature implements Configurable, HUDRendered, Positio
 
         int yOffset = 0;
         for (String line : lines) {
-            renderInfo.context().drawString(MilloMod.MC.font, line, getPosition().getX(), getPosition().getY() + yOffset, 0xFFFFFFFF, true);
+            renderInfo.graphics().text(MilloMod.MC.font, line, getPosition().getX(), getPosition().getY() + yOffset, 0xFFFFFFFF, true);
             yOffset += 10;
         }
     }

@@ -6,7 +6,7 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.player.PlayerModel;
@@ -33,9 +33,9 @@ public class SkinPreview extends Feature implements Toggleable, ContainerMod {
     }
 
     @Override
-    public void containerDrawSlot(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    public void containerDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled()) return;
-        Screen screen = MilloMod.MC.screen;
+        Screen screen = MilloMod.MC.gui.screen();
         if (screen == null) return;
 
         var handledScreen = (HandledScreenAccessor) screen;
@@ -69,10 +69,13 @@ public class SkinPreview extends Feature implements Toggleable, ContainerMod {
         int x = handledScreen.getX() - 100;
         int y = handledScreen.getY();
 
+//        Model.Simple simple = new Model.Simple(model, RenderType.SMALL_BUFFER_SIZE);
+        // TODO: FIX 26.2
+
         if (model != null && skin != null) {
-            context.submitSkinRenderState(
-                    model, skin.body().texturePath(), 38f, -15f, -15f, 0f, x, y, x + 100, y + 100
-            );
+//            graphics.skin(
+//                    model., skin.body().texturePath(), 38f, -15f, -15f, 0f, x, y, x + 100, y + 100
+//            );
         }
     }
 }

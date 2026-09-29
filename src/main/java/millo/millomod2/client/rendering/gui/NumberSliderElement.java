@@ -4,10 +4,11 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.style.GUIStyle;
 import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
+
 import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
@@ -35,10 +36,10 @@ public class NumberSliderElement extends AbstractWidget implements FadeElement {
     private boolean isHovered = false;
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
-        context.pose().pushMatrix();
-        getFade().applyTranslation(context.pose());
+        graphics.pose().pushMatrix();
+        getFade().applyTranslation(graphics.pose());
 
         isHovered = isMouseOver(mouseX, mouseY);
 
@@ -54,14 +55,14 @@ public class NumberSliderElement extends AbstractWidget implements FadeElement {
         double progress = (value - min) / (max - min);
         int middle = getY() + getHeight() / 2;
 
-        context.fill(getX(), middle -1, getX() + (getWidth() - textWidth) / 2 - 2, middle + 1, GUIStyle.GUIDE);
-        context.fill(getX() + (getWidth() + textWidth) / 2 + 2, middle -1, getRight(), middle + 1, GUIStyle.GUIDE);
-        context.fill(getX(), getY(), (int) (getX() + progress * getWidth()), getBottom(), GUIStyle.ACCENT);
+        graphics.fill(getX(), middle -1, getX() + (getWidth() - textWidth) / 2 - 2, middle + 1, GUIStyle.GUIDE);
+        graphics.fill(getX() + (getWidth() + textWidth) / 2 + 2, middle -1, getRight(), middle + 1, GUIStyle.GUIDE);
+        graphics.fill(getX(), getY(), (int) (getX() + progress * getWidth()), getBottom(), GUIStyle.ACCENT);
 
         int textColor = isHovered ? 0xFFFFFFAA : 0xFFFFFFFF;
-        context.drawString(textRenderer, text, getX() + (getWidth() - textWidth) / 2, middle - 4, textColor, false);
+        graphics.text(textRenderer, text, getX() + (getWidth() - textWidth) / 2, middle - 4, textColor, false);
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
 

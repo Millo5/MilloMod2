@@ -3,10 +3,11 @@ package millo.millomod2.client.features.guides;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+
 import java.util.List;
 
 /** A guide paragraph that wraps to the width assigned by its containing ListElement. */
@@ -36,11 +37,11 @@ public class WrappedTextElement extends ClickableElement<WrappedTextElement> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
         int y = getY();
         for (FormattedCharSequence line : lines) {
-            context.drawString(MilloMod.MC.font, line, getX(), y, 0xFFFFFFFF, true);
+            graphics.text(MilloMod.MC.font, line, getX(), y, 0xFFFFFFFF, true);
             y += LINE_HEIGHT;
         }
     }

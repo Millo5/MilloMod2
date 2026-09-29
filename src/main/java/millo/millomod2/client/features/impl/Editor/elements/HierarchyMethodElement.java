@@ -10,7 +10,7 @@ import millo.millomod2.menu.elements.buttons.AbstractButton;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +47,7 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
     @Override
     public void onClick(MouseButtonEvent click, boolean doubled) {
         if (click.button() == 1) {
-            if (MilloMod.MC.screen instanceof Menu menu) {
+            if (MilloMod.MC.gui.screen() instanceof Menu menu) {
                 ListElement contextMenu = ListElement.create(100, 20)
                         .background(0xCC222222)
                         .direction(ElementDirection.COLUMN)
@@ -85,22 +85,22 @@ public class HierarchyMethodElement extends AbstractButton<HierarchyMethodElemen
         browser.openTemplate(templateName);
     }
 
-    @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
 
+    @Override
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
         if (highlight > 0f) {
             highlight -= deltaTicks * 0.1f;
             if (highlight < 0f) highlight = 0f;
-//            context.fill(getX(), getY(), getRight(), getBottom(), 0x00FFFF00 | ((int) (highlight * 255) << 24));
+//            graphics.fill(getX(), getY(), getRight(), getBottom(), 0x00FFFF00 | ((int) (highlight * 255) << 24));
         }
 
         int highlightColor = getHighlightColor();
         if (highlightColor != 0) {
-            context.fill(getX(), getY(), getRight(), getBottom(), highlightColor);
+            graphics.fill(getX(), getY(), getRight(), getBottom(), highlightColor);
         }
 
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 
     private int getHighlightColor() {

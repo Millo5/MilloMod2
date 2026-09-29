@@ -31,7 +31,7 @@ public class AngelsGrace extends Feature implements Toggleable {
         if (!isEnabled() || player() == null) return;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return;
 
-        Screen screen = MC.screen;
+        Screen screen = MC.gui.screen();
         if (screen instanceof AbstractContainerScreen<?> || screen instanceof ChatScreen) {
             if (!player().getAbilities().flying && player().getAbilities().mayfly) {
                 if (player().getDeltaMovement().y < -0.3 && !player().onGround()) {

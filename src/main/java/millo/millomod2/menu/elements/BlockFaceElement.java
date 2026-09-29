@@ -1,10 +1,8 @@
 package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -23,20 +21,22 @@ public class BlockFaceElement extends ClickableElement<BlockFaceElement> {
         Block block = BuiltInRegistries.BLOCK.getValue(id);
         BlockState state = block.defaultBlockState();
 
-        BlockRenderDispatcher brm = MilloMod.MC.getBlockRenderer();
-
-        BlockStateModel model = brm.getBlockModel(state);
-        sprite = model.particleIcon();
+        sprite = MilloMod.MC
+                .getModelManager()
+                .getBlockStateModelSet()
+                .get(state)
+                .particleMaterial()
+                .sprite();
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        context.pose().pushMatrix();
-        context.pose().translate(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
-        if (rotation != 0) context.pose().rotate(rotation);
-        context.pose().translate(-getWidth() / 2f, -getHeight() / 2f);
-        context.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, getWidth(), getHeight(),0xFFFFFFFF);
-        context.pose().popMatrix();
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
+        if (rotation != 0) graphics.pose().rotate(rotation);
+        graphics.pose().translate(-getWidth() / 2f, -getHeight() / 2f);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, 0, 0, getWidth(), getHeight(),0xFFFFFFFF);
+        graphics.pose().popMatrix();
     }
 
     public void rotate(float amount) {

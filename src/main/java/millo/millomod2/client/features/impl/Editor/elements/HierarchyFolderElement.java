@@ -28,7 +28,7 @@ public class HierarchyFolderElement extends FolderElement {
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (click.y() <= getY() + 12 && click.button() == 1) {
-            if (MilloMod.MC.screen instanceof Menu menu) {
+            if (MilloMod.MC.gui.screen() instanceof Menu menu) {
                 ListElement contextMenu = ListElement.create(100, 20)
                         .background(0xCC222222)
                         .direction(ElementDirection.COLUMN)

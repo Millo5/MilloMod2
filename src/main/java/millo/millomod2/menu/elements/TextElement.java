@@ -5,7 +5,7 @@ import millo.millomod2.client.mixin.render.accessors.ClickableWidgetAccessor;
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.gui.ActiveTextCollector;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -42,47 +42,47 @@ public class TextElement extends StringWidget implements FadeElement {
     }
 
     @Override
-    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
         if (isHovered && tooltipSupplier != null) {
             Component tooltip = tooltipSupplier.get();
             setTooltip(tooltip == null ? null : Tooltip.create(tooltip));
         }
-        context.pose().pushMatrix();
-        getFade().applyTranslation(context.pose());
+        graphics.pose().pushMatrix();
+        getFade().applyTranslation(graphics.pose());
 
 
 
         int textWidth = MilloMod.MC.font.width(this.getMessage());
         if (alignment == TextAlignment.CENTER) {
-            context.pose().translate((this.width - textWidth) / 2f, 0);
+            graphics.pose().translate((this.width - textWidth) / 2f, 0);
         } else if (alignment == TextAlignment.RIGHT) {
-            context.pose().translate(this.width - textWidth, 0);
+            graphics.pose().translate(this.width - textWidth, 0);
         }
 
-        context.pose().translate(xOffset, yOffset);
+        graphics.pose().translate(xOffset, yOffset);
 
         if (highlight != 0) {
-            context.fill(getX(), getY() - 1, getRight(), getBottom(), 0x40000000 | highlight);
+            graphics.fill(getX(), getY() - 1, getRight(), getBottom(), 0x40000000 | highlight);
             int highlightXStart = getX() + MilloMod.MC.font.width(getMessage().getString().substring(0, highlightStart));
             int highlightXWidth = getX() + MilloMod.MC.font.width(getMessage().getString().substring(0, highlightEnd)) - highlightXStart;
-//            context.fill(highlightXStart, getY() - 1, highlightXStart + highlightXWidth, getBottom(), 0x80000000 | highlight);
-            context.renderOutline(highlightXStart, getY()-1, highlightXWidth, getHeight()+1, 0xFF000000 | highlight);
+//            graphics.fill(highlightXStart, getY() - 1, highlightXStart + highlightXWidth, getBottom(), 0x80000000 | highlight);
+            graphics.outline(highlightXStart, getY()-1, highlightXWidth, getHeight()+1, 0xFF000000 | highlight);
         }
 
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         if (onClick != null && isHovered) {
-            context.fill(getX(), getBottom() - 1, getRight(), getBottom(), 0xFFFFFFFF);
+            graphics.fill(getX(), getBottom() - 1, getRight(), getBottom(), 0xFFFFFFFF);
         }
 
         ClickableWidgetAccessor accessor = (ClickableWidgetAccessor) this;
         if (accessor.getTooltipState().get() != null) {
-            var pos = context.pose().transformPosition(mouseX, mouseY, new Vector2f());
-            accessor.getTooltipState().refreshTooltipForNextRenderPass(context, (int)pos.x, (int)pos.y, isHovered, isFocused(), getRectangle());
+            var pos = graphics.pose().transformPosition(mouseX, mouseY, new Vector2f());
+            accessor.getTooltipState().refreshTooltipForNextRenderPass(graphics, (int)pos.x, (int)pos.y, isHovered, isFocused(), getRectangle());
         }
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
     @Override

@@ -2,7 +2,7 @@ package millo.millomod2.menu.elements;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -25,16 +25,16 @@ public class ItemStackElement extends ClickableElement<ItemStackElement> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
-        context.renderItem(stack, getX() - 4, getY() - 4, 0);
+        graphics.item(stack, getX() - 4, getY() - 4, 0);
         if (drawOverlay) {
-            context.renderItemDecorations(getTextRenderer(), stack, getX(), getY(), null);
+            graphics.itemDecorations(getTextRenderer(), stack, getX(), getY(), null);
         }
 
         if (isMouseOver(mouseX, mouseY)) {
-            var pos = context.pose().transformPosition(mouseX, mouseY, new Vector2f());
-            context.setTooltipForNextFrame(getTextRenderer(), stack, (int) pos.x, (int) pos.y);
+            var pos = graphics.pose().transformPosition(mouseX, mouseY, new Vector2f());
+            graphics.setTooltipForNextFrame(getTextRenderer(), stack, (int) pos.x, (int) pos.y);
         }
     }
 

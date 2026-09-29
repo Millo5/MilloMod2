@@ -3,7 +3,7 @@ package millo.millomod2.client.features.impl.Editor.elements;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
@@ -45,21 +45,21 @@ public class Tab extends ButtonElement {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         boolean hovered = isMouseOver(mouseX, mouseY) && !closeButton.isMouseOver(mouseX, mouseY);
 
         int background = this.background;
         if (getHoverBackgroundColor() >= 0) background(hovered ? getHoverBackgroundColor() : getBackground());
         if (selected) background(0x2000ffff);
-        context.fill(getX(), getY(), getRight(), getBottom(), getFade().getColor(getBackground()));
-        getBorder().render(context, this);
+        graphics.fill(getX(), getY(), getRight(), getBottom(), getFade().getColor(getBackground()));
+        getBorder().render(graphics, this);
         this.background = background;
 
         int textColor = hovered ? 0xFFFFFFAA : 0xFFFFFFFF;
-        context.drawString(MilloMod.MC.font, getMessage(), getX() + 4, getY() + (getHeight() - 8) / 2, textColor);
+        graphics.text(MilloMod.MC.font, getMessage(), getX() + 4, getY() + (getHeight() - 8) / 2, textColor);
 
         closeButton.setX(getX() + textWidth + 4);
-        closeButton.render(context, mouseX, mouseY, deltaTicks);
+        closeButton.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 
     public void setSelected(boolean selected) {

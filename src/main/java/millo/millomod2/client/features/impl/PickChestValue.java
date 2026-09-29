@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -44,11 +45,11 @@ public class PickChestValue extends Feature implements Keybound, PacketEventSubs
 
         requested = false;
 
-        Iterator<ItemStack> itemIterator = container.nonEmptyItems().iterator();
+        Iterator<ItemStackTemplate> itemIterator = container.nonEmptyItems().iterator();
         if (!itemIterator.hasNext()) return true;
-        ItemStack item = itemIterator.next();
+        ItemStackTemplate item = itemIterator.next();
 
-        MilloMod.schedule(() -> PlayerUtil.setInventorySlot(packet.getSlot(), item), 50);
+        MilloMod.schedule(() -> PlayerUtil.setInventorySlot(packet.getSlot(), item.create()), 50);
 
         return true;
     }

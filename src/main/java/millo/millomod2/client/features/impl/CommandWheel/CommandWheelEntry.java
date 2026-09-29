@@ -4,8 +4,9 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+
 import java.awt.*;
 
 public class CommandWheelEntry {
@@ -30,7 +31,7 @@ public class CommandWheelEntry {
 
     public void draw(RenderInfo info, int x, int y, Font textRenderer, float shown) {
         hover = info.lerp(hover, isSelected() ? 1f : 0f, 1f);
-        GuiGraphics context = info.context();
+        GuiGraphicsExtractor context = info.graphics();
 
         if (selected) drawMouseLine(context, x, y);
 
@@ -42,15 +43,15 @@ public class CommandWheelEntry {
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
         context.fill(-20, -20, 20, 20, color);
-        context.renderOutline(-20, -20, 40, 40, borderCol);
+        context.outline(-20, -20, 40, 40, borderCol);
 
         int w = textRenderer.width(text);
-        context.drawString(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);
+        context.text(textRenderer, text, -w / 2, -5, Color.WHITE.hashCode(), true);
 
         context.pose().popMatrix();
     }
 
-    private void drawMouseLine(GuiGraphics context, int x, int y) {
+    private void drawMouseLine(GuiGraphicsExtractor graphics, int x, int y) {
         var window = MilloMod.MC.getWindow();
         double mouseX = MilloMod.MC.mouseHandler.xpos() / window.getScreenWidth() * window.getGuiScaledWidth();
         double mouseY = MilloMod.MC.mouseHandler.ypos() / window.getScreenHeight() * window.getGuiScaledHeight();
@@ -67,7 +68,7 @@ public class CommandWheelEntry {
             mouseY += dy;
 
             int color = new Color(1f, 1f, 1f, (1f - j/20f) * hover).hashCode();
-            context.fill((int) mouseX, (int) mouseY, (int) (mouseX+1), (int) (mouseY+1), color);
+            graphics.fill((int) mouseX, (int) mouseY, (int) (mouseX+1), (int) (mouseY+1), color);
         }
     }
 

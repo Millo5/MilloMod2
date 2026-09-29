@@ -3,9 +3,10 @@ package millo.millomod2.client.features.guides;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,18 +64,18 @@ public class GuideRichTextElement extends ClickableElement<GuideRichTextElement>
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int y = getY();
         for (Line line : lines) {
             int x = getX();
             for (Part part : line.parts) {
                 int textWidth = MilloMod.MC.font.width(part.text);
                 if (part.snippet) {
-                    context.fill(x, y - 2, x + textWidth + SNIPPET_PADDING * 2, y + 10, 0x30ffffff);
-                    context.drawString(MilloMod.MC.font, part.text, x + SNIPPET_PADDING, y, 0xFFFFE080, true);
+                    graphics.fill(x, y - 2, x + textWidth + SNIPPET_PADDING * 2, y + 10, 0x30ffffff);
+                    graphics.text(MilloMod.MC.font, part.text, x + SNIPPET_PADDING, y, 0xFFFFE080, true);
                     x += textWidth + SNIPPET_PADDING * 2;
                 } else {
-                    context.drawString(MilloMod.MC.font, part.text, x, y, 0xFFFFFFFF, true);
+                    graphics.text(MilloMod.MC.font, part.text, x, y, 0xFFFFFFFF, true);
                     x += textWidth;
                 }
             }

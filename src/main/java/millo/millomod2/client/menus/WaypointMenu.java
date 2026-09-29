@@ -12,7 +12,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -92,6 +92,6 @@ public class WaypointMenu extends Menu {
 
     }
 
-    protected void renderBlurredBackground(GuiGraphics context) {}
+    protected void extractBlurredBackground(GuiGraphicsExtractor graphics) {}
 
 }

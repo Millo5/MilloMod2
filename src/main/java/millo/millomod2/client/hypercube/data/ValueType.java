@@ -11,7 +11,7 @@ public enum ValueType {
     LOCATION(Items.PAPER),
     VECTOR(Items.PRISMARINE_SHARD),
     SOUND(Items.NAUTILUS_SHELL),
-    PARTICLE(Items.WHITE_DYE),
+    PARTICLE(Items.DYE.white()),
     POTION(Items.DRAGON_BREATH),
     ITEM(Items.ITEM_FRAME),
     ANY_VALUE(Items.POTATO),

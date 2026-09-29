@@ -74,7 +74,7 @@ public class MilloWebSocketServer extends WebSocketServer {
         if (type != MessageType.INFO) text.append(Component.literal("["+name+"] ").setStyle(Styles.NAME.getStyle()));
         text.append(Component.literal(message).setStyle(Styles.DEFAULT.getStyle()));
 
-        if (MilloMod.player() != null) MilloMod.player().displayClientMessage(text, false);
+        if (MilloMod.player() != null) MilloMod.player().sendSystemMessage(text);
     }
 
     private static String accept(String message) {

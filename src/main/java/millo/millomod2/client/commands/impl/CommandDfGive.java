@@ -27,7 +27,7 @@ public class CommandDfGive extends Command {
                 .then(Arg.argument("item", ItemArgument.item(context))
                         .executes(ctx -> {
                             ItemInput item = ctx.getArgument("item", ItemInput.class);
-                            ItemStack itemStack = item.createItemStack(1, false);
+                            ItemStack itemStack = item.createItemStack(1);
                             PlayerUtil.giveItem(itemStack);
                             return 1;
                         }))

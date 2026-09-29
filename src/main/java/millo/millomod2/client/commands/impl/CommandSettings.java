@@ -15,7 +15,7 @@ public class CommandSettings extends Command {
         cd.register(Arg.literal("settings")
                 .executes(ctx -> {
                     ConfigMenu screen = new ConfigMenu(null);
-                    instance.schedule(() -> instance.setScreen(screen));
+                    instance.schedule(() -> instance.gui.setScreen(screen));
                     return 1;
                 })
         );

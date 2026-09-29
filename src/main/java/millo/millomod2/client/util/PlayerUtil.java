@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import java.util.function.Consumer;
 
 public class PlayerUtil {
 
@@ -89,7 +88,7 @@ public class PlayerUtil {
         int slot = mc.player.getInventory().getFreeSlot();
 
         if (slot == -1) {
-            mc.player.displayClientMessage(Component.literal("No inventory room!").setStyle(Styles.SCARY.getStyle()), false);
+            MilloLog.logInGame(Component.literal("No inventory room!").setStyle(Styles.SCARY.getStyle()));
             return;
         }
 

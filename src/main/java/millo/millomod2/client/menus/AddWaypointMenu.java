@@ -14,7 +14,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -127,7 +127,8 @@ public class AddWaypointMenu extends Menu {
         }
     }
 
-    protected void renderBlurredBackground(GuiGraphics context) {}
+    @Override
+    protected void extractBlurredBackground(GuiGraphicsExtractor graphics) {}
 
     public void setName(String name) {
         inputTitle.setValue(name);

@@ -9,7 +9,7 @@ import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
 import millo.millomod2.client.mixin.render.accessors.ScreenAccessor;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -106,15 +106,15 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
 
         if (!isChestScreen) return;
         if (!isShown() && config.getBoolean("always_show")) {
-            showSearchBox((MilloMod.MC.screen instanceof ScreenAccessor screen) ? screen : null);
+            showSearchBox((MilloMod.MC.gui.screen() instanceof ScreenAccessor screen) ? screen : null);
         }
 
         if (!isShown()) return;
-        searchBox.render(info.context(), info.mouseX(), info.mouseY(), info.deltaTime());
+        searchBox.extractWidgetRenderState(info.graphics(), info.mouseX(), info.mouseY(), info.deltaTime());
     }
 
     @Override
-    public void containerDrawSlot(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    public void containerDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled() || !isShown()) return;
 
         String searchTerm = searchBox.getValue().trim();
@@ -126,13 +126,13 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
         if (Arrays.stream(searchTerms).allMatch(itemName::contains)) color = 0x40ffffff;
         else color = 0x80000000;
 
-        context.fillGradient(slot.x, slot.y, slot.x + 16, slot.y + 16, color, color);
+        graphics.fillGradient(slot.x, slot.y, slot.x + 16, slot.y + 16, color, color);
     }
 
     @Override
     public <T extends AbstractContainerMenu> void containerKeyPressed(T handler, KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (!isEnabled()) return;
-        if (MilloMod.MC.screen == null) return;
+        if (MilloMod.MC.gui.screen() == null) return;
         if (searchBox == null) return;
 
         int keyCode = input.key();
@@ -160,7 +160,7 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
                 for (Slot slot : handler.slots) {
                     String itemName = slot.getItem().getHoverName().getString().toLowerCase();
                     if (Arrays.stream(searchTerms).allMatch(itemName::contains)) {
-                        MilloMod.MC.gameMode.handleInventoryMouseClick(handler.containerId, slot.index, 0, ClickType.PICKUP, MilloMod.MC.player);
+                        MilloMod.MC.gameMode.handleContainerInput(handler.containerId, slot.index, 0, ContainerInput.PICKUP, MilloMod.MC.player);
                         break;
                     }
                 }
@@ -175,14 +175,14 @@ public class ContainerSearch extends Feature implements Toggleable, Configurable
     private void focusSearchBox() {
         if (searchBox == null) return;
 
-        showSearchBox((MilloMod.MC.screen instanceof ScreenAccessor screen) ? screen : null);
+        showSearchBox((MilloMod.MC.gui.screen() instanceof ScreenAccessor screen) ? screen : null);
 
         searchBox.setEditable(true);
         searchBox.setCursorPosition(0);
         searchBox.setHighlightPos(searchBox.getValue().length());
         searchBox.setFocused(true);
 
-        if (MilloMod.MC.screen != null) MilloMod.MC.screen.setFocused(searchBox);
+        if (MilloMod.MC.gui.screen() != null) MilloMod.MC.gui.screen().setFocused(searchBox);
     }
 
     @Override

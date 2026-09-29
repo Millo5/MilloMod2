@@ -8,7 +8,7 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.rendering.DonutRenderState;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import org.joml.Matrix3x2f;
@@ -73,7 +73,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
     public void HUDRender(RenderInfo renderInfo) {
         if (!isEnabled()) return;
         FeaturePosition pos = getPosition();
-        GuiGraphics context = renderInfo.context();
+        GuiGraphicsExtractor graphics = renderInfo.graphics();
 
         double time = (System.currentTimeMillis() - lastUpdateTime) / 1000d;
         float alpha = (float) Math.max(Math.min(1, 5 - time), 0);
@@ -86,12 +86,12 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         textOffsetX = 0;
         String display = config.getChoice("display");
         switch (display) {
-            case "Radial" -> renderRadial(context, pos);
-            case "Bar" -> renderBar(context, pos);
+            case "Radial" -> renderRadial(graphics, pos);
+            case "Bar" -> renderBar(graphics, pos);
         }
 
         if (config.getBoolean("show_text")) {
-            context.drawString(MilloMod.MC.font,
+            graphics.text(MilloMod.MC.font,
                     Math.round(renderedCpuUsage * 100d) / 100d + "%",
                     pos.getX() + 10 + textOffsetX, pos.getY() + 6,
                     new Color(1f, 1f, 1f, renderedAlpha).hashCode(), true
@@ -100,7 +100,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
 
     }
 
-    private void renderBar(GuiGraphics context, FeaturePosition pos) {
+    private void renderBar(GuiGraphicsExtractor graphics, FeaturePosition pos) {
         int barWidth = 100;
         int barHeight = 10;
         int x = pos.getX();
@@ -109,22 +109,22 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         textOffsetX = barWidth - 8;
 
         // Background bar
-        context.fill(x, y, x + barWidth, y + barHeight,
+        graphics.fill(x, y, x + barWidth, y + barHeight,
                 new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode());
 
         // Foreground bar
         int filledWidth = Math.round((renderedCpuUsage / 100f) * barWidth);
         Color color = Color.getHSBColor(Math.max(0f, (100f - renderedCpuUsage) / 360f), 1f, 1f);
-        context.fill(x, y, x + filledWidth, y + barHeight,
+        graphics.fill(x, y, x + filledWidth, y + barHeight,
                 new Color(color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f, renderedAlpha).hashCode());
     }
 
-    private void renderRadial(GuiGraphics context, FeaturePosition pos) {
+    private void renderRadial(GuiGraphicsExtractor graphics, FeaturePosition pos) {
         textOffsetX = 12;
         if (backgroundDonut == null) {
             this.backgroundDonut = new DonutRenderState(
                     RenderPipelines.GUI,
-                    new Matrix3x2f(context.pose()),
+                    new Matrix3x2f(graphics.pose()),
                     20,
                     pos.getX() + 10, pos.getY() + 10,
                     4.9f, 9.9f,
@@ -133,7 +133,7 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
             );
             this.foregroundDonut = new DonutRenderState(
                     RenderPipelines.GUI,
-                    new Matrix3x2f(context.pose()),
+                    new Matrix3x2f(graphics.pose()),
                     20,
                     pos.getX() + 10, pos.getY() + 10,
                     5f, 10f,
@@ -147,8 +147,9 @@ public class LagslayerHUD extends Feature implements Toggleable, HUDRendered, Po
         foregroundDonut.setAngles(0.75f - (Math.round(renderedCpuUsage) / 100f), 0.75f);
         backgroundDonut.setColor(new Color(0.25f, 0.25f, 0.25f, renderedAlpha).hashCode());
 
-        context.guiRenderState.submitGuiElement(backgroundDonut);
-        context.guiRenderState.submitGuiElement(foregroundDonut);
+        // TODO: help
+        graphics.guiRenderState.addGuiElement(backgroundDonut);
+        graphics.guiRenderState.addGuiElement(foregroundDonut);
     }
 
 

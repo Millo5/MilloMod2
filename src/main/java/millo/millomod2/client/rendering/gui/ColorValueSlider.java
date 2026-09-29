@@ -2,9 +2,10 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+
 import java.awt.*;
 
 public class ColorValueSlider extends ClickableElement<ColorValueSlider> implements ColorElement {
@@ -25,15 +26,15 @@ public class ColorValueSlider extends ClickableElement<ColorValueSlider> impleme
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        context.fillGradient(getX(), getY(), getRight(), getBottom(),
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        graphics.fillGradient(getX(), getY(), getRight(), getBottom(),
                 Color.getHSBColor(hsb[0], hsb[1], 1).hashCode(),
                 Color.getHSBColor(hsb[0], hsb[1], 0).hashCode()
         );
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         int handleY = (int) ((1f - hsb[2]) * (getHeight() - 1) + getY()) + 1;
-        context.fill(getX() - 2, handleY - 1, getRight() + 3, handleY, 0xffffffff);
+        graphics.fill(getX() - 2, handleY - 1, getRight() + 3, handleY, 0xffffffff);
     }
 
     @Override

@@ -3,7 +3,7 @@ package millo.millomod2.client.features.guides;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -29,13 +29,13 @@ public class GuideSnippetElement extends ClickableElement<GuideSnippetElement> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         background(isMouseOver(mouseX, mouseY) ? 0xA0303030 : 0x60000000);
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         int y = getY() + PADDING;
         for (String line : lines) {
-            context.drawString(MilloMod.MC.font, line, getX() + PADDING, y, 0xFFFFE080, true);
+            graphics.text(MilloMod.MC.font, line, getX() + PADDING, y, 0xFFFFE080, true);
             y += LINE_HEIGHT;
         }
     }

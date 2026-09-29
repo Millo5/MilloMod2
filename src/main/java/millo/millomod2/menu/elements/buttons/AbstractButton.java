@@ -3,7 +3,7 @@ package millo.millomod2.menu.elements.buttons;
 import millo.millomod2.client.util.SoundUtil;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.TextAlignment;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -35,14 +35,13 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
         return false;
     }
 
-
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         boolean hovered = isMouseOver(mouseX, mouseY);
 
         int background = this.background;
         if (hoverBackgroundColor >= 0) background(hovered ? hoverBackgroundColor : this.background);
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
         this.background = background;
 
         int textX = switch (textAlignment) {
@@ -50,7 +49,7 @@ public abstract class AbstractButton<T extends AbstractButton<T>> extends Clicka
             case RIGHT -> getX() + getWidth() - 4 - Minecraft.getInstance().font.width(getMessage());
             case CENTER -> getX() + (getWidth() - Minecraft.getInstance().font.width(getMessage())) / 2;
         };
-        context.drawString(Minecraft.getInstance().font, getMessage(), textX, getY() + (getHeight() - 8) / 2, getTextColor(), true);
+        graphics.text(Minecraft.getInstance().font, getMessage(), textX, getY() + (getHeight() - 8) / 2, getTextColor(), true);
     }
 
     protected int getTextColor() {

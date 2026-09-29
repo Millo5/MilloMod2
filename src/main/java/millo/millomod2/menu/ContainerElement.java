@@ -4,7 +4,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
@@ -132,26 +132,26 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks);
-        context.pose().pushMatrix();
-        getFade().applyTranslation(context.pose());
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
-        context.pose().translate(getX(), getY());
-        context.enableScissor(0, 0, getWidth(), getHeight());
+        graphics.pose().pushMatrix();
+        getFade().applyTranslation(graphics.pose());
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
+        graphics.pose().translate(getX(), getY());
+        graphics.enableScissor(0, 0, getWidth(), getHeight());
 
         if (Debug.showHudInfo()) {
             int nameColor = getClass().getSimpleName().hashCode() | 0x33000000;
-            context.fill(0, 0, getWidth(), getHeight(), nameColor);
-            context.drawString(MilloMod.MC.font, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
-            context.drawString(MilloMod.MC.font, "x:" + getX() + " y:" + getY() + " w:" + getWidth() + " h:" + getHeight(), 0, 10, 0xFFFFFFFF, false);
+            graphics.fill(0, 0, getWidth(), getHeight(), nameColor);
+            graphics.text(MilloMod.MC.font, getClass().getSimpleName(), 0, 0, 0xFFFFFFFF, false);
+            graphics.text(MilloMod.MC.font, "x:" + getX() + " y:" + getY() + " w:" + getWidth() + " h:" + getHeight(), 0, 10, 0xFFFFFFFF, false);
         }
 
-        RenderArgs args = new RenderArgs(context, mouseX - getX(), mouseY - getY(), deltaTicks);
+        RenderArgs args = new RenderArgs(graphics, mouseX - getX(), mouseY - getY(), deltaTicks);
         renderElement(args);
 
-        context.disableScissor();
-        context.pose().popMatrix();
+        graphics.disableScissor();
+        graphics.pose().popMatrix();
     }
 
     protected void renderElement(RenderArgs args) {
@@ -161,7 +161,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
     protected void renderChildren(RenderArgs args) {
         for (AbstractWidget child : List.copyOf(getChildren())) {
             try {
-                child.render(args.context, args.mouseX, args.mouseY, args.deltaTicks);
+                child.extractRenderState(args.context, args.mouseX, args.mouseY, args.deltaTicks);
             } catch (Exception e) {
                 MilloLog.error("Failed to render child element: " + child);
                 MilloLog.stackTrace(e);
@@ -189,7 +189,7 @@ public abstract class ContainerElement<T extends ContainerElement<?>> extends Cl
         }
     }
 
-    protected record RenderArgs(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {}
+    protected record RenderArgs(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {}
 
     @Override
     public String toString() {

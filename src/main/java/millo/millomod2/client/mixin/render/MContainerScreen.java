@@ -3,7 +3,7 @@ package millo.millomod2.client.mixin.render;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.addons.ContainerMod;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
@@ -52,22 +52,22 @@ public abstract class MContainerScreen<T extends AbstractContainerMenu> extends 
         });
     }
 
-    @Inject(method = "render", at = @At("RETURN"))
-    private void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At("RETURN"))
+    private void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         long currentTime = System.currentTimeMillis();
         long deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
-        RenderInfo info = new RenderInfo(context, deltaTime / 1000f, mouseX, mouseY);
+        RenderInfo info = new RenderInfo(graphics, deltaTime / 1000f, mouseX, mouseY);
 
-        context.pose().pushMatrix();
-        context.pose().translate(leftPos, topPos);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(leftPos, topPos);
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
                 rendered.containerRender(this.menu, info);
             }
         });
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
@@ -108,11 +108,11 @@ public abstract class MContainerScreen<T extends AbstractContainerMenu> extends 
         });
     }
 
-    @Inject(method="renderSlot", at = @At("TAIL"))
-    private void drawSlotInject(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method="extractSlot", at = @At("TAIL"))
+    private void drawSlotInject(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         FeatureHandler.forEach(f -> {
             if (f instanceof ContainerMod rendered) {
-                rendered.containerDrawSlot(context, slot, mouseX, mouseY, ci);
+                rendered.containerDrawSlot(graphics, slot, mouseX, mouseY, ci);
             }
         });
     }

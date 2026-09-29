@@ -3,7 +3,7 @@ package millo.millomod2.menu.elements;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.menu.FadeElement;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,11 +23,11 @@ public class TextFieldElement extends EditBox implements FadeElement {
     }
 
     @Override
-    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         getFade().progress(deltaTicks * 20f);
 
-        context.pose().pushMatrix();
-        getFade().applyTranslation(context.pose());
+        graphics.pose().pushMatrix();
+        getFade().applyTranslation(graphics.pose());
         int color = getFade().getColor(0, 0, 0, 150);
         int underlineColor = getFade().getColor(51, 51, 51, 150);
         if (isHovered()) {
@@ -36,12 +36,12 @@ public class TextFieldElement extends EditBox implements FadeElement {
         }
         if (isFocused()) underlineColor = getFade().getColor(200, 200, 200, 150);
 
-        context.fill(getX(), getY(), getRight(), getBottom(), color);
-        context.fill(getX(), getBottom() - 1, getRight(), getBottom(), underlineColor);
+        graphics.fill(getX(), getY(), getRight(), getBottom(), color);
+        graphics.fill(getX(), getBottom() - 1, getRight(), getBottom(), underlineColor);
 
-        context.pose().translate(4, height / 2f - 4);
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
-        context.pose().popMatrix();
+        graphics.pose().translate(4, height / 2f - 4);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
+        graphics.pose().popMatrix();
     }
 
     private final Fade fade = new Fade();

@@ -5,7 +5,7 @@ import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -29,11 +29,11 @@ public class DropDownElement extends AbstractButton<DropDownElement> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        var pos = context.pose().transformPosition(getX(), getBottom(), new Vector2f());
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        var pos = graphics.pose().transformPosition(getX(), getBottom(), new Vector2f());
         screenX = (int) pos.x;
         screenBottom = (int) pos.y;
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DropDownElement extends AbstractButton<DropDownElement> {
 
     @Override
     public void onClick(MouseButtonEvent click, boolean doubled) {
-        if (MilloMod.MC.screen instanceof Menu menu) {
+        if (MilloMod.MC.gui.screen() instanceof Menu menu) {
             menu.openContextMenu(optionsList, screenX, screenBottom + offsetY);
         }
     }
@@ -66,7 +66,7 @@ public class DropDownElement extends AbstractButton<DropDownElement> {
                 .message(label)
                 .onPress(button -> {
                     onSelect.accept(button);
-                    if (MilloMod.MC.screen instanceof Menu menu) {
+                    if (MilloMod.MC.gui.screen() instanceof Menu menu) {
                         menu.closeContextMenu();
                     }
                 });

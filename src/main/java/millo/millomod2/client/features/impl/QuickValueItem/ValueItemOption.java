@@ -2,7 +2,7 @@ package millo.millomod2.client.features.impl.QuickValueItem;
 
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
@@ -19,18 +20,24 @@ import java.util.List;
 public abstract class ValueItemOption {
 
     protected final String id;
-    protected final ItemStack icon;
+    protected final ItemStackTemplate template;
+    private ItemStack icon;
 
     private boolean selected = false;
     private float hover = 0f;
 
     public ValueItemOption(Item  icon, String id) {
         this.id = id;
-        this.icon = new ItemStack(icon);
+        this.template = new ItemStackTemplate(icon);
+    }
+
+    public ItemStack getIcon() {
+        if (icon == null) icon = template.create();
+        return icon;
     }
 
     public ItemStack getItem(String value) {
-        ItemStack item = new ItemStack(icon.getItem());
+        ItemStack item = new ItemStack(getIcon().getItem());
 
         CompoundTag pbv = new CompoundTag();
         pbv.putString("hypercube:varitem", getVarItemString(item, value));
@@ -57,37 +64,37 @@ public abstract class ValueItemOption {
     }
 
     private float x, y;
-    public void draw(GuiGraphics context, int x, int y, float delta, float shown) {
+    public void draw(GuiGraphicsExtractor graphics, int x, int y, float delta, float shown) {
         hover = Mth.clampedLerp(delta, hover, isSelected() ? 1f : 0f);
 
         this.x = x;
         this.y = y;
 
-        context.pose().pushMatrix();
-        context.pose().translate(x, y);
-        context.pose().scale(shown, shown);
-        context.pose().scale(hover*0.2f+1f, hover*0.2f+1f);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(shown, shown);
+        graphics.pose().scale(hover*0.2f+1f, hover*0.2f+1f);
 
         int color = new Color(0f, 0f, 0f, 0.2f + hover * 0.3f).hashCode();
         int borderCol = new Color(1f-hover, 1f, 1f, 1f).hashCode();
-        context.fill(-8, -8, 8, 8, color);
-        context.renderOutline(-8, -8, 16, 16, borderCol);
+        graphics.fill(-8, -8, 8, 8, color);
+        graphics.outline(-8, -8, 16, 16, borderCol);
 
-        context.renderItem(icon, -8, -8);
+        graphics.item(getIcon(), -8, -8);
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
-    public void draw(GuiGraphics context, int x, int y, float delta) {
+    public void draw(GuiGraphicsExtractor graphics, int x, int y, float delta) {
         this.x = Mth.clampedLerp(delta, this.x, x);
         this.y = Mth.clampedLerp(delta, this.y, y);
 
-        context.pose().pushMatrix();
-        context.pose().translate(this.x, this.y);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(this.x, this.y);
 
-        context.renderItem(icon, -8, -8);
+        graphics.item(getIcon(), -8, -8);
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
 

@@ -11,7 +11,7 @@ import millo.millomod2.client.features.addons.MouseScrollable;
 import millo.millomod2.client.util.KeyUtil;
 import millo.millomod2.client.util.RenderInfo;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 import java.awt.*;
 import java.util.List;
@@ -91,8 +91,8 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
 
     @Override
     public void onTick() {
-        if (!KeyUtil.isKeyDown(getKeybind()) || MilloMod.MC.screen != null) {
-            if ( open) {
+        if (!KeyUtil.isKeyDown(getKeybind()) || MilloMod.MC.gui.screen() != null) {
+            if (open) {
                 MilloMod.MC.mouseHandler.grabMouse();
 
                 currentEntries.stream().filter(CommandWheelEntry::isSelected).forEach(CommandWheelEntry::execute);
@@ -145,7 +145,7 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         if (shown < 0.01f) return;
         rotateBump = renderInfo.lerp(rotateBump, 0f, 0.8f);
 
-        GuiGraphics context = renderInfo.context();
+        GuiGraphicsExtractor graphics = renderInfo.graphics();
         Font textRenderer = MilloMod.MC.font;
         int cx = MilloMod.MC.getWindow().getGuiScaledWidth() / 2;
         int cy = MilloMod.MC.getWindow().getGuiScaledHeight() / 2;
@@ -161,22 +161,22 @@ public class CommandWheel extends Feature implements Keybound, HUDRendered, Conf
         }
 
         // Render page indicator
-        context.pose().pushMatrix();
-        context.pose().translate(cx, cy + 10);
-        context.pose().scale(shown, shown);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(cx, cy + 10);
+        graphics.pose().scale(shown, shown);
 
         int totalPages = getPages().size();
         int w = totalPages * 5 / 2 - 1;
 
         for (int i = 0; i < totalPages; i++) {
             if (i == currentPage) {
-                context.fill(i * 5 - w - 1, -1, i * 5 + 3 - w, 3, Color.white.hashCode());
+                graphics.fill(i * 5 - w - 1, -1, i * 5 + 3 - w, 3, Color.white.hashCode());
             } else {
-                context.fill(i * 5 - w, 0, i * 5 + 2 - w, 2, Color.gray.hashCode());
+                graphics.fill(i * 5 - w, 0, i * 5 + 2 - w, 2, Color.gray.hashCode());
             }
         }
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
     private List<ListConfigValue<CommandWheelEntryConfigValue>> getPages() {

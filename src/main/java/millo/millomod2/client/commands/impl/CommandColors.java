@@ -15,14 +15,14 @@ public class CommandColors extends Command {
         cd.register(Arg.literal("colors")
                 .executes(ctx -> {
                     ColorsMenu screen = new ColorsMenu(null);
-                    instance.schedule(() -> instance.setScreen(screen));
+                    instance.schedule(() -> instance.gui.setScreen(screen));
                     return 1;
                 })
         );
         cd.register(Arg.literal("col")
                 .executes(ctx -> {
                     ColorsMenu screen = new ColorsMenu(null);
-                    instance.schedule(() -> instance.setScreen(screen));
+                    instance.schedule(() -> instance.gui.setScreen(screen));
                     return 1;
                 })
         );

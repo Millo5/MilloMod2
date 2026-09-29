@@ -2,7 +2,7 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import java.awt.*;
@@ -21,13 +21,13 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         background(0xff3300ff);
 
         for (int x = 0; x < getWidth(); x++) {
             float p = (float) x / getWidth();
 
-            context.fillGradient(
+            graphics.fillGradient(
                     getX() + x,
                     getY(),
                     getX() + x + 1,
@@ -41,12 +41,12 @@ public class ColorSelectArea extends ClickableElement<ColorSelectArea> implement
 
             int cursorX = (int) (getX() + getWidth() * hsb[0]);
             int cursorY = (int) (getY() + getHeight() * (1f - hsb[1]));
-            context.fill(cursorX-1, cursorY, cursorX+2, cursorY+1, cusorColor);
-            context.fill(cursorX, cursorY-1, cursorX+1, cursorY+2, cusorColor);
+            graphics.fill(cursorX-1, cursorY, cursorX+2, cursorY+1, cusorColor);
+            graphics.fill(cursorX, cursorY-1, cursorX+1, cursorY+2, cusorColor);
 
         }
 
-//        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+//        super.renderWidget(graphics, mouseX, mouseY, deltaTicks);
     }
 
     @Override

@@ -77,8 +77,8 @@ public class SearchBar extends FlexElement<SearchBar> implements AbsoluteElement
     }
 
     public void focus() {
-        if (MilloMod.MC.screen == null) return;
-        MilloMod.MC.screen.setFocused(searchField);
+        if (MilloMod.MC.gui.screen() == null) return;
+        MilloMod.MC.gui.screen().setFocused(searchField);
     }
 
     public ArrayList<SearchResult> getCurrentResults() {

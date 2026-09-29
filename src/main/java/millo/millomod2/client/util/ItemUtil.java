@@ -57,8 +57,8 @@ public class ItemUtil {
         } catch (Exception e) {
             try {
                 ItemParser stringReader = new ItemParser(MilloMod.MC.level.registryAccess());
-                ItemParser.ItemResult result = stringReader.parse(new StringReader(data));
-                return new ItemInput(result.item(), result.components()).createItemStack(1, false);
+                ItemInput result = stringReader.parse(new StringReader(data));
+                return result.createItemStack(1);
             } catch (Exception e2) {
                 System.out.println("Error parsing item NBT: " + e2.getMessage());
             }
@@ -68,6 +68,7 @@ public class ItemUtil {
     }
 
 
+    // TODO: ItemStackTemplate?
     public static String getPBVString(ItemStack stack, String key) {
         CompoundTag pbv = getPBV(stack);
         if (pbv == null) return null;

@@ -10,8 +10,9 @@ import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.util.RenderInfo;
 import millo.millomod2.client.util.style.Styles;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+
 import java.awt.*;
 
 public class ToggleSprintDisplay extends Feature implements Toggleable, Configurable, Positional, HUDRendered {
@@ -44,12 +45,12 @@ public class ToggleSprintDisplay extends Feature implements Toggleable, Configur
     @Override
     public void HUDRender(RenderInfo renderInfo) {
         if (!isEnabled()) return;
-        GuiGraphics context = renderInfo.context();
+        GuiGraphicsExtractor graphics = renderInfo.graphics();
 
         if (player().input.keyPresses.sprint()) {
             int x = position.getX();
             int y = position.getY();
-            context.drawString(MilloMod.MC.font, displayText, x, y, Color.WHITE.hashCode(), true);
+            graphics.text(MilloMod.MC.font, displayText, x, y, Color.WHITE.hashCode(), true);
         }
     }
 

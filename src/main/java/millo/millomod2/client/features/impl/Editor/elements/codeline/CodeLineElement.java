@@ -5,9 +5,10 @@ import millo.millomod2.client.features.impl.Editor.logic.search.Searchable;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.FlexElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,13 +37,13 @@ public class CodeLineElement extends FlexElement<CodeLineElement> implements Sea
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         if (highlight > 0f) {
             int alpha = (int) (highlight * 0x60) << 24;
-            context.fill(getX(), getY(), getRight(), getBottom(), alpha | (Styles.HIGHLIGHT.getColor() & 0x00FFFFFF));
+            graphics.fill(getX(), getY(), getRight(), getBottom(), alpha | (Styles.HIGHLIGHT.getColor() & 0x00FFFFFF));
             highlight = Math.max(0f, highlight - deltaTicks * 0.1f);
         }
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 
     public void highlight() {

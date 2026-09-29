@@ -21,7 +21,7 @@ public abstract class Menu extends Screen {
     @Override
     public void onClose() {
         setFocused(null);
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 
 
@@ -90,7 +90,7 @@ public abstract class Menu extends Screen {
     }
 
     public void open() {
-        MilloMod.MC.schedule(() -> MilloMod.MC.setScreen(this));
+        MilloMod.MC.schedule(() -> MilloMod.MC.gui.setScreen(this));
     }
 
 }

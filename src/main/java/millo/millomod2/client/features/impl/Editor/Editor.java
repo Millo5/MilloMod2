@@ -7,9 +7,9 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Keybound;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
+import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
-import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.ItemUtil;
 import millo.millomod2.client.util.MilloLog;
@@ -22,11 +22,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+
 import java.util.regex.Pattern;
 
 public class Editor extends Feature implements Keybound, Configurable, PacketEventSubscriber {
@@ -71,7 +73,7 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
                 // all shulkers have been received.
                 fetchingAllTemplates = false;
                 waitForShulkers = 0;
-                player().displayClientMessage(Component.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()), false);
+                MilloLog.logInGame(Component.literal("Finished fetching templates.").setStyle(Styles.ADDED.getStyle()));
                 screen.getMain().getHierarchy().reload();
             }
         }
@@ -97,9 +99,9 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
         ItemContainerContents containerComponent = shulkerComponents.get(DataComponents.CONTAINER);
         if (containerComponent == null) return false;
 
-        for (ItemStack itemStack : containerComponent.nonEmptyItems()) {
+        for (ItemStackTemplate itemStack : containerComponent.nonEmptyItems()) {
 
-            String codeTemplateData = ItemUtil.getPBVString(itemStack, "hypercube:codetemplatedata");
+            String codeTemplateData = ItemUtil.getPBVString(itemStack.create(), "hypercube:codetemplatedata");
             if (codeTemplateData == null) continue;
 
             TemplateModel templateModel = ModelUtil.parseFromItemNBT(codeTemplateData);
@@ -144,7 +146,7 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
     public void openEditor() {
         MC.schedule(() -> {
             screen = new EditorMenu(null);
-            MC.setScreen(screen);
+            MC.gui.setScreen(screen);
         });
     }
 
@@ -156,14 +158,14 @@ public class Editor extends Feature implements Keybound, Configurable, PacketEve
             return;
         }
 
-        player().displayClientMessage(Component.literal("Fetching all templates...").setStyle(Styles.ANY.getStyle()), false);
+        MilloLog.logInGame(Component.literal("Fetching all templates...").setStyle(Styles.ANY.getStyle()));
         fetchingAllTemplates = true;
         waitForShulkers = 0;
         PlayerUtil.sendCommand("p totemplate");
     }
 
     public void abort() {
-        player().displayClientMessage(Component.literal("Aborting template fetching...").setStyle(Styles.SCARY.getStyle()), false);
+        MilloLog.logInGame(Component.literal("Aborting template fetching...").setStyle(Styles.SCARY.getStyle()));
 
         fetchingAllTemplates = false;
         waitForShulkers = 0;

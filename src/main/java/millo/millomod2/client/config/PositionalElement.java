@@ -4,7 +4,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import java.awt.*;
 
@@ -71,9 +71,9 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        context.fill(getX(), getY(), getRight(), getBottom(), 0x80000000);
-        context.renderOutline(getX(), getY(), getWidth(), getHeight(), 0xff00ffff);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        graphics.fill(getX(), getY(), getRight(), getBottom(), 0x80000000);
+        graphics.outline(getX(), getY(), getWidth(), getHeight(), 0xff00ffff);
 
         if (dragging || isMouseOver(mouseX, mouseY)) {
             int anchorX = (int) (feature.getPosition().getAnchor().x / 2d * MilloMod.MC.getWindow().getGuiScaledWidth());
@@ -91,7 +91,7 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
             for (int i = 0; i < 20; i++) {
                 int color = new Color(1f, 1f, 1f, 1f - i/20f).hashCode();
 
-                context.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
+                graphics.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
                 lineX += dx;
                 lineY += dy;
             }
@@ -101,7 +101,7 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
             for (int i = 0; i < 20; i++) {
                 int color = new Color(1f, 1f, 1f, 1f - i/20f).hashCode();
 
-                context.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
+                graphics.fill((int) lineX, (int) lineY, (int) lineX + 1, (int) lineY + 1, color);
                 lineX -= dx;
                 lineY -= dy;
             }
@@ -110,14 +110,14 @@ public class PositionalElement extends ClickableElement<PositionalElement> {
                 if (anchor == feature.getPosition().getAnchor()) continue;
                 int anchorPosX = (int) (anchor.x / 2d * MilloMod.MC.getWindow().getGuiScaledWidth());
                 int anchorPosY = (int) (anchor.y / 2d * MilloMod.MC.getWindow().getGuiScaledHeight());
-                context.renderOutline(anchorPosX - 3, anchorPosY - 3, 5,5, 0xffffffff);
+                graphics.outline(anchorPosX - 3, anchorPosY - 3, 5,5, 0xffffffff);
             }
 
-            context.fill(anchorX - 4, anchorY - 4, anchorX + 3, anchorY + 3, 0xffffffff);
-            context.drawString(getTextRenderer(), message, getX() + 2, getY() + 2, 0xffffffff);
+            graphics.fill(anchorX - 4, anchorY - 4, anchorX + 3, anchorY + 3, 0xffffffff);
+            graphics.text(getTextRenderer(), message, getX() + 2, getY() + 2, 0xffffffff);
         }
 
 
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 }

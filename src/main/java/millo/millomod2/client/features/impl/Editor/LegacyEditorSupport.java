@@ -14,6 +14,7 @@ import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class LegacyEditorSupport {
 
@@ -36,7 +37,7 @@ public class LegacyEditorSupport {
 
         if (!sneaking) PlayerUtil.sendSneak(true);
         MilloMod.MC.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, new BlockHitResult(
-                pos.getCenter(), Direction.UP, pos, false
+                new Vec3(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false // TODO: Terrible Vec3.
         ));
         if (!sneaking) PlayerUtil.sendSneak(false);
     }

@@ -2,7 +2,7 @@ package millo.millomod2.client.rendering.gui;
 
 import millo.millomod2.client.menus.ColorsMenu;
 import millo.millomod2.menu.elements.ClickableElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
@@ -32,12 +32,13 @@ public class ColorSquare extends ClickableElement<ColorSquare> {
         return true;
     }
 
+
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         if (isMouseOver(mouseX, mouseY)) {
-            context.renderOutline(getX(), getY(), getWidth(), getHeight(), 0xffffffff);
+            graphics.outline(getX(), getY(), getWidth(), getHeight(), 0xffffffff);
         }
     }
 

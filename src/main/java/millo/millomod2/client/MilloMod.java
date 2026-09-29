@@ -63,8 +63,8 @@ public class MilloMod implements ClientModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register(CommandHandler::register);
 
-        PayloadTypeRegistry.playS2C().register(ModAPIPayload.ID, ModAPIPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(ModAPIPayload.ID, ModAPIPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ModAPIPayload.ID, ModAPIPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ModAPIPayload.ID, ModAPIPayload.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(ModAPIPayload.ID, ModAPI::onPayload);
 

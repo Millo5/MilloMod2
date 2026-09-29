@@ -6,8 +6,8 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.FileUtil;
+import millo.millomod2.client.util.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 
 public class ActionDumpReader extends Feature implements PacketEventSubscriber {
@@ -24,7 +24,7 @@ public class ActionDumpReader extends Feature implements PacketEventSubscriber {
         reading = true;
         PlayerUtil.sendCommand("dumpactioninfo");
         fullDump = new StringBuilder();
-        player().displayClientMessage(Component.nullToEmpty("Reading action dump..."), false);
+        MilloLog.logInGame("Reading action dump...");
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ActionDumpReader extends Feature implements PacketEventSubscriber {
 
         if (content.startsWith("Error:")) {
             reading = false;
-            player().displayClientMessage(Component.nullToEmpty("Error while reading action dump!"), false);
+            MilloLog.logInGame("Error while reading action dump!");
             return false;
         }
 
@@ -49,7 +49,7 @@ public class ActionDumpReader extends Feature implements PacketEventSubscriber {
             JsonObject json = JsonParser.parseString(fullDump.toString()).getAsJsonObject();
             FileUtil.writeJson("action_dump.json", json);
 
-            player().displayClientMessage(Component.nullToEmpty("Action dump saved!"), false);
+            MilloLog.logInGame("Action dump saved!");
         }
         return true;
     }

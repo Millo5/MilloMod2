@@ -23,7 +23,7 @@ public class MilloLog {
 
     private static void sendToPlayer(Component text) {
         if (MilloMod.player() == null) return;
-        MilloMod.MC.schedule(() -> MilloMod.player().displayClientMessage(text, false));
+        MilloMod.MC.schedule(() -> MilloMod.player().sendSystemMessage(text));
     }
 
     public static void logInGame(String message, boolean debugOnly) {

@@ -6,7 +6,7 @@ import millo.millomod2.client.features.FeaturePosition;
 import millo.millomod2.client.features.addons.Positional;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.menu.Menu;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
 public class ConfigPositionMenu extends Menu {
@@ -27,8 +27,7 @@ public class ConfigPositionMenu extends Menu {
     }
 
     @Override
-    protected void renderBlurredBackground(GuiGraphics context) {
-    }
+    protected void extractBlurredBackground(GuiGraphicsExtractor graphics) {}
 
     @Override
     public void onClose() {

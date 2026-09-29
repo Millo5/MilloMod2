@@ -7,7 +7,7 @@ import millo.millomod2.client.features.impl.Editor.logic.EditorPlot;
 import millo.millomod2.client.hypercube.data.HypercubeLocation;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.hypercube.model.TemplateModel;
-import millo.millomod2.client.mixin.render.accessors.DrawContextAccessor;
+import millo.millomod2.client.mixin.render.accessors.GuiGraphicsExtractorAccessor;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.buttons.ButtonElement;
@@ -15,7 +15,7 @@ import millo.millomod2.menu.elements.flex.CrossAxisAlignment;
 import millo.millomod2.menu.elements.flex.ElementDirection;
 import millo.millomod2.menu.elements.flex.FlexElement;
 import millo.millomod2.menu.elements.flex.MainAxisAlignment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -171,17 +171,17 @@ public class EditorMenu extends Menu {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        Matrix3x2fStack originalMatrices = context.pose();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        Matrix3x2fStack originalMatrices = graphics.pose();
         Matrix3x2fStack matrices = new Matrix3x2fStack(32);
         matrices.set(originalMatrices);
 
-        DrawContextAccessor accessor = (DrawContextAccessor) context;
-        accessor.setMatrices(matrices);
+        GuiGraphicsExtractorAccessor accessor = (GuiGraphicsExtractorAccessor) graphics;
+        accessor.setPose(matrices);
         try {
-            super.render(context, mouseX, mouseY, deltaTicks);
+            super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
         } finally {
-            accessor.setMatrices(originalMatrices);
+            accessor.setPose(originalMatrices);
         }
     }
 
@@ -206,7 +206,7 @@ public class EditorMenu extends Menu {
     }
 
     public void openPlotSelector(ButtonElement button) {
-        minecraft.setScreen(new PlotSelectorMenu(this));
+        minecraft.setScreenAndShow(new PlotSelectorMenu(this));
     }
 
     public MainBody getMain() {

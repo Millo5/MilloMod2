@@ -16,7 +16,7 @@
     "render.MInGameHUD",
     "render.MParentElement",
     "render.accessors.ClickableWidgetAccessor",
-    "render.accessors.DrawContextAccessor",
+    "render.accessors.GuiGraphicsExtractorAccessor",
     "render.accessors.HandledScreenAccessor",
     "render.accessors.ScreenAccessor",
     "screen.MTitleScreen"

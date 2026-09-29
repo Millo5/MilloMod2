@@ -169,8 +169,8 @@ public class Hierarchy extends ResizableFlexElement<Hierarchy> {
     }
 
     public void focusSearch() {
-        if (MilloMod.MC.screen == null) return;
-        MilloMod.MC.screen.setFocused(search);
+        if (MilloMod.MC.gui.screen() == null) return;
+        MilloMod.MC.gui.screen().setFocused(search);
     }
 
     public void removeTemplate(String templateName) {

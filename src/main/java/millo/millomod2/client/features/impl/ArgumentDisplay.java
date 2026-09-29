@@ -11,7 +11,7 @@ import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.hypercube.data.ValueType;
 import millo.millomod2.client.mixin.render.accessors.HandledScreenAccessor;
 import millo.millomod2.client.util.ItemUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
@@ -87,10 +87,10 @@ public class ArgumentDisplay extends Feature implements Toggleable, Configurable
     }
 
     @Override
-    public void containerDrawSlot(GuiGraphics context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+    public void containerDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (!isEnabled()) return;
         if (slot.container instanceof Inventory) return;
-        if (!(MilloMod.MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
+        if (!(MilloMod.MC.gui.screen() instanceof AbstractContainerScreen<?> handledScreen)) return;
 
         List<ArgumentInfo> arguments = List.copyOf(this.arguments);
 
@@ -99,20 +99,20 @@ public class ArgumentDisplay extends Feature implements Toggleable, Configurable
         HandledScreenAccessor container = (HandledScreenAccessor) handledScreen;
 
         if (slot.getItem().isEmpty() && config.getBoolean("show_icons")) {
-            context.renderItem(arguments.get(idx).type.getIcon(), slot.x , slot.y);
-            context.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x50000000);
+            graphics.item(arguments.get(idx).type.getIcon(), slot.x , slot.y);
+            graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x50000000);
         }
 
         if (!config.getBoolean("show_text")) return;
 
-        Vector2f pos = context.pose().transformPosition(slot.x, slot.y, new Vector2f());
+        Vector2f pos = graphics.pose().transformPosition(slot.x, slot.y, new Vector2f());
         boolean mouseOver = mouseX >= pos.x && mouseX <= pos.x + 16 && mouseY >= pos.y && mouseY <= pos.y + 16;
         if (!mouseOver) return;
 
         Component name = arguments.get(slot.getContainerSlot()).name;
         int height = MilloMod.MC.font.wordWrapHeight(name, container.getBackgroundWidth());
 
-        context.drawWordWrap(MilloMod.MC.font, name, 0, -height, container.getBackgroundWidth(), 0xFFFFFFFF, true);
+        graphics.textWithWordWrap(MilloMod.MC.font, name, 0, -height, container.getBackgroundWidth(), 0xFFFFFFFF, true);
     }
 
     private static class ArgumentInfo {

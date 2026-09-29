@@ -9,9 +9,10 @@ import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.*;
 import millo.millomod2.client.util.ChatMatchRule;
 import millo.millomod2.client.util.RenderInfo;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,11 +101,11 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
     public void HUDRender(RenderInfo renderInfo) {
         if (!isEnabled()) return;
 
-        GuiGraphics context = renderInfo.context();
+        GuiGraphicsExtractor graphics = renderInfo.graphics();
         int direction = (config.getChoice("direction").equals("up") ? -1 : 1);
 
-        context.pose().pushMatrix();
-        context.pose().translate(position.getX(), position.getY());
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(position.getX(), position.getY());
 
         for (Notification notification : List.copyOf(notifications)) {
             float visible = renderInfo.lerp(notification.getVisible(), notification.isFadingOut() ? 0f : 1f, 1f);
@@ -114,20 +115,20 @@ public class Notifications extends Feature implements Toggleable, Positional, HU
             float progress = notification.getProgress();
 
             float xOffset = (1 - visible) * position.getWidth();
-            context.pose().translate(xOffset, 0);
+            graphics.pose().translate(xOffset, 0);
 
             int height = MilloMod.MC.font.wordWrapHeight(notification.getMessage(), position.getWidth());
-            context.fill(-2, -2, position.getWidth(), height + 2, new Color(0, 0, 0, (int)(150 * visible)).hashCode());
-            context.fill(-2, height, -2 + (int) (position.getWidth() * (1 - progress)), height + 2, new Color(255, 255, 255, (int)(150 * visible)).hashCode());
-            context.drawWordWrap(MilloMod.MC.font, notification.getMessage(), 0, 0, position.getWidth(), new Color(1f, 1f, 1f, visible).hashCode(), true);
+            graphics.fill(-2, -2, position.getWidth(), height + 2, new Color(0, 0, 0, (int)(150 * visible)).hashCode());
+            graphics.fill(-2, height, -2 + (int) (position.getWidth() * (1 - progress)), height + 2, new Color(255, 255, 255, (int)(150 * visible)).hashCode());
+            graphics.textWithWordWrap(MilloMod.MC.font, notification.getMessage(), 0, 0, position.getWidth(), new Color(1f, 1f, 1f, visible).hashCode(), true);
 
-            context.pose().translate(-xOffset, 0);
+            graphics.pose().translate(-xOffset, 0);
 
             float yOffset = visible * (height + 6);
-            context.pose().translate(0, yOffset * direction);
+            graphics.pose().translate(0, yOffset * direction);
         }
 
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
     }
 
     public static void notify(Notification notification) {

@@ -32,7 +32,7 @@ public class ConfirmationElement extends ListElement {
                 .hoverBackground(0xFF000000)
                 .onPress(button -> {
                     onConfirm.run();
-                    if (MilloMod.MC.screen instanceof Menu menu) {
+                    if (MilloMod.MC.gui.screen() instanceof Menu menu) {
                         menu.closeContextMenu();
                     }
                 })
@@ -41,7 +41,7 @@ public class ConfirmationElement extends ListElement {
         ButtonElement cancelButton = ButtonElement.create(80, 20)
                 .hoverBackground(0xFF000000)
                 .onPress(button -> {
-                    if (MilloMod.MC.screen instanceof Menu menu) {
+                    if (MilloMod.MC.gui.screen() instanceof Menu menu) {
                         menu.closeContextMenu();
                     }
                 })

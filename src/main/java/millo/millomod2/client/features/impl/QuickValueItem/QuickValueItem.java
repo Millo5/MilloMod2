@@ -12,7 +12,7 @@ import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.RenderInfo;
 import millo.millomod2.menu.elements.TextFieldElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
@@ -20,7 +20,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -67,7 +67,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
 
 
         if (!packet.changedSlots().isEmpty()) return false;
-        if (packet.buttonNum() != 1 || packet.clickType() != ClickType.QUICK_MOVE) return false;
+        if (packet.buttonNum() != 1 || packet.containerInput() != ContainerInput.QUICK_MOVE) return false;
 
         openSelector(packet.slotNum());
 
@@ -91,7 +91,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         this.textInputShown = true;
         this.selectedOption = option;
 
-        AbstractContainerMenu handler = ((AbstractContainerScreen<?>) MilloMod.MC.screen).getMenu();
+        AbstractContainerMenu handler = ((AbstractContainerScreen<?>) MilloMod.MC.gui.screen()).getMenu();
 
         argumentTextField = new TextFieldElement(MilloMod.MC.font,
                 handler.slots.get(this.slot).x + 24,
@@ -103,11 +103,11 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         argumentTextField.setResponder((s) -> this.value = s);
         argumentTextField.setMaxLength(10000);
 
-        ((ScreenAccessor) MilloMod.MC.screen).iAddSelectableChild(argumentTextField);
+        ((ScreenAccessor) MilloMod.MC.gui.screen()).iAddSelectableChild(argumentTextField);
 
-        MilloMod.MC.screen.setFocused(null);
+        MilloMod.MC.gui.screen().setFocused(null);
         argumentTextField.setFocused(false);
-        MilloMod.MC.screen.setFocused(argumentTextField);
+        MilloMod.MC.gui.screen().setFocused(argumentTextField);
         argumentTextField.setFocused(true);
     }
 
@@ -117,8 +117,8 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
     private void closeTextInput(boolean success) {
         textInputShown = false;
 
-        if (MilloMod.MC.screen != null) {
-            ((ScreenAccessor) MilloMod.MC.screen).iRemove(argumentTextField);
+        if (MilloMod.MC.gui.screen() != null) {
+            ((ScreenAccessor) MilloMod.MC.gui.screen()).iRemove(argumentTextField);
         }
         argumentTextField = null;
 
@@ -135,12 +135,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         PlayerUtil.sendOffhandItem(selectedOption.getItem(value));
 
         int syncId = player().containerMenu.containerId;
-        intMan.handleInventoryMouseClick(syncId,
-                getSlot(),
-                40,
-                ClickType.SWAP,
-                player()
-        );
+        intMan.handleContainerInput(syncId, getSlot(), 40, ContainerInput.SWAP, player());
 
         PlayerUtil.sendOffhandItem(oldOffhandItem);
 
@@ -156,7 +151,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         if (MilloMod.player() == null) return;
 
         if (selectorShown) {
-            if (MilloMod.MC.screen instanceof AbstractContainerScreen<?> screen) {
+            if (MilloMod.MC.gui.screen() instanceof AbstractContainerScreen<?> screen) {
                 selectOption(screen);
             } else {
                 closeSelector();
@@ -215,7 +210,7 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
         if (!isEnabled()) return;
 
         if (textInputShown && argumentTextField != null) {
-            argumentTextField.render(info.context(), info.mouseX(), info.mouseY(), info.deltaTime());
+            argumentTextField.extractWidgetRenderState(info.graphics(), info.mouseX(), info.mouseY(), info.deltaTime());
         }
 
         animationProgress = info.lerp(animationProgress, selectorShown ? 1f : 0f, 15f);
@@ -226,17 +221,17 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
             slotY = slot.y;
         }
 
-        GuiGraphics context = info.context();
+        GuiGraphicsExtractor graphics = info.graphics();
 
-        context.pose().pushMatrix();
-        context.pose().translate(slotX, slotY);
-        context.fill(0, 0, 16, 16, new Color(255, 175, 175, (int)(animationProgress * 255)).hashCode());
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(slotX, slotY);
+        graphics.fill(0, 0, 16, 16, new Color(255, 175, 175, (int)(animationProgress * 255)).hashCode());
 
-        context.pose().translate(8, 8);
+        graphics.pose().translate(8, 8);
 
         if (textInputShown) {
             selectedOption.setSelected(false);
-            selectedOption.draw(context, 0, 0, info.deltaTime());
+            selectedOption.draw(graphics, 0, 0, info.deltaTime());
         }
 
         for (int i = 0; i < options.size(); i++) {
@@ -244,9 +239,9 @@ public class QuickValueItem extends Feature implements Toggleable, ContainerMod,
             int xx = (int) (Math.cos(angle) * 20 * animationProgress);
             int yy = (int) (Math.sin(angle) * 20 * animationProgress);
 
-            options.get(i).draw(context, xx, yy, info.deltaTime() * 10f, animationProgress);
+            options.get(i).draw(graphics, xx, yy, info.deltaTime() * 10f, animationProgress);
         }
-        context.pose().popMatrix();
+        graphics.pose().popMatrix();
 
     }
 

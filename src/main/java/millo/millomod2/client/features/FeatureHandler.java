@@ -17,8 +17,8 @@ import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.MilloLog;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public final class FeatureHandler {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> forEach(Feature::onTick));
         ClientTickEvents.END_CLIENT_TICK.register(client -> forEach(Feature::onEndTick));
-        WorldRenderEvents.END_MAIN.register(context -> {
+        LevelRenderEvents.END_MAIN.register(context -> {
             renderer = new Renderer(context);
             for (WorldRendered feature : WorldRendered.features) {
                 feature.worldRender(renderer);
@@ -185,7 +185,7 @@ public final class FeatureHandler {
 
         if (feature instanceof Keybound keybound) {
             for (String keybindId : keybound.getKeybindIds()) {
-                keybound.registerKeybind(keybindId, KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                keybound.registerKeybind(keybindId, KeyMappingHelper.registerKeyMapping(new KeyMapping(
                         "key.millomod2." + feature.getId() + "." + keybindId,
                         keybound.getDefaultType(),
                         keybound.getDefaultCode(),

@@ -57,14 +57,14 @@ public class FolderElement extends ContainerElement<FolderElement> {
     protected void renderElement(RenderArgs args) {
         args.context().fill(0, 0, getWidth(), getHeight(), background);
 
-        args.context().drawString(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
+        args.context().text(getTextRenderer(), title, 16, 1, 0xFFFFFFFF, true);
 
         float targetHeight = opened ? Math.min(maxHeightWhenOpened, contentList.getHeight() + 12) : 12;
 
         Matrix3x2fStack mats = args.context().pose();
         mats.pushMatrix();
         mats.rotateAbout((contentList.getHeight() / visualHeight) * 1.570796f, 9f, 5);
-        args.context().drawString(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
+        args.context().text(getTextRenderer(), "☽", 5, 1, 0xFFFFFFFF, false);
         mats.popMatrix();
 
 //        visualHeight += (targetHeight - visualHeight) * 0.2f;

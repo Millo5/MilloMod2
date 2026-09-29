@@ -27,7 +27,7 @@ public abstract class MTitleScreen {
 
         UpdateService.checkForUpdates().thenAccept(result -> {
             MilloMod.MC.execute(() -> {
-                if (!result.outdated() || MilloMod.MC.screen != titleScreen) return;
+                if (!result.outdated() || MilloMod.MC.gui.screen() != titleScreen) return;
                 ScreenAccessor accessor = (ScreenAccessor) titleScreen;
                 accessor.iAddDrawableChild(
                         (Button.builder(Component.literal("Update MilloMod (" + MilloMod.MOD_VERSION + " -> " + result.latestVersion() + ")"),

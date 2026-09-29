@@ -25,7 +25,7 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -49,12 +49,12 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     private ItemStack oldOffhandItem = null;
 
     @Override
-    public boolean containerSlotClick(int slotId, int button, ClickType actionType, Player player) {
+    public boolean containerSlotClick(int slotId, int button, ContainerInput actionType, Player player) {
         if (!isEnabled()) return false;
         if (HypercubeAPI.getMode() != HypercubeAPI.Mode.DEV) return false;
 
         if (open) return true;
-        if (button != 1 || actionType != ClickType.QUICK_MOVE) return false;
+        if (button != 1 || actionType != ContainerInput.QUICK_MOVE) return false;
 
         AbstractContainerMenu screenHandler = player.containerMenu;
         ItemStack stack = screenHandler.getSlot(slotId).getItem();
@@ -88,7 +88,7 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     private void open(ArgumentModel<?> model, int slot, ItemStack originalStack, ModifierWindow modifier) {
-        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
+        if (!(MC.gui.screen() instanceof AbstractContainerScreen<?> handledScreen)) return;
 
         this.currentModel = model;
         this.slot = slot;
@@ -102,7 +102,7 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     }
 
     private void close(boolean confirm) {
-        if (MC.screen != null) ((ScreenAccessor) MC.screen).iRemove(window);
+        if (MC.gui.screen() != null) ((ScreenAccessor) MC.gui.screen()).iRemove(window);
 
         if (confirm) {
             JsonObject serialized = currentModel.serialize();
@@ -119,10 +119,10 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
                 MultiPlayerGameMode intMan = MilloMod.MC.gameMode;
                 if (intMan == null) return;
 
-                intMan.handleInventoryMouseClick(syncId, slot, 0, ClickType.SWAP, player());
+                intMan.handleContainerInput(syncId, slot, 0, ContainerInput.SWAP, player());
                 net().send(new ServerboundSetCreativeModeSlotPacket(36, copy));
-                intMan.handleInventoryMouseClick(syncId, slot, 0, ClickType.SWAP, player());
-                intMan.handleInventoryMouseClick(syncId, 54, 0, ClickType.QUICK_CRAFT, player());
+                intMan.handleContainerInput(syncId, slot, 0, ContainerInput.SWAP, player());
+                intMan.handleContainerInput(syncId, 54, 0, ContainerInput.QUICK_CRAFT, player());
 
             }, 1);
 
@@ -140,18 +140,18 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     public <T extends AbstractContainerMenu> void containerRender(T handler, RenderInfo info) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
+        if (!(MC.gui.screen() instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen
                 ;
-//        window.render(info.context(), info.mouseX(), info.mouseY(), info.deltaTime() * 20f);
-        window.render(info.context(), info.mouseX() - accessor.getX(), info.mouseY() - accessor.getY(), info.deltaTime() * 20f);
+//        window.render(info.graphics(), info.mouseX(), info.mouseY(), info.deltaTime() * 20f);
+        window.extractRenderState(info.graphics(), info.mouseX() - accessor.getX(), info.mouseY() - accessor.getY(), info.deltaTime() * 20f);
     }
 
     @Override
     public void containerMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
+        if (!(MC.gui.screen() instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen;
 
         MouseButtonEvent local = new MouseButtonEvent(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
@@ -162,7 +162,7 @@ public class ValueItemEditor extends Feature implements Toggleable, ContainerMod
     public void containerMouseReleased(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
         if (!open || !isEnabled()) return;
 
-        if (!(MC.screen instanceof AbstractContainerScreen<?> handledScreen)) return;
+        if (!(MC.gui.screen() instanceof AbstractContainerScreen<?> handledScreen)) return;
         HandledScreenAccessor accessor = (HandledScreenAccessor) handledScreen;
 
         MouseButtonEvent local = new MouseButtonEvent(click.x() - accessor.getX(), click.y() - accessor.getY(), click.buttonInfo());
