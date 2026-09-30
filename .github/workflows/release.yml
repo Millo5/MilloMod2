@@ -36,7 +36,7 @@ jobs:
         if: steps.check_version.outputs.changed == 'true'
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: gradle
 
