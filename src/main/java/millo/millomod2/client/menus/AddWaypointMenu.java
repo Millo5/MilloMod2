@@ -3,7 +3,7 @@ package millo.millomod2.client.menus;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.impl.Waypoints.Waypoint;
 import millo.millomod2.client.features.impl.Waypoints.Waypoints;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ListElement;

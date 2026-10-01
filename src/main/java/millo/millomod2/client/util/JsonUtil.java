@@ -3,61 +3,61 @@ package millo.millomod2.client.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import millo.millomod2.client.util.logging.MilloLogger;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class JsonUtil {
 
-    public static void compare(JsonObject self, JsonObject other) {
-        compare(self, other, new ArrayList<>());
+    public static void compare(JsonObject self, JsonObject other, MilloLogger logger) {
+        compareInternal(self, other, logger);
     }
 
-    private static void compare(JsonElement self, JsonElement other, ArrayList<String> path) {
+    private static void compareInternal(JsonElement self, JsonElement other, MilloLogger logger) {
         if (self.isJsonObject() && other.isJsonObject()) {
-            compare(self.getAsJsonObject(), other.getAsJsonObject(), path);
+            compareInternal(self.getAsJsonObject(), other.getAsJsonObject(), logger);
         } else if (self.isJsonArray() && other.isJsonArray()) {
-            compare(self.getAsJsonArray(), other.getAsJsonArray(), path);
+            compareInternal(self.getAsJsonArray(), other.getAsJsonArray(), logger);
         } else if (!self.equals(other)) {
-            MilloLog.logWarning(self + " does not match " + other + " at path " + String.join(".", path));
+            logger.warn(self + " does not match " + other);
         }
     }
 
-    private static void compare(JsonObject self, JsonObject other, ArrayList<String> path) {
+    private static void compareInternal(JsonObject self, JsonObject other, MilloLogger logger) {
         Set<String> keys = new HashSet<>();
         keys.addAll(self.keySet());
         keys.addAll(other.keySet());
 
         for (String key : keys) {
+            logger.push(key);
             if (!other.has(key)) {
-                MilloLog.logWarning("Key " + key + " is missing in other" + " at path " + String.join(".", path) + " -> " + self.get(key));
+                logger.warn("Key is missing in other, value: " + self.get(key));
                 continue;
             }
             if (!self.has(key)) {
-                MilloLog.logWarning("Key " + key + " is missing in self" + " at path " + String.join(".", path) + " -> " + other.get(key));
+                logger.warn("Key is missing in self, value: " + other.get(key));
                 continue;
             }
-            ArrayList<String> newPath = new ArrayList<>(path);
-            newPath.add(key);
-            compare(self.get(key), other.get(key), newPath);
+            compareInternal(self.get(key), other.get(key), logger);
+            logger.pop();
         }
     }
 
-    private static void compare(JsonArray self, JsonArray other, ArrayList<String> path) {
+    private static void compareInternal(JsonArray self, JsonArray other, MilloLogger logger) {
         int maxSize = Math.max(self.size(), other.size());
         for (int i = 0; i < maxSize; i++) {
+            logger.push("[" + i + "]");
             if (i >= self.size()) {
-                MilloLog.logWarning("Missing element in self at index " + i + " at path " + String.join(".", path) + " -> " + other.get(i));
+                logger.warn("Index missing in self, value: " + other.get(i));
                 continue;
             }
             if (i >= other.size()) {
-                MilloLog.logWarning("Missing element in other at index " + i + " at path " + String.join(".", path) + " -> " + self.get(i));
+                logger.warn("Index missing in other, value: " + self.get(i));
                 continue;
             }
-            ArrayList<String> newPath = new ArrayList<>(path);
-            newPath.add("[" + i + "]");
-            compare(self.get(i), other.get(i), newPath);
+            compareInternal(self.get(i), other.get(i), logger);
+            logger.pop();
         }
     }
 

@@ -2,7 +2,7 @@ package millo.millomod2.client.menus;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.net.UpdateService;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.style.Styles;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.ListElement;

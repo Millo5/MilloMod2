@@ -1,7 +1,7 @@
 package millo.millomod2.client.hypercube.model.arguments.particle;
 
 import com.google.gson.JsonObject;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 
 import java.util.HashMap;
 import java.util.function.Supplier;

@@ -1,4 +1,4 @@
-package millo.millomod2.client.util;
+package millo.millomod2.client.util.logging;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.util.style.Styles;

@@ -15,7 +15,7 @@ import millo.millomod2.client.features.impl.Waypoints.Waypoints;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.HypercubeAPI;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;

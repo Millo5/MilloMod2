@@ -6,7 +6,7 @@ import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.features.PacketEventBus;
 import millo.millomod2.client.features.addons.PacketEventSubscriber;
 import millo.millomod2.client.util.FileUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 

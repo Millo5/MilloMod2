@@ -3,7 +3,8 @@ package millo.millomod2.client.hypercube.model;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import millo.millomod2.client.util.JsonUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
+import millo.millomod2.client.util.logging.MilloLogger;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -32,8 +33,10 @@ public class ModelUtil {
             JsonObject json = JsonParser.parseString(decompressed).getAsJsonObject();
             TemplateModel model = new TemplateModel().deserialize(json);
 
+            MilloLogger logger = new MilloLogger().push(model.getFileName());
+
             // Warn for missing data
-            JsonUtil.compare(model.serialize(), json);
+            JsonUtil.compare(model.serialize(), json, logger);
 
             return model;
         } catch (Exception e) {

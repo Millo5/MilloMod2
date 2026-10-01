@@ -2,7 +2,7 @@ package millo.millomod2.client.hypercube.model.arguments;
 
 import com.google.gson.JsonObject;
 import millo.millomod2.client.hypercube.model.JsonSerializable;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 
 import java.util.HashMap;
 import java.util.function.Supplier;

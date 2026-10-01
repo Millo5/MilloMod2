@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import millo.millomod2.client.hypercube.actiondump.Sound;
 import millo.millomod2.client.hypercube.actiondump.SoundVariant;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.SoundUtil;
 
 public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {

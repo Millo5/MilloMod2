@@ -4,7 +4,7 @@ import millo.millomod2.client.hypercube.actiondump.Action;
 import millo.millomod2.client.hypercube.actiondump.Particle;
 import millo.millomod2.client.hypercube.actiondump.RawActionDump;
 import millo.millomod2.client.hypercube.actiondump.Sound;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;

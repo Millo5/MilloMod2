@@ -3,7 +3,7 @@ package millo.millomod2.client.hypercube.model.arguments;
 import com.google.gson.JsonObject;
 import millo.millomod2.client.hypercube.model.arguments.particle.ParticleField;
 import millo.millomod2.client.hypercube.actiondump.readable.ActionDump;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
 package millo.millomod2.client.features.impl.BlueprintLoader;
 
 import millo.millomod2.client.hypercube.model.ModelUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.math.ByteArray;
 import net.minecraft.world.item.ItemStack;

@@ -1,11 +1,13 @@
 package millo.millomod2.client.util;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagTypes;
+
+import java.io.DataInputStream;
+import java.io.IOException;
 
 public class NbtUtil {
 

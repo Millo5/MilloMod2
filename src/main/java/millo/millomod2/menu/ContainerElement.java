@@ -2,7 +2,7 @@ package millo.millomod2.menu;
 
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.menu.elements.ClickableElement;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;

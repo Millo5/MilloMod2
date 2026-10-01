@@ -12,7 +12,7 @@ import millo.millomod2.client.hypercube.model.ModelUtil;
 import millo.millomod2.client.hypercube.model.TemplateModel;
 import millo.millomod2.client.util.HypercubeAPI;
 import millo.millomod2.client.util.ItemUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.PlayerUtil;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.core.BlockPos;

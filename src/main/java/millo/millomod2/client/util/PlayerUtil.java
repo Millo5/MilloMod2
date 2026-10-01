@@ -3,6 +3,7 @@ package millo.millomod2.client.util;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.features.impl.Debug;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.style.Styles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;

@@ -4,7 +4,7 @@ import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.config.saving.ConfigSaving;
 import millo.millomod2.client.features.FeatureHandler;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.menu.Menu;
 import millo.millomod2.menu.elements.FolderElement;
 import millo.millomod2.menu.elements.ListElement;

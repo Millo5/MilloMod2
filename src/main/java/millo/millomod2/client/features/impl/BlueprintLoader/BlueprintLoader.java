@@ -2,7 +2,7 @@ package millo.millomod2.client.features.impl.BlueprintLoader;
 
 import millo.millomod2.client.features.Feature;
 import millo.millomod2.client.util.FileUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.NbtUtil;
 import millo.millomod2.client.util.PlayerUtil;
 import net.minecraft.nbt.CompoundTag;

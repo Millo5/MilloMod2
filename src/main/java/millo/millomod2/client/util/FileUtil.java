@@ -2,6 +2,7 @@ package millo.millomod2.client.util;
 
 import com.google.gson.JsonObject;
 import millo.millomod2.client.MilloMod;
+import millo.millomod2.client.util.logging.MilloLog;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

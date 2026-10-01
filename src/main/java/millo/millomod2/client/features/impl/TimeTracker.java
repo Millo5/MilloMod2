@@ -6,7 +6,7 @@ import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.hypercube.data.Plot;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.HypercubeAPI;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 
 import java.io.IOException;

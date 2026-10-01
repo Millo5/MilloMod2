@@ -7,7 +7,7 @@ import millo.millomod2.client.config.saving.ConfigSaving;
 import millo.millomod2.client.features.FeatureHandler;
 import millo.millomod2.client.features.guides.GuideData;
 import millo.millomod2.client.hypercube.modapi.ModAPIPayload;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.client.util.ModAPI;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;

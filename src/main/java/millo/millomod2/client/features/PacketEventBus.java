@@ -1,6 +1,6 @@
 package millo.millomod2.client.features;
 
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import java.util.ArrayList;

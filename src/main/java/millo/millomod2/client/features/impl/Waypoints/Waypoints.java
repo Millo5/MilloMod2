@@ -18,7 +18,7 @@ import millo.millomod2.client.menus.WaypointMenu;
 import millo.millomod2.client.rendering.world.Renderer;
 import millo.millomod2.client.util.FileUtil;
 import millo.millomod2.client.util.HypercubeAPI;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;

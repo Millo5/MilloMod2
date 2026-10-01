@@ -2,7 +2,7 @@ package millo.millomod2.client.config.value;
 
 import millo.millomod2.client.config.ConfigValue;
 import millo.millomod2.client.config.Instantiable;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import millo.millomod2.menu.elements.ListElement;
 import millo.millomod2.menu.elements.TextElement;
 import millo.millomod2.menu.elements.flex.CrossAxisAlignment;

@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.menus.UpdateMenu;
 import millo.millomod2.client.util.FileUtil;
-import millo.millomod2.client.util.MilloLog;
+import millo.millomod2.client.util.logging.MilloLog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
