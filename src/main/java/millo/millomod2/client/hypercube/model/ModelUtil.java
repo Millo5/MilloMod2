@@ -36,6 +36,8 @@ public class ModelUtil {
             MilloLogger logger = new MilloLogger().push(model.getFileName());
 
             // Warn for missing data
+            // "Other" is the raw json, it is truth
+            // "Self" is the deserialized data
             JsonUtil.compare(model.serialize(), json, logger);
 
             return model;

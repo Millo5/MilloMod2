@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 public abstract class ArgumentModel<T extends ArgumentModel<T>> implements JsonSerializable<T> {
 
     private int slot;
+    private int version;
 
     public abstract T self();
     public abstract String id();
@@ -21,6 +22,8 @@ public abstract class ArgumentModel<T extends ArgumentModel<T>> implements JsonS
 
         JsonObject itemObject = new JsonObject();
         itemObject.addProperty("id", id());
+        itemObject.addProperty("version", version);
+
         JsonObject dataObject = new JsonObject();
         serializeItem(dataObject);
         itemObject.add("data", dataObject);
@@ -32,6 +35,7 @@ public abstract class ArgumentModel<T extends ArgumentModel<T>> implements JsonS
     @Override
     public final T deserialize(JsonObject jsonObject) {
         this.slot = jsonObject.get("slot").getAsInt();
+        if (jsonObject.getAsJsonObject("item").has("version")) this.version = jsonObject.getAsJsonObject("item").get("version").getAsInt();
         deserializeItem(jsonObject.getAsJsonObject("item").getAsJsonObject("data"));
         return self();
     }
