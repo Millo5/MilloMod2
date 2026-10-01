@@ -10,7 +10,9 @@ import java.util.HashMap;
 public class KeyUtil {
 
     public static boolean isKeyDown(KeyMapping keyBind) {
-        return InputConstants.isKeyDown(MilloMod.MC.getWindow(), ((KeyMappingAccessor) keyBind).getKey().getValue());
+        int key = ((KeyMappingAccessor) keyBind).getKey().getValue();
+        if (key == -1) return false;
+        return InputConstants.isKeyDown(MilloMod.MC.getWindow(), key);
     }
 
     public static boolean isKeyDown(int keycode) {
