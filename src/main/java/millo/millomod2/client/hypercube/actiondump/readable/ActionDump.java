@@ -53,10 +53,12 @@ public class ActionDump {
         }
 
         for (Sound sound : raw.sounds) {
+            soundMap.put("minecraft:"+sound.soundId, sound);
             soundMap.put(sound.icon.name.toLowerCase(), sound);
         }
 
         for (Particle particle : raw.particles) {
+            particleFieldsMap.put("minecraft:"+particle.particleId, particle.fields);
             particleFieldsMap.put(particle.icon.name.toLowerCase(), particle.fields);
         }
     }
@@ -71,12 +73,11 @@ public class ActionDump {
         return Optional.ofNullable(codeBlockMap.get(name));
     }
 
-    public Sound getSoundFromName(String name) {
+    public Sound getSoundFromId(String name) {
         return soundMap.get(name.toLowerCase());
     }
 
     public String[] getParticleFields(String particle) {
         return particleFieldsMap.get(particle.toLowerCase());
     }
-
 }

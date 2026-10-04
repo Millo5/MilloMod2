@@ -9,6 +9,7 @@ import millo.millomod2.client.util.SoundUtil;
 
 public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
+    private int mappingVersion;
     private double volume, pitch;
     private String sound, key, variant;
 
@@ -24,6 +25,9 @@ public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
     @Override
     protected void deserializeItem(JsonObject jsonObject) {
+        mappingVersion = jsonObject.has("mappingVersion")
+                ? jsonObject.get("mappingVersion").getAsInt()
+                : 0;
         sound = jsonObject.has("sound") ? jsonObject.get("sound").getAsString() : null;
         volume = jsonObject.get("vol").getAsDouble();
         pitch = jsonObject.get("pitch").getAsDouble();
@@ -33,6 +37,7 @@ public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
     @Override
     protected void serializeItem(JsonObject jsonObject) {
+        jsonObject.addProperty("mappingVersion", mappingVersion);
         jsonObject.addProperty("pitch", pitch);
         jsonObject.addProperty("vol", volume);
         if (sound != null) jsonObject.addProperty("sound", sound);
@@ -62,7 +67,7 @@ public class SoundArgumentModel extends ArgumentModel<SoundArgumentModel> {
 
     public void play() {
         ActionDump dump = ActionDump.getActionDump().orElseThrow();
-        Sound sound = dump.getSoundFromName(getSound());
+        Sound sound = dump.getSoundFromId(getSound());
 
         float volume = (float) getVolume();
         float pitch = (float) getPitch();

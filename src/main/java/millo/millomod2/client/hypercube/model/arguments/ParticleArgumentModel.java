@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class ParticleArgumentModel extends ArgumentModel<ParticleArgumentModel> {
 
+    private int mappingVersion;
     private String particle;
 
     // Cluster
@@ -32,6 +33,9 @@ public class ParticleArgumentModel extends ArgumentModel<ParticleArgumentModel> 
 
     @Override
     protected void deserializeItem(JsonObject jsonObject) {
+        mappingVersion = jsonObject.has("mappingVersion")
+                ? jsonObject.get("mappingVersion").getAsInt()
+                : 0;
         particle = jsonObject.get("particle").getAsString();
 
         JsonObject cluster = jsonObject.get("cluster").getAsJsonObject();
@@ -42,7 +46,12 @@ public class ParticleArgumentModel extends ArgumentModel<ParticleArgumentModel> 
         JsonObject data = jsonObject.get("data").getAsJsonObject();
         dataFields = new ArrayList<>();
         ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
-        for (String fieldName : actionDump.getParticleFields(particle)) {
+        String[] fields = actionDump.getParticleFields(particle);
+        if (fields == null) {
+            MilloLog.logWarning("No particle fields found for particle " + particle);
+            return;
+        }
+        for (String fieldName : fields) {
             try {
                 ParticleField<? extends ParticleField<?>> field = ParticleField.getParticleField(fieldName);
                 field.deserialize(data);
@@ -56,6 +65,7 @@ public class ParticleArgumentModel extends ArgumentModel<ParticleArgumentModel> 
 
     @Override
     protected void serializeItem(JsonObject jsonObject) {
+        jsonObject.addProperty("mappingVersion", mappingVersion);
         jsonObject.addProperty("particle", particle);
 
         JsonObject cluster = new JsonObject();

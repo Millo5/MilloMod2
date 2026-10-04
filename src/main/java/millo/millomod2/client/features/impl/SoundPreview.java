@@ -147,7 +147,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
             ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
             this.soundName = data.get("sound").getAsString();
-             Sound adSound = actionDump.getSoundFromName(soundName);
+             Sound adSound = actionDump.getSoundFromId(soundName);
             if (adSound == null) throw new IllegalArgumentException("Sound not found in action dump");
             this.soundId = adSound.soundId;
         }
@@ -160,7 +160,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
             ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
             this.soundName = sound.getSound();
-            Sound adSound = actionDump.getSoundFromName(soundName);
+            Sound adSound = actionDump.getSoundFromId(soundName);
             if (adSound == null) throw new IllegalArgumentException("Sound not found in action dump");
             this.soundId = adSound.soundId;
         }
@@ -181,7 +181,7 @@ public class SoundPreview extends Feature implements Toggleable, ContainerMod {
 
             if (!variant.isEmpty()) {
                 ActionDump actionDump = ActionDump.getActionDump().orElseThrow();
-                Sound adSound = actionDump.getSoundFromName(soundName);
+                Sound adSound = actionDump.getSoundFromId(soundName);
                 if (adSound == null) return;
 
                 for (SoundVariant soundVariant : adSound.variants) {

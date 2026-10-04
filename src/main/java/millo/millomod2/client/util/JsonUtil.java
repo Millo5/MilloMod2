@@ -33,10 +33,12 @@ public class JsonUtil {
             logger.push(key);
             if (!other.has(key)) {
                 logger.warn("Key is missing in other, value: " + self.get(key));
+                logger.pop();
                 continue;
             }
             if (!self.has(key)) {
                 logger.warn("Key is missing in self, value: " + other.get(key));
+                logger.pop();
                 continue;
             }
             compareInternal(self.get(key), other.get(key), logger);
@@ -50,10 +52,12 @@ public class JsonUtil {
             logger.push("[" + i + "]");
             if (i >= self.size()) {
                 logger.warn("Index missing in self, value: " + other.get(i));
+                logger.pop();
                 continue;
             }
             if (i >= other.size()) {
                 logger.warn("Index missing in other, value: " + self.get(i));
+                logger.pop();
                 continue;
             }
             compareInternal(self.get(i), other.get(i), logger);
