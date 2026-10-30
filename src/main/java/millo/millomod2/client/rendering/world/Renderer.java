@@ -1,15 +1,16 @@
 package millo.millomod2.client.rendering.world;
 
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+import com.mojang.renderpearl.api.commands.RenderPass;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
+import com.mojang.renderpearl.api.vertex.VertexFormat;
 import millo.millomod2.client.MilloMod;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.Minecraft;
@@ -77,8 +78,8 @@ public class Renderer {
         Vec3 camera = context.levelState().cameraRenderState.pos;
         matrices.pushPose();
         matrices.translate(pos.x-camera.x, pos.y-camera.y, pos.z-camera.z);
-        matrices.mulPose(context.levelState().cameraRenderState.orientation);
-        matrices.mulPose(flipX);
+        matrices.mulPose(context.levelState().cameraRenderState.viewRotationMatrix);
+        matrices.rotate(flipX);
         final float s = scale * 0.02f;
         matrices.scale(s, s, s);
         context.submitNodeCollector().submitText(matrices,
@@ -185,7 +186,8 @@ public class Renderer {
         try (RenderPass renderPass = RenderSystem.getDevice()
                 .createCommandEncoder()
                 .createRenderPass(() -> MilloMod.MOD_ID + " example render pipeline rendering", colorTexture, Optional.empty(), mainTarget.getDepthTextureView(), OptionalDouble.empty())) {
-            renderPass.setPipeline(pipeline);
+
+            renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
 
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);

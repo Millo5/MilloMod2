@@ -51,7 +51,14 @@ public class TeleportHandler extends Feature implements PacketEventSubscriber {
         if (!handle) return false;
 
         if (callback != null) callback.accept(packet);
-        if (cancel) net().send(new ServerboundAcceptTeleportationPacket(packet.id()));
+        if (cancel) net().send(new ServerboundAcceptTeleportationPacket(
+                packet.id(),
+                packet.change().position().x,
+                packet.change().position().y,
+                packet.change().position().z,
+                packet.change().yRot(),
+                packet.change().xRot()
+        ));
         callback = null;
         active = false;
         return cancel;

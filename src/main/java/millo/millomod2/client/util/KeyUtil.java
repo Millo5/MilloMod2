@@ -1,7 +1,6 @@
 package millo.millomod2.client.util;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import millo.millomod2.client.MilloMod;
 import millo.millomod2.client.mixin.core.KeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 
@@ -15,7 +14,7 @@ public class KeyUtil {
 
     public static boolean isKeyDown(int keycode) {
         if (keycode == -1) return false;
-        return InputConstants.isKeyDown(MilloMod.MC.getWindow(), keycode);
+        return InputConstants.isKeyDown(keycode);
     }
 
     private static final HashMap<KeyMapping, Integer> keyDuration = new HashMap<>();

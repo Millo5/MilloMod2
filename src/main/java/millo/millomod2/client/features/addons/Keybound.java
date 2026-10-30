@@ -1,8 +1,9 @@
 package millo.millomod2.client.features.addons;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import java.util.HashMap;
 import net.minecraft.client.KeyMapping;
+
+import java.util.HashMap;
 
 public interface Keybound {
 
@@ -33,7 +34,7 @@ public interface Keybound {
     }
 
     default InputConstants.Type getDefaultType() {
-        return InputConstants.Type.KEYSYM;
+        return InputConstants.Type.KEYBOARD;
     }
     default int getDefaultCode() {
         return -1;
