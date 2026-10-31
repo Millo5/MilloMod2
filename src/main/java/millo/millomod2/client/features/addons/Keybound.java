@@ -37,7 +37,7 @@ public interface Keybound {
         return InputConstants.Type.KEYBOARD;
     }
     default int getDefaultCode() {
-        return -1;
+        return InputConstants.UNKNOWN.getValue();
     }
 
 }
