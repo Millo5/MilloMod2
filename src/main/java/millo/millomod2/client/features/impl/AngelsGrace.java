@@ -1,6 +1,8 @@
 package millo.millomod2.client.features.impl;
 
+import millo.millomod2.client.config.FeatureConfig;
 import millo.millomod2.client.features.Feature;
+import millo.millomod2.client.features.addons.Configurable;
 import millo.millomod2.client.features.addons.Toggleable;
 import millo.millomod2.client.features.impl.Notifications.Notifications;
 import millo.millomod2.client.util.HypercubeAPI;
@@ -11,19 +13,24 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import java.util.Random;
 
-public class AngelsGrace extends Feature implements Toggleable {
+public class AngelsGrace extends Feature implements Toggleable, Configurable {
 
     private static final String[] messages = new String[] {
             "Saved by Millo...", "Helium consumed...", "Lowered density...",
             "+1 Pair of Wings", "Hoppoo Feather Consumed", "Walking on sunshine...",
             "Ascended to greater bounds...", "You feel lightheaded", "Schlooof screams at you for food",
             "You find yourself standing on a big pillow", "Your psychic powers activate", "I want ice cream",
-            "You are now 20% more fabulous", "A big shark shaped balloon catches you"
+            "You are now 20% more fabulous", "A big shark shaped balloon catches you", "ender doesn't like notifications"
     };
 
     @Override
     public String getId() {
         return "angels_grace";
+    }
+
+    @Override
+    public void setupConfig(FeatureConfig config) {
+        config.addBoolean("notifications", true);
     }
 
     @Override
@@ -38,9 +45,13 @@ public class AngelsGrace extends Feature implements Toggleable {
                     player().getAbilities().flying = true;
                     player().onUpdateAbilities();
                     String message = messages[new Random().nextInt(messages.length)];
-                    Notifications.notify(Component.literal(message).setStyle(Styles.VARIABLE.getStyle()));
+
+                    if (getConfig().getBoolean("notifications")) {
+                        Notifications.notify(Component.literal(message).setStyle(Styles.VARIABLE.getStyle()));
+                    }
                 }
             }
         }
     }
+
 }
